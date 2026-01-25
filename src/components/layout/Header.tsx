@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ShoppingBag, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -13,7 +13,6 @@ const navLinks = [
   { href: "/cafee", label: "CaFEE" },
   { href: "/portfolio", label: "Portfolio" },
   { href: "/podcasts", label: "Podcasts" },
-  { href: "/resources", label: "Ressources" },
 ];
 
 export function Header() {
@@ -36,52 +35,57 @@ export function Header() {
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
         isScrolled
-          ? "bg-card/95 backdrop-blur-md shadow-card py-3"
+          ? "bg-card/98 backdrop-blur-xl shadow-lg py-3"
           : "bg-transparent py-5"
       )}
     >
       <div className="container-main flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-3 group">
           <div className="relative">
-            {/* Double Droplet Icon */}
+            {/* Modern Droplet Logo */}
             <svg
-              width="40"
-              height="40"
+              width="36"
+              height="36"
               viewBox="0 0 40 40"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              className="text-primary"
+              className="transition-transform duration-300 group-hover:scale-110"
             >
               <path
                 d="M15 8C10 16 5 20 5 25C5 30.5228 9.47715 35 15 35C20.5228 35 25 30.5228 25 25C25 20 20 16 15 8Z"
-                fill="currentColor"
-                opacity="0.8"
+                fill="hsl(var(--primary))"
+                opacity="0.7"
               />
               <path
                 d="M25 5C21 11.5 17 15 17 19C17 23.4183 20.5817 27 25 27C29.4183 27 33 23.4183 33 19C33 15 29 11.5 25 5Z"
-                fill="currentColor"
+                fill="hsl(var(--primary))"
               />
             </svg>
           </div>
-          <span className="font-serif text-2xl font-bold text-foreground">
+          <span className={cn(
+            "font-serif text-xl font-bold transition-colors",
+            isScrolled ? "text-foreground" : "text-white"
+          )}>
             fernanden
           </span>
         </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center gap-8">
+        {/* Desktop Navigation - Centered */}
+        <nav className="hidden lg:flex items-center gap-1">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               to={link.href}
               className={cn(
-                "font-heading text-sm font-medium transition-colors link-underline",
+                "font-heading text-sm font-medium px-4 py-2 rounded-full transition-all duration-300",
                 location.pathname === link.href
-                  ? "text-primary"
-                  : "text-foreground hover:text-primary"
+                  ? "text-primary bg-primary/10"
+                  : isScrolled 
+                    ? "text-foreground/70 hover:text-primary hover:bg-primary/5"
+                    : "text-white/80 hover:text-white hover:bg-white/10"
               )}
             >
               {link.label}
@@ -89,16 +93,48 @@ export function Header() {
           ))}
         </nav>
 
-        {/* Desktop CTA */}
-        <div className="hidden lg:block">
-          <Button asChild>
-            <Link to="/contact">Contactez-nous</Link>
+        {/* Desktop Right Actions */}
+        <div className="hidden lg:flex items-center gap-3">
+          <Button 
+            variant="ghost" 
+            size="icon"
+            className={cn(
+              "rounded-full",
+              isScrolled ? "text-foreground hover:bg-muted" : "text-white hover:bg-white/10"
+            )}
+          >
+            <Heart size={18} />
+          </Button>
+          <Button 
+            variant="ghost" 
+            size="icon"
+            className={cn(
+              "rounded-full relative",
+              isScrolled ? "text-foreground hover:bg-muted" : "text-white hover:bg-white/10"
+            )}
+          >
+            <ShoppingBag size={18} />
+            <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary text-white text-[10px] rounded-full flex items-center justify-center">
+              0
+            </span>
+          </Button>
+          <Button 
+            asChild 
+            size="sm" 
+            className="ml-2 rounded-full px-6 bg-primary hover:bg-primary/90"
+          >
+            <Link to="/contact">Contact</Link>
           </Button>
         </div>
 
         {/* Mobile Menu Button */}
         <button
-          className="lg:hidden p-2 text-foreground"
+          className={cn(
+            "lg:hidden p-2 rounded-full transition-colors",
+            isScrolled 
+              ? "text-foreground hover:bg-muted" 
+              : "text-white hover:bg-white/10"
+          )}
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           aria-label="Toggle menu"
         >
@@ -110,28 +146,28 @@ export function Header() {
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, x: "100%" }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: "100%" }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-            className="fixed inset-0 top-0 z-40 bg-card lg:hidden"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-x-0 top-[60px] z-40 bg-card border-t border-border lg:hidden shadow-xl"
           >
-            <div className="flex flex-col h-full pt-20 pb-8 px-6">
-              <nav className="flex flex-col gap-4">
+            <div className="container-main py-6">
+              <nav className="flex flex-col gap-1">
                 {navLinks.map((link, index) => (
                   <motion.div
                     key={link.href}
-                    initial={{ opacity: 0, x: 20 }}
+                    initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
+                    transition={{ delay: index * 0.05 }}
                   >
                     <Link
                       to={link.href}
                       className={cn(
-                        "font-heading text-xl font-semibold block py-3 border-b border-border",
+                        "font-heading text-base font-medium block py-3 px-4 rounded-lg transition-colors",
                         location.pathname === link.href
-                          ? "text-primary"
-                          : "text-foreground"
+                          ? "text-primary bg-primary/10"
+                          : "text-foreground hover:bg-muted"
                       )}
                     >
                       {link.label}
@@ -139,8 +175,8 @@ export function Header() {
                   </motion.div>
                 ))}
               </nav>
-              <div className="mt-auto">
-                <Button asChild size="lg" className="w-full">
+              <div className="mt-6 pt-6 border-t border-border flex gap-3">
+                <Button asChild size="lg" className="flex-1 rounded-full">
                   <Link to="/contact">Contactez-nous</Link>
                 </Button>
               </div>

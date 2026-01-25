@@ -1,168 +1,139 @@
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
+import { useState } from "react";
 import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
 
 const testimonials = [
   {
     id: 1,
-    quote: "fernanden a transformé notre mariage en une expérience inoubliable. Chaque détail reflétait notre histoire et notre culture avec une élégance extraordinaire.",
-    author: "Aïcha & Kofi",
-    role: "Mariage à Cotonou",
-    image: "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?q=80&w=2670&auto=format&fit=crop",
+    quote: "Fernanden a transformé notre événement en une expérience inoubliable. Leur attention aux détails et leur créativité sont exceptionnelles.",
+    author: "Marie Kouassi",
+    role: "Directrice Marketing",
+    company: "Groupe Ecobank",
+    image: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=200&h=200&auto=format&fit=crop",
   },
   {
     id: 2,
-    quote: "L'accompagnement psychopédagogique de CaFEE a changé notre approche parentale. Notre fils s'épanouit comme jamais auparavant.",
-    author: "Marie-Claire Dossou",
-    role: "Mère de famille, Cotonou",
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=2576&auto=format&fit=crop",
+    quote: "Les créations DENSEN reflètent parfaitement l'élégance africaine. Chaque pièce raconte une histoire unique.",
+    author: "Jean-Pierre Mensah",
+    role: "CEO",
+    company: "AfricaConnect",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&h=200&auto=format&fit=crop",
   },
   {
     id: 3,
-    quote: "DENSEN incarne parfaitement ce que signifie porter son identité avec fierté. Ces vêtements racontent notre histoire africaine.",
-    author: "Emmanuel Agbossou",
-    role: "Entrepreneur, Lagos",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2574&auto=format&fit=crop",
-  },
-  {
-    id: 4,
-    quote: "L'identité visuelle créée par CaFEE Expressive a propulsé notre marque. Un travail d'exception qui capture notre essence.",
-    author: "Startup AfriTech",
-    role: "Client Corporate",
-    image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=2574&auto=format&fit=crop",
+    quote: "L'accompagnement CaFEE a été déterminant pour le développement de notre identité visuelle. Professionnalisme et créativité au rendez-vous.",
+    author: "Aminata Diallo",
+    role: "Fondatrice",
+    company: "StartupLab Dakar",
+    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200&h=200&auto=format&fit=crop",
   },
 ];
 
 export function TestimonialsSection() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [direction, setDirection] = useState(0);
+  const [current, setCurrent] = useState(0);
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setDirection(1);
-      setCurrentIndex((prev) => (prev + 1) % testimonials.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const navigate = (newDirection: number) => {
-    setDirection(newDirection);
-    setCurrentIndex((prev) => {
-      if (newDirection === 1) {
-        return (prev + 1) % testimonials.length;
-      }
-      return prev === 0 ? testimonials.length - 1 : prev - 1;
-    });
-  };
-
-  const variants = {
-    enter: (direction: number) => ({
-      x: direction > 0 ? 100 : -100,
-      opacity: 0,
-    }),
-    center: {
-      x: 0,
-      opacity: 1,
-    },
-    exit: (direction: number) => ({
-      x: direction < 0 ? 100 : -100,
-      opacity: 0,
-    }),
-  };
+  const next = () => setCurrent((prev) => (prev + 1) % testimonials.length);
+  const prev = () => setCurrent((prev) => (prev - 1 + testimonials.length) % testimonials.length);
 
   return (
-    <section className="py-20 lg:py-32 bg-background">
-      <div className="container-main">
-        {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <h2 className="heading-section text-foreground mb-4">
-            Ce que disent nos <span className="text-primary">clients</span>
-          </h2>
-          <p className="body-large text-muted-foreground max-w-2xl mx-auto">
-            Découvrez comment nous avons transformé leurs visions en réalités mémorables.
-          </p>
-        </motion.div>
+    <section className="py-24 lg:py-32 bg-background relative overflow-hidden">
+      {/* Background Accent */}
+      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1/3 h-[600px] bg-gradient-to-r from-primary/5 to-transparent" />
+      
+      <div className="container-main relative">
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
+          {/* Left - Title */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+          >
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-10 h-[2px] bg-primary" />
+              <span className="font-heading text-xs uppercase tracking-[0.25em] text-muted-foreground">
+                Témoignages
+              </span>
+            </div>
+            
+            <h2 className="text-4xl md:text-5xl font-serif font-bold text-foreground mb-6 leading-tight">
+              Ce que disent
+              <span className="text-primary block">nos clients</span>
+            </h2>
 
-        {/* Testimonial Carousel */}
-        <div className="relative max-w-4xl mx-auto">
-          <div className="bg-cream rounded-2xl p-8 md:p-12 border-l-4 border-primary overflow-hidden min-h-[320px] flex items-center">
-            <AnimatePresence mode="wait" custom={direction}>
-              <motion.div
-                key={currentIndex}
-                custom={direction}
-                variants={variants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{ duration: 0.5, ease: "easeInOut" }}
-                className="w-full"
+            {/* Navigation */}
+            <div className="flex gap-3">
+              <button
+                onClick={prev}
+                className="w-12 h-12 rounded-full border border-border hover:border-primary hover:bg-primary/5 transition-all flex items-center justify-center group"
               >
-                {/* Quote Icon */}
-                <Quote className="w-12 h-12 text-primary/20 mb-6" />
+                <ChevronLeft size={20} className="text-muted-foreground group-hover:text-primary" />
+              </button>
+              <button
+                onClick={next}
+                className="w-12 h-12 rounded-full border border-border hover:border-primary hover:bg-primary/5 transition-all flex items-center justify-center group"
+              >
+                <ChevronRight size={20} className="text-muted-foreground group-hover:text-primary" />
+              </button>
+            </div>
+          </motion.div>
 
-                {/* Quote Text */}
-                <blockquote className="font-serif text-xl md:text-2xl text-foreground leading-relaxed mb-8">
-                  "{testimonials[currentIndex].quote}"
-                </blockquote>
+          {/* Right - Testimonial Card */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="relative"
+          >
+            <div className="bg-card rounded-2xl p-8 md:p-10 shadow-xl border border-border/50 relative">
+              {/* Quote Icon */}
+              <div className="absolute -top-4 -left-4 w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-terracotta">
+                <Quote size={18} className="text-white" />
+              </div>
 
-                {/* Author */}
+              {/* Content */}
+              <motion.div
+                key={current}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+              >
+                <p className="text-lg md:text-xl text-foreground leading-relaxed mb-8 font-serif italic">
+                  "{testimonials[current].quote}"
+                </p>
+
                 <div className="flex items-center gap-4">
                   <img
-                    src={testimonials[currentIndex].image}
-                    alt={testimonials[currentIndex].author}
-                    className="w-14 h-14 rounded-full object-cover"
+                    src={testimonials[current].image}
+                    alt={testimonials[current].author}
+                    className="w-14 h-14 rounded-full object-cover ring-2 ring-primary/20"
                   />
                   <div>
                     <p className="font-heading font-semibold text-foreground">
-                      {testimonials[currentIndex].author}
+                      {testimonials[current].author}
                     </p>
-                    <p className="body-small text-muted-foreground">
-                      {testimonials[currentIndex].role}
+                    <p className="text-sm text-muted-foreground">
+                      {testimonials[current].role}, {testimonials[current].company}
                     </p>
                   </div>
                 </div>
               </motion.div>
-            </AnimatePresence>
-          </div>
 
-          {/* Navigation Arrows */}
-          <button
-            onClick={() => navigate(-1)}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-6 w-12 h-12 rounded-full bg-card shadow-card flex items-center justify-center hover:bg-primary hover:text-white transition-colors"
-            aria-label="Previous testimonial"
-          >
-            <ChevronLeft size={24} />
-          </button>
-          <button
-            onClick={() => navigate(1)}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-6 w-12 h-12 rounded-full bg-card shadow-card flex items-center justify-center hover:bg-primary hover:text-white transition-colors"
-            aria-label="Next testimonial"
-          >
-            <ChevronRight size={24} />
-          </button>
-
-          {/* Dots */}
-          <div className="flex justify-center gap-2 mt-8">
-            {testimonials.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => {
-                  setDirection(index > currentIndex ? 1 : -1);
-                  setCurrentIndex(index);
-                }}
-                className={`w-2.5 h-2.5 rounded-full transition-colors ${
-                  index === currentIndex ? "bg-primary" : "bg-primary/30"
-                }`}
-                aria-label={`Go to testimonial ${index + 1}`}
-              />
-            ))}
-          </div>
+              {/* Dots */}
+              <div className="flex gap-2 mt-8">
+                {testimonials.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrent(index)}
+                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                      index === current 
+                        ? "w-8 bg-primary" 
+                        : "w-1.5 bg-border hover:bg-primary/30"
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+          </motion.div>
         </div>
       </div>
     </section>
