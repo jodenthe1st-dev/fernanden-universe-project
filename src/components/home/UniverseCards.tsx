@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { Home, Shirt, GraduationCap, ArrowUpRight } from "lucide-react";
+import { useRef } from "react";
 
 const universes = [
   {
@@ -32,11 +33,137 @@ const universes = [
   },
 ];
 
+// 3D Card Component
+function Universe3DCard({ universe, index }: { universe: typeof universes[0]; index: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const mouseXSpring = useSpring(x, { stiffness: 150, damping: 20 });
+  const mouseYSpring = useSpring(y, { stiffness: 150, damping: 20 });
+
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["8deg", "-8deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-8deg", "8deg"]);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    const xPct = (e.clientX - rect.left) / rect.width - 0.5;
+    const yPct = (e.clientY - rect.top) / rect.height - 0.5;
+    x.set(xPct);
+    y.set(yPct);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6, delay: index * 0.15 }}
+      style={{ perspective: "1000px" }}
+    >
+      <motion.div
+        ref={ref}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
+        className="relative"
+      >
+        <Link
+          to={universe.href}
+          className="group relative block bg-card rounded-xl overflow-hidden"
+          style={{ transformStyle: "preserve-3d" }}
+        >
+          {/* Image Container */}
+          <div className="relative aspect-[4/5] overflow-hidden">
+            <motion.img
+              src={universe.image}
+              alt={universe.title}
+              className="w-full h-full object-cover"
+              style={{ transform: "translateZ(-20px) scale(1.1)" }}
+              whileHover={{ scale: 1.15 }}
+              transition={{ duration: 0.7 }}
+            />
+            {/* Clean Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-deep-black via-deep-black/50 to-transparent" />
+            
+            {/* Icon Badge - 3D Effect */}
+            <motion.div 
+              className="absolute top-6 left-6"
+              style={{ transform: "translateZ(40px)" }}
+            >
+              <div className="w-12 h-12 rounded-full bg-card/90 backdrop-blur-md border border-border/50 flex items-center justify-center shadow-lg">
+                <universe.icon className="w-5 h-5 text-primary" />
+              </div>
+            </motion.div>
+
+            {/* Content - 3D Lifted */}
+            <motion.div 
+              className="absolute bottom-0 left-0 right-0 p-6"
+              style={{ transform: "translateZ(30px)" }}
+            >
+              <p className="font-heading text-xs uppercase tracking-[0.2em] text-primary mb-2">
+                {universe.subtitle}
+              </p>
+              <h3 className="font-serif text-3xl font-bold text-white mb-3">
+                {universe.title}
+              </h3>
+              <p className="text-sm text-white/70 mb-4 line-clamp-2">
+                {universe.description}
+              </p>
+              
+              {/* CTA */}
+              <div className="flex items-center gap-2 text-white/90 group-hover:text-primary transition-colors duration-300">
+                <span className="text-sm font-medium">Explorer</span>
+                <ArrowUpRight 
+                  size={16} 
+                  className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" 
+                />
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Bottom Accent Line */}
+          <motion.div 
+            className="absolute bottom-0 left-0 right-0 h-1 bg-primary origin-left"
+            initial={{ scaleX: 0 }}
+            whileHover={{ scaleX: 1 }}
+            transition={{ duration: 0.4 }}
+          />
+        </Link>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 export function UniverseCards() {
   return (
-    <section className="py-24 lg:py-32 bg-background">
-      <div className="container-main">
-        {/* Section Header - More Minimal */}
+    <section className="py-24 lg:py-32 bg-background relative overflow-hidden">
+      {/* Clean Background */}
+      <div className="absolute inset-0">
+        <motion.div
+          animate={{ 
+            y: [0, -30, 0],
+          }}
+          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-0 right-0 w-[40vw] h-[40vw] rounded-full bg-gradient-to-br from-primary/5 to-transparent blur-3xl"
+        />
+        <motion.div
+          animate={{ 
+            y: [0, 30, 0],
+          }}
+          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute bottom-0 left-0 w-[30vw] h-[30vw] rounded-full bg-gradient-to-tr from-secondary/5 to-transparent blur-3xl"
+        />
+      </div>
+
+      <div className="container-main relative">
+        {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -44,17 +171,15 @@ export function UniverseCards() {
           transition={{ duration: 0.6 }}
           className="text-center mb-20"
         >
-          {/* Decorative Icon */}
+          {/* Minimal Decorative Element */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
+            initial={{ opacity: 0, scale: 0 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
+            transition={{ delay: 0.1, type: "spring" }}
             className="flex justify-center mb-6"
           >
-            <div className="w-8 h-8 border border-primary/30 rotate-45 flex items-center justify-center">
-              <div className="w-2 h-2 bg-primary rotate-45" />
-            </div>
+            <div className="w-12 h-[1px] bg-primary" />
           </motion.div>
 
           <p className="font-heading text-xs uppercase tracking-[0.3em] text-muted-foreground mb-4">
@@ -65,64 +190,10 @@ export function UniverseCards() {
           </h2>
         </motion.div>
 
-        {/* Universe Cards - Modern Grid */}
+        {/* Universe Cards - 3D Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {universes.map((universe, index) => (
-            <motion.div
-              key={universe.id}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: index * 0.15 }}
-            >
-              <Link
-                to={universe.href}
-                className="group relative block bg-card rounded-xl overflow-hidden"
-              >
-                {/* Image Container */}
-                <div className="relative aspect-[4/5] overflow-hidden">
-                  <img
-                    src={universe.image}
-                    alt={universe.title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                  {/* Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-deep-black via-deep-black/40 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300" />
-                  
-                  {/* Icon Badge */}
-                  <div className="absolute top-6 left-6">
-                    <div className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center">
-                      <universe.icon className="w-5 h-5 text-white" />
-                    </div>
-                  </div>
-
-                  {/* Content */}
-                  <div className="absolute bottom-0 left-0 right-0 p-6">
-                    <p className="font-heading text-xs uppercase tracking-[0.2em] text-primary mb-2">
-                      {universe.subtitle}
-                    </p>
-                    <h3 className="font-serif text-3xl font-bold text-white mb-3">
-                      {universe.title}
-                    </h3>
-                    <p className="text-sm text-white/70 mb-4 line-clamp-2">
-                      {universe.description}
-                    </p>
-                    
-                    {/* CTA */}
-                    <div className="flex items-center gap-2 text-white/90 group-hover:text-primary transition-colors">
-                      <span className="text-sm font-medium">Explorer</span>
-                      <ArrowUpRight 
-                        size={16} 
-                        className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" 
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Bottom Bar */}
-                <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
-              </Link>
-            </motion.div>
+            <Universe3DCard key={universe.id} universe={universe} index={index} />
           ))}
         </div>
       </div>
