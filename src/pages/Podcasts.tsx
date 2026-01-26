@@ -1,81 +1,144 @@
 import { Layout } from "@/components/layout/Layout";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Play, Clock, MapPin, Headphones } from "lucide-react";
+import { Play, Clock, MapPin, Headphones, Pause, Volume2 } from "lucide-react";
+import { useState } from "react";
+import { AnimatedLetters } from "@/components/animations/AnimatedLetters";
+import { GradientBlob } from "@/components/animations/GradientBlob";
+import { cn } from "@/lib/utils";
 
 const densenMinuteEpisodes = [
-  { id: 1, title: "Style Parisien", location: "Paris, France", duration: "1:00" },
-  { id: 2, title: "Couleurs de Lagos", location: "Lagos, Nigeria", duration: "1:00" },
-  { id: 3, title: "Élégance Dakaroise", location: "Dakar, Sénégal", duration: "1:00" },
+  { id: 1, title: "Style Parisien", location: "Paris, France", duration: "1:00", color: "bg-primary" },
+  { id: 2, title: "Couleurs de Lagos", location: "Lagos, Nigeria", duration: "1:00", color: "bg-primary" },
+  { id: 3, title: "Élégance Dakaroise", location: "Dakar, Sénégal", duration: "1:00", color: "bg-primary" },
+  { id: 4, title: "Influences de Cotonou", location: "Cotonou, Bénin", duration: "1:00", color: "bg-primary" },
 ];
 
 const parenTipsEpisodes = [
-  { id: 1, title: "Accompagner les devoirs", duration: "2:30" },
-  { id: 2, title: "Gérer les écrans", duration: "3:00" },
-  { id: 3, title: "Encourager la créativité", duration: "2:45" },
+  { id: 1, title: "Accompagner les devoirs avec bienveillance", duration: "2:30" },
+  { id: 2, title: "Gérer le temps d'écran efficacement", duration: "3:00" },
+  { id: 3, title: "Encourager la créativité au quotidien", duration: "2:45" },
+  { id: 4, title: "Communiquer avec son adolescent", duration: "3:15" },
 ];
 
 const Podcasts = () => {
+  const [playingId, setPlayingId] = useState<string | null>(null);
+
+  const togglePlay = (id: string) => {
+    setPlayingId(playingId === id ? null : id);
+  };
+
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="pt-32 pb-16 bg-gradient-to-r from-primary/20 to-cafee-mint/20">
-        <div className="container-main">
+      <section className="relative pt-28 pb-12 overflow-hidden">
+        <GradientBlob 
+          className="-top-40 left-1/3" 
+          color1="hsl(var(--primary) / 0.15)"
+          color2="hsl(var(--cafee-mint) / 0.1)"
+          size="500px"
+        />
+
+        <div className="container-main relative z-10">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             className="text-center"
           >
-            <span className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-primary font-heading font-medium text-sm mb-6">
-              <Headphones size={18} />
-              fernanden Podcasts
-            </span>
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full mb-6"
+            >
+              <motion.div
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ repeat: Infinity, duration: 2 }}
+              >
+                <Headphones size={18} className="text-primary" />
+              </motion.div>
+              <span className="font-heading text-sm font-medium text-primary">fernanden Podcasts</span>
+            </motion.div>
+            
             <h1 className="heading-hero text-foreground mb-4">
-              Nos <span className="text-primary">Podcasts</span>
+              <AnimatedLetters text="Nos Podcasts" type="wave" />
             </h1>
-            <p className="body-large text-muted-foreground max-w-2xl mx-auto">
-              Style, éducation et inspiration — découvrez nos séries audio.
-            </p>
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="body-large text-muted-foreground max-w-xl mx-auto"
+            >
+              Style, éducation et inspiration — découvrez nos séries audio
+            </motion.p>
           </motion.div>
         </div>
       </section>
 
       {/* Podcast Series */}
-      <section className="py-20 bg-background">
+      <section className="pb-16">
         <div className="container-main">
-          <div className="grid lg:grid-cols-2 gap-12">
+          <div className="grid lg:grid-cols-2 gap-8">
             {/* DENSEN Minute */}
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
+              initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="bg-card p-8 rounded-2xl shadow-card"
+              className="bg-card rounded-3xl overflow-hidden border border-border/50"
             >
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-20 h-20 bg-primary rounded-xl flex items-center justify-center">
-                  <span className="font-serif text-2xl font-bold text-white">DM</span>
-                </div>
-                <div>
-                  <h2 className="heading-card text-foreground">DENSEN Minute</h2>
-                  <p className="body-small text-muted-foreground">60 secondes d'inspiration style</p>
+              {/* Header */}
+              <div className="bg-gradient-to-r from-primary to-primary/80 p-6 text-white">
+                <div className="flex items-center gap-4">
+                  <motion.div 
+                    className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center"
+                    whileHover={{ rotate: 10 }}
+                  >
+                    <span className="font-serif text-2xl font-bold">DM</span>
+                  </motion.div>
+                  <div>
+                    <h2 className="heading-card text-white">DENSEN Minute</h2>
+                    <p className="text-white/80 text-sm">60 secondes d'inspiration style</p>
+                  </div>
                 </div>
               </div>
 
-              <div className="space-y-4">
-                {densenMinuteEpisodes.map((episode) => (
-                  <div
+              {/* Episodes */}
+              <div className="p-5 space-y-3">
+                {densenMinuteEpisodes.map((episode, index) => (
+                  <motion.div
                     key={episode.id}
-                    className="flex items-center gap-4 p-4 bg-muted rounded-xl hover:bg-muted/80 transition-colors cursor-pointer"
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1 }}
+                    className={cn(
+                      "flex items-center gap-4 p-4 rounded-xl transition-all cursor-pointer group",
+                      playingId === `dm-${episode.id}` 
+                        ? "bg-primary/10 border border-primary/30" 
+                        : "bg-muted hover:bg-muted/80"
+                    )}
+                    onClick={() => togglePlay(`dm-${episode.id}`)}
                   >
-                    <button className="w-10 h-10 bg-primary rounded-full flex items-center justify-center shrink-0">
-                      <Play size={16} className="text-white ml-0.5" />
-                    </button>
+                    <motion.button 
+                      className={cn(
+                        "w-12 h-12 rounded-full flex items-center justify-center shrink-0 transition-colors",
+                        playingId === `dm-${episode.id}` ? "bg-primary" : "bg-primary/80 group-hover:bg-primary"
+                      )}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      {playingId === `dm-${episode.id}` ? (
+                        <Pause size={18} className="text-white" />
+                      ) : (
+                        <Play size={18} className="text-white ml-0.5" />
+                      )}
+                    </motion.button>
+                    
                     <div className="flex-1 min-w-0">
                       <h4 className="font-heading font-semibold text-foreground truncate">
                         {episode.title}
                       </h4>
-                      <div className="flex items-center gap-3 text-muted-foreground body-small">
+                      <div className="flex items-center gap-3 text-muted-foreground text-sm mt-1">
                         <span className="flex items-center gap-1">
                           <MapPin size={12} />
                           {episode.location}
@@ -86,67 +149,178 @@ const Podcasts = () => {
                         </span>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
 
-              <Link
-                to="/podcasts/densen-minute"
-                className="inline-block mt-6 font-heading font-medium text-primary hover:underline"
-              >
-                Voir tous les épisodes →
-              </Link>
+                    {playingId === `dm-${episode.id}` && (
+                      <motion.div 
+                        initial={{ opacity: 0, scale: 0 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="flex items-center gap-1"
+                      >
+                        {[...Array(4)].map((_, i) => (
+                          <motion.div
+                            key={i}
+                            className="w-1 bg-primary rounded-full"
+                            animate={{ 
+                              height: [8, 20, 8],
+                            }}
+                            transition={{ 
+                              repeat: Infinity, 
+                              duration: 0.8,
+                              delay: i * 0.1 
+                            }}
+                          />
+                        ))}
+                      </motion.div>
+                    )}
+                  </motion.div>
+                ))}
+
+                <Link
+                  to="/podcasts/densen-minute"
+                  className="inline-flex items-center gap-2 mt-4 font-heading font-medium text-primary hover:underline"
+                >
+                  Voir tous les épisodes →
+                </Link>
+              </div>
             </motion.div>
 
             {/* Paren'TIPS */}
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
+              initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="bg-card p-8 rounded-2xl shadow-card"
+              className="bg-card rounded-3xl overflow-hidden border border-border/50"
             >
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-20 h-20 bg-cafee-mint rounded-xl flex items-center justify-center">
-                  <span className="font-serif text-2xl font-bold text-white">PT</span>
-                </div>
-                <div>
-                  <h2 className="heading-card text-foreground">Paren'TIPS</h2>
-                  <p className="body-small text-muted-foreground">Conseils psychopédagogiques</p>
+              {/* Header */}
+              <div className="bg-gradient-to-r from-cafee-mint to-cafee-mint/80 p-6 text-white">
+                <div className="flex items-center gap-4">
+                  <motion.div 
+                    className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center"
+                    whileHover={{ rotate: -10 }}
+                  >
+                    <span className="font-serif text-2xl font-bold">PT</span>
+                  </motion.div>
+                  <div>
+                    <h2 className="heading-card text-white">Paren'TIPS</h2>
+                    <p className="text-white/80 text-sm">Conseils psychopédagogiques</p>
+                  </div>
                 </div>
               </div>
 
-              <div className="space-y-4">
-                {parenTipsEpisodes.map((episode) => (
-                  <div
+              {/* Episodes */}
+              <div className="p-5 space-y-3">
+                {parenTipsEpisodes.map((episode, index) => (
+                  <motion.div
                     key={episode.id}
-                    className="flex items-center gap-4 p-4 bg-muted rounded-xl hover:bg-muted/80 transition-colors cursor-pointer"
+                    initial={{ opacity: 0, x: 20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1 }}
+                    className={cn(
+                      "flex items-center gap-4 p-4 rounded-xl transition-all cursor-pointer group",
+                      playingId === `pt-${episode.id}` 
+                        ? "bg-cafee-mint/10 border border-cafee-mint/30" 
+                        : "bg-muted hover:bg-muted/80"
+                    )}
+                    onClick={() => togglePlay(`pt-${episode.id}`)}
                   >
-                    <button className="w-10 h-10 bg-cafee-mint rounded-full flex items-center justify-center shrink-0">
-                      <Play size={16} className="text-white ml-0.5" />
-                    </button>
+                    <motion.button 
+                      className={cn(
+                        "w-12 h-12 rounded-full flex items-center justify-center shrink-0 transition-colors",
+                        playingId === `pt-${episode.id}` ? "bg-cafee-mint" : "bg-cafee-mint/80 group-hover:bg-cafee-mint"
+                      )}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      {playingId === `pt-${episode.id}` ? (
+                        <Pause size={18} className="text-white" />
+                      ) : (
+                        <Play size={18} className="text-white ml-0.5" />
+                      )}
+                    </motion.button>
+                    
                     <div className="flex-1 min-w-0">
                       <h4 className="font-heading font-semibold text-foreground truncate">
                         {episode.title}
                       </h4>
-                      <div className="flex items-center gap-3 text-muted-foreground body-small">
+                      <div className="flex items-center gap-3 text-muted-foreground text-sm mt-1">
                         <span className="flex items-center gap-1">
                           <Clock size={12} />
                           {episode.duration}
                         </span>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
 
-              <Link
-                to="/podcasts/paren-tips"
-                className="inline-block mt-6 font-heading font-medium text-cafee-mint hover:underline"
-              >
-                Voir tous les épisodes →
-              </Link>
+                    {playingId === `pt-${episode.id}` && (
+                      <motion.div 
+                        initial={{ opacity: 0, scale: 0 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="flex items-center gap-1"
+                      >
+                        {[...Array(4)].map((_, i) => (
+                          <motion.div
+                            key={i}
+                            className="w-1 bg-cafee-mint rounded-full"
+                            animate={{ 
+                              height: [8, 20, 8],
+                            }}
+                            transition={{ 
+                              repeat: Infinity, 
+                              duration: 0.8,
+                              delay: i * 0.1 
+                            }}
+                          />
+                        ))}
+                      </motion.div>
+                    )}
+                  </motion.div>
+                ))}
+
+                <Link
+                  to="/podcasts/paren-tips"
+                  className="inline-flex items-center gap-2 mt-4 font-heading font-medium text-cafee-mint hover:underline"
+                >
+                  Voir tous les épisodes →
+                </Link>
+              </div>
             </motion.div>
           </div>
+        </div>
+      </section>
+
+      {/* Subscribe CTA */}
+      <section className="pb-16">
+        <div className="container-main">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="bg-deep-black text-white rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden"
+          >
+            <GradientBlob 
+              className="top-0 left-0" 
+              color1="hsl(var(--primary) / 0.2)"
+              size="200px"
+            />
+            
+            <div className="relative z-10 text-center md:text-left">
+              <h3 className="heading-subsection mb-2">Ne manquez aucun épisode</h3>
+              <p className="text-white/70">Abonnez-vous à nos podcasts sur votre plateforme préférée</p>
+            </div>
+            
+            <div className="flex gap-3 relative z-10">
+              {["Spotify", "Apple", "YouTube"].map((platform) => (
+                <motion.button
+                  key={platform}
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-6 py-3 bg-white/10 backdrop-blur-sm rounded-xl font-heading font-medium hover:bg-white/20 transition-colors"
+                >
+                  {platform}
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
         </div>
       </section>
     </Layout>
