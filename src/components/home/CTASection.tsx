@@ -1,23 +1,51 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import { useRef } from "react";
 
 export function CTASection() {
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"],
+  });
+
+  const y = useTransform(scrollYProgress, [0, 1], [50, -50]);
+  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.95, 1, 0.95]);
+
   return (
-    <section className="relative py-32 lg:py-40 overflow-hidden bg-deep-black">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-        }} />
+    <section ref={containerRef} className="relative py-32 lg:py-40 overflow-hidden bg-deep-black">
+      {/* Clean Animated Background */}
+      <motion.div
+        style={{ y }}
+        className="absolute top-1/4 left-1/4 w-[40vw] h-[40vw] rounded-full bg-gradient-to-br from-primary/15 to-transparent blur-[100px]"
+      />
+      <motion.div
+        style={{ y: useTransform(scrollYProgress, [0, 1], [-30, 30]) }}
+        className="absolute bottom-1/4 right-1/4 w-[30vw] h-[30vw] rounded-full bg-gradient-to-tl from-secondary/10 to-transparent blur-[80px]"
+      />
+
+      {/* Floating 3D Elements */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <motion.div
+          animate={{ 
+            rotateY: [0, 360],
+          }}
+          transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+          className="absolute top-[20%] right-[10%] w-24 h-24 border border-white/5 rounded-xl"
+          style={{ transformStyle: "preserve-3d" }}
+        />
+        <motion.div
+          animate={{ 
+            rotate: [0, 180, 360],
+          }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          className="absolute bottom-[30%] left-[15%] w-16 h-16 border border-primary/20 rotate-45"
+        />
       </div>
 
-      {/* Gradient Accents */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[120px]" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-secondary/10 rounded-full blur-[120px]" />
-
-      <div className="relative z-10 container-main">
+      <motion.div style={{ scale }} className="relative z-10 container-main">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -25,13 +53,15 @@ export function CTASection() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            {/* Decorative Element */}
+            {/* Minimal Decorative Line */}
             <div className="flex justify-center mb-8">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-[1px] bg-primary/50" />
-                <div className="w-2 h-2 rotate-45 border border-primary" />
-                <div className="w-12 h-[1px] bg-primary/50" />
-              </div>
+              <motion.div 
+                className="w-16 h-[1px] bg-primary"
+                initial={{ scaleX: 0 }}
+                whileInView={{ scaleX: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2, duration: 0.6 }}
+              />
             </div>
 
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white mb-6 leading-tight">
@@ -45,28 +75,32 @@ export function CTASection() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                asChild
-                size="lg"
-                className="text-base px-10 h-14 bg-primary hover:bg-primary/90 group"
-              >
-                <Link to="/contact" className="flex items-center gap-3">
-                  <span>Commencer un projet</span>
-                  <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
-                </Link>
-              </Button>
-              <Button
-                asChild
-                variant="outline"
-                size="lg"
-                className="text-base px-10 h-14 border-white/20 text-white hover:bg-white hover:text-deep-black"
-              >
-                <Link to="/portfolio">Voir nos réalisations</Link>
-              </Button>
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Button
+                  asChild
+                  size="lg"
+                  className="text-base px-10 h-14 bg-primary hover:bg-primary/90 group"
+                >
+                  <Link to="/contact" className="flex items-center gap-3">
+                    <span>Commencer un projet</span>
+                    <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
+                  </Link>
+                </Button>
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Button
+                  asChild
+                  variant="outline"
+                  size="lg"
+                  className="text-base px-10 h-14 border-white/20 text-white hover:bg-white hover:text-deep-black"
+                >
+                  <Link to="/portfolio">Voir nos réalisations</Link>
+                </Button>
+              </motion.div>
             </div>
           </motion.div>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }

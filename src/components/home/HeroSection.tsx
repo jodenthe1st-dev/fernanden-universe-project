@@ -1,9 +1,20 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ArrowRight } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 
 export function HeroSection() {
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"],
+  });
+
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  const textY = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+
   const scrollToContent = () => {
     window.scrollTo({
       top: window.innerHeight,
@@ -12,21 +23,81 @@ export function HeroSection() {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden">
-      {/* Background with Parallax Effect */}
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105"
-        style={{
-          backgroundImage: `url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=2532&auto=format&fit=crop')`,
-        }}
+    <section ref={containerRef} className="relative min-h-screen flex items-center overflow-hidden">
+      {/* Parallax Background */}
+      <motion.div
+        style={{ y: backgroundY }}
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-110"
       >
-        {/* Modern Gradient Overlay - Inspired by OGNENS style */}
-        <div className="absolute inset-0 bg-gradient-to-r from-deep-black/90 via-deep-black/60 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-deep-black/80 via-transparent to-deep-black/30" />
+        <div 
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=2532&auto=format&fit=crop')`,
+          }}
+        />
+        {/* Clean Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-deep-black/95 via-deep-black/70 to-deep-black/40" />
+        <div className="absolute inset-0 bg-gradient-to-t from-deep-black via-transparent to-transparent" />
+      </motion.div>
+
+      {/* 3D Floating Elements */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1, duration: 1 }}
+          className="absolute top-1/4 right-[15%] w-32 h-32"
+          style={{ perspective: "1000px" }}
+        >
+          <motion.div
+            animate={{ 
+              rotateY: [0, 360],
+              rotateX: [0, 15, 0, -15, 0],
+            }}
+            transition={{ 
+              rotateY: { duration: 20, repeat: Infinity, ease: "linear" },
+              rotateX: { duration: 8, repeat: Infinity, ease: "easeInOut" },
+            }}
+            className="w-full h-full border border-white/10 rounded-2xl backdrop-blur-sm"
+            style={{ transformStyle: "preserve-3d" }}
+          />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.2, duration: 1 }}
+          className="absolute bottom-1/3 right-[25%] w-20 h-20"
+        >
+          <motion.div
+            animate={{ 
+              rotate: [0, 90, 180, 270, 360],
+              scale: [1, 1.1, 1],
+            }}
+            transition={{ 
+              rotate: { duration: 15, repeat: Infinity, ease: "linear" },
+              scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+            }}
+            className="w-full h-full rotate-45 border border-primary/30"
+          />
+        </motion.div>
+
+        {/* Gradient Orb */}
+        <motion.div
+          animate={{ 
+            y: [0, -20, 0],
+            x: [0, 10, 0],
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-[20%] right-[8%] w-64 h-64 rounded-full bg-gradient-to-br from-primary/20 to-transparent blur-3xl"
+        />
       </div>
 
-      {/* Content - Left Aligned like OGNENS */}
-      <div className="relative z-10 container-main w-full">
+      {/* Content with Parallax */}
+      <motion.div 
+        style={{ y: textY, opacity }}
+        className="relative z-10 container-main w-full"
+      >
         <div className="max-w-2xl">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -100,7 +171,7 @@ export function HeroSection() {
             </motion.div>
           </motion.div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Scroll Indicator - Minimal */}
       <motion.button

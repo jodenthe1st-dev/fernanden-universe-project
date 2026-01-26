@@ -37,8 +37,12 @@ export function TestimonialsSection() {
 
   return (
     <section className="py-24 lg:py-32 bg-background relative overflow-hidden">
-      {/* Background Accent */}
-      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1/3 h-[600px] bg-gradient-to-r from-primary/5 to-transparent" />
+      {/* Clean Background */}
+      <motion.div
+        animate={{ x: [0, 20, 0] }}
+        transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute left-0 top-1/2 -translate-y-1/2 w-1/3 h-[600px] bg-gradient-to-r from-primary/5 to-transparent blur-2xl"
+      />
       
       <div className="container-main relative">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
