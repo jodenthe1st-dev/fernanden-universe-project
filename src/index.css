@@ -18,19 +18,23 @@
 
 @layer base {
   :root {
-    /* Primary Brand Colors */
-    --terracotta: 12 76% 44%;
-    --terracotta-dark: 12 76% 36%;
-    --citron-green: 85 64% 56%;
-    --citron-green-dark: 85 64% 46%;
-    --soft-cream: 40 33% 95%;
+    /* Primary Brand Colors - FERNANDEN Official */
+    --bordeaux: 0 30% 32%;
+    --bordeaux-light: 0 25% 42%;
+    --citron-green: 75 70% 52%;
+    --citron-green-dark: 75 70% 42%;
+    --soft-cream: 45 40% 96%;
     --deep-black: 0 0% 11%;
     --soft-gray: 0 0% 65%;
+    
+    /* Legacy Terracotta - Now Bordeaux */
+    --terracotta: 0 30% 32%;
+    --terracotta-dark: 0 30% 26%;
     
     /* Universe-Specific Colors */
     /* SHE - Spaces & Events */
     --saffron-rose: 24 71% 70%;
-    --ivory: 60 100% 97%;
+    --ivory: 45 40% 97%;
     --bronze: 30 51% 52%;
     --stone-gray: 30 4% 53%;
     
@@ -43,7 +47,7 @@
     --warm-brown: 25 51% 31%;
     
     /* Semantic Tokens */
-    --background: 40 33% 95%;
+    --background: 45 40% 96%;
     --foreground: 0 0% 11%;
     
     --card: 0 0% 100%;
@@ -52,41 +56,41 @@
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 11%;
     
-    --primary: 12 76% 44%;
+    --primary: 0 30% 32%;
     --primary-foreground: 0 0% 100%;
     
-    --secondary: 85 64% 56%;
+    --secondary: 75 70% 52%;
     --secondary-foreground: 0 0% 11%;
     
-    --muted: 40 33% 92%;
+    --muted: 45 30% 92%;
     --muted-foreground: 0 0% 45%;
     
-    --accent: 40 33% 90%;
+    --accent: 45 30% 90%;
     --accent-foreground: 0 0% 11%;
     
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     
-    --border: 40 20% 85%;
-    --input: 40 20% 85%;
-    --ring: 12 76% 44%;
+    --border: 45 20% 85%;
+    --input: 45 20% 85%;
+    --ring: 0 30% 32%;
     
     --radius: 0.5rem;
     
     /* Sidebar */
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 0 0% 11%;
-    --sidebar-primary: 12 76% 44%;
+    --sidebar-primary: 0 30% 32%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 40 33% 95%;
+    --sidebar-accent: 45 40% 95%;
     --sidebar-accent-foreground: 0 0% 11%;
-    --sidebar-border: 40 20% 85%;
-    --sidebar-ring: 12 76% 44%;
+    --sidebar-border: 45 20% 85%;
+    --sidebar-ring: 0 30% 32%;
     
     /* Custom Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(12 76% 44% / 0.9), hsl(0 0% 11% / 0.8));
-    --gradient-terracotta: linear-gradient(135deg, hsl(12 76% 44%), hsl(12 76% 36%));
-    --gradient-citron: linear-gradient(135deg, hsl(85 64% 56%), hsl(85 64% 46%));
+    --gradient-hero: linear-gradient(135deg, hsl(0 30% 32% / 0.95), hsl(0 0% 11% / 0.9));
+    --gradient-primary: linear-gradient(135deg, hsl(0 30% 32%), hsl(0 30% 26%));
+    --gradient-citron: linear-gradient(135deg, hsl(75 70% 52%), hsl(75 70% 42%));
     --gradient-dark: linear-gradient(180deg, hsl(0 0% 11%), hsl(0 0% 8%));
     
     /* Shadows */
@@ -94,7 +98,7 @@
     --shadow-md: 0 4px 12px hsl(0 0% 0% / 0.1);
     --shadow-lg: 0 8px 24px hsl(0 0% 0% / 0.12);
     --shadow-xl: 0 20px 60px hsl(0 0% 0% / 0.2);
-    --shadow-terracotta: 0 8px 24px hsl(12 76% 44% / 0.25);
+    --shadow-primary: 0 8px 24px hsl(0 30% 32% / 0.25);
   }
 
   .dark {

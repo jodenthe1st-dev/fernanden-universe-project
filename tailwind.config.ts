@@ -130,7 +130,7 @@ export default {
       boxShadow: {
         "card": "var(--shadow-sm)",
         "card-hover": "var(--shadow-lg)",
-        "terracotta": "var(--shadow-terracotta)",
+        "primary": "var(--shadow-primary)",
         "xl": "var(--shadow-xl)",
       },
       

@@ -1,7 +1,16 @@
 import { Link } from "react-router-dom";
-import { Facebook, Instagram, Linkedin, Youtube, Twitter, MapPin, Phone, Mail } from "lucide-react";
+import { Facebook, Instagram, Linkedin, MapPin, Phone, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { motion } from "framer-motion";
+import logoMain from "@/assets/logo-fernanden-main.png";
+
+// TikTok icon component
+const TikTokIcon = ({ size = 20 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.74 2.89 2.89 0 012.31-4.64 2.93 2.93 0 01.88.13V9.4a6.84 6.84 0 00-1-.05A6.33 6.33 0 005 20.1a6.34 6.34 0 0010.86-4.43v-7a8.16 8.16 0 004.77 1.52v-3.4a4.85 4.85 0 01-1-.1z"/>
+  </svg>
+);
 
 const universeLinks = [
   { href: "/she", label: "SHE - Spaces & Events" },
@@ -27,40 +36,46 @@ const socialLinks = [
   { href: "https://facebook.com", icon: Facebook, label: "Facebook" },
   { href: "https://instagram.com", icon: Instagram, label: "Instagram" },
   { href: "https://linkedin.com", icon: Linkedin, label: "LinkedIn" },
-  { href: "https://youtube.com", icon: Youtube, label: "YouTube" },
-  { href: "https://twitter.com", icon: Twitter, label: "Twitter" },
+  { href: "https://tiktok.com", icon: TikTokIcon, label: "TikTok" },
 ];
 
 export function Footer() {
   return (
-    <footer className="bg-deep-black text-white">
-      <div className="container-main py-16 lg:py-20">
+    <footer className="bg-deep-black text-white relative overflow-hidden">
+      {/* Decorative citron arc */}
+      <div className="absolute top-0 right-0 w-96 h-96 opacity-5">
+        <svg viewBox="0 0 200 200" className="w-full h-full">
+          <path
+            d="M100 20 C60 20, 20 60, 20 100 C20 140, 60 180, 100 180"
+            stroke="hsl(var(--secondary))"
+            strokeWidth="8"
+            fill="none"
+          />
+        </svg>
+      </div>
+      
+      <div className="container-main py-16 lg:py-20 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
           {/* Column 1: Logo & About */}
-          <div className="lg:col-span-1">
+          <motion.div 
+            className="lg:col-span-1"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
             <Link to="/" className="flex items-center gap-2 mb-6">
-              <svg
-                width="40"
-                height="40"
-                viewBox="0 0 40 40"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="text-primary"
-              >
-                <path
-                  d="M15 8C10 16 5 20 5 25C5 30.5228 9.47715 35 15 35C20.5228 35 25 30.5228 25 25C25 20 20 16 15 8Z"
-                  fill="currentColor"
-                  opacity="0.8"
-                />
-                <path
-                  d="M25 5C21 11.5 17 15 17 19C17 23.4183 20.5817 27 25 27C29.4183 27 33 23.4183 33 19C33 15 29 11.5 25 5Z"
-                  fill="currentColor"
-                />
-              </svg>
-              <span className="font-serif text-2xl font-bold">fernanden</span>
+              <img 
+                src={logoMain} 
+                alt="fernanden" 
+                className="h-16 brightness-0 invert opacity-90 hover:opacity-100 transition-opacity"
+              />
             </Link>
+            <p className="text-soft-gray body-small mb-4">
+              Un design 3en1 aux multiples facettes.
+            </p>
             <p className="text-soft-gray body-small mb-6">
-              Un design aux multiples facettes. Mode, espaces, éducation et création graphique — nous transformons vos visions en réalité.
+              Mode, espaces, éducation et création graphique — nous transformons vos visions en réalité.
             </p>
             <div className="flex gap-3">
               {socialLinks.map((social) => (
@@ -69,48 +84,60 @@ export function Footer() {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary transition-colors"
+                  className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-secondary hover:text-deep-black transition-all duration-300"
                   aria-label={social.label}
                 >
-                  <social.icon size={20} />
+                  <social.icon size={18} />
                 </a>
               ))}
             </div>
-          </div>
+          </motion.div>
 
           {/* Column 2: Universes */}
-          <div>
-            <h4 className="font-heading font-semibold text-lg mb-6">Nos Univers</h4>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            <h4 className="font-heading font-semibold text-lg mb-6 text-secondary">Nos Univers</h4>
             <ul className="space-y-3">
               {universeLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     to={link.href}
-                    className="text-soft-gray hover:text-white transition-colors body-small"
+                    className="text-soft-gray hover:text-white transition-colors body-small flex items-center gap-2 group"
                   >
+                    <span className="w-1.5 h-1.5 rounded-full bg-secondary/50 group-hover:bg-secondary transition-colors" />
                     {link.label}
                   </Link>
                 </li>
               ))}
             </ul>
-          </div>
+          </motion.div>
 
           {/* Column 3: Resources & Legal */}
-          <div>
-            <h4 className="font-heading font-semibold text-lg mb-6">Ressources</h4>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <h4 className="font-heading font-semibold text-lg mb-6 text-secondary">Ressources</h4>
             <ul className="space-y-3 mb-8">
               {resourceLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     to={link.href}
-                    className="text-soft-gray hover:text-white transition-colors body-small"
+                    className="text-soft-gray hover:text-white transition-colors body-small flex items-center gap-2 group"
                   >
+                    <span className="w-1.5 h-1.5 rounded-full bg-secondary/50 group-hover:bg-secondary transition-colors" />
                     {link.label}
                   </Link>
                 </li>
               ))}
             </ul>
-            <h4 className="font-heading font-semibold text-lg mb-4">Légal</h4>
+            <h4 className="font-heading font-semibold text-lg mb-4 text-white/80">Légal</h4>
             <ul className="space-y-3">
               {legalLinks.map((link) => (
                 <li key={link.href}>
@@ -123,34 +150,44 @@ export function Footer() {
                 </li>
               ))}
             </ul>
-          </div>
+          </motion.div>
 
           {/* Column 4: Contact & Newsletter */}
-          <div>
-            <h4 className="font-heading font-semibold text-lg mb-6">Contact</h4>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <h4 className="font-heading font-semibold text-lg mb-6 text-secondary">Contact</h4>
             <ul className="space-y-4 mb-8">
               <li className="flex items-start gap-3">
-                <MapPin size={20} className="text-primary shrink-0 mt-0.5" />
+                <MapPin size={20} className="text-secondary shrink-0 mt-0.5" />
                 <span className="text-soft-gray body-small">
                   Cabinet fernanden<br />
                   Cotonou, Bénin
                 </span>
               </li>
               <li className="flex items-center gap-3">
-                <Phone size={20} className="text-primary shrink-0" />
-                <a href="tel:+22900000000" className="text-soft-gray hover:text-white transition-colors body-small">
-                  +229 00 00 00 00
-                </a>
+                <Phone size={20} className="text-secondary shrink-0" />
+                <div className="text-soft-gray body-small">
+                  <a href="tel:+22901975126" className="hover:text-white transition-colors block">
+                    +229 01 97 51 26 36
+                  </a>
+                  <a href="tel:+22901487135" className="hover:text-white transition-colors block">
+                    01 48 71 35 36
+                  </a>
+                </div>
               </li>
               <li className="flex items-center gap-3">
-                <Mail size={20} className="text-primary shrink-0" />
-                <a href="mailto:contact@fernanden.com" className="text-soft-gray hover:text-white transition-colors body-small">
-                  contact@fernanden.com
+                <Mail size={20} className="text-secondary shrink-0" />
+                <a href="mailto:fernandenentreprises@gmail.com" className="text-soft-gray hover:text-white transition-colors body-small">
+                  fernandenentreprises@gmail.com
                 </a>
               </li>
             </ul>
 
-            <h4 className="font-heading font-semibold text-lg mb-4">Newsletter</h4>
+            <h4 className="font-heading font-semibold text-lg mb-4 text-white/80">Newsletter</h4>
             <p className="text-soft-gray body-small mb-4">
               Recevez nos inspirations et actualités.
             </p>
@@ -158,13 +195,13 @@ export function Footer() {
               <Input
                 type="email"
                 placeholder="Votre email"
-                className="bg-white/10 border-white/20 text-white placeholder:text-soft-gray"
+                className="bg-white/10 border-white/20 text-white placeholder:text-soft-gray focus:border-secondary"
               />
-              <Button type="submit" size="icon">
+              <Button type="submit" size="icon" className="bg-secondary hover:bg-secondary/90 text-deep-black">
                 <Mail size={18} />
               </Button>
             </form>
-          </div>
+          </motion.div>
         </div>
       </div>
 
@@ -172,10 +209,12 @@ export function Footer() {
       <div className="border-t border-white/10">
         <div className="container-main py-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-soft-gray caption text-center md:text-left">
-            © {new Date().getFullYear()} fernanden. Tous droits réservés. Label OAPI.
+            © {new Date().getFullYear()} fernanden®. Tous droits réservés. Label OAPI.
           </p>
-          <p className="text-soft-gray caption">
-            Créé avec passion à Cotonou, Bénin 🇧🇯
+          <p className="text-soft-gray caption flex items-center gap-2">
+            <span>Since 2017</span>
+            <span className="text-secondary">•</span>
+            <span>Créé avec passion à Cotonou, Bénin 🇧🇯</span>
           </p>
         </div>
       </div>

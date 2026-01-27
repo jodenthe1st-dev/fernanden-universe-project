@@ -4,6 +4,7 @@ import { Menu, X, ShoppingBag, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import logoMain from "@/assets/logo-fernanden-main.png";
 
 const navLinks = [
   { href: "/", label: "Accueil" },
@@ -37,40 +38,24 @@ export function Header() {
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
         isScrolled
-          ? "bg-card/98 backdrop-blur-xl shadow-lg py-3"
-          : "bg-transparent py-5"
+          ? "bg-card/98 backdrop-blur-xl shadow-lg py-2"
+          : "bg-transparent py-4"
       )}
     >
       <div className="container-main flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-3 group">
-          <div className="relative">
-            {/* Modern Droplet Logo */}
-            <svg
-              width="36"
-              height="36"
-              viewBox="0 0 40 40"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="transition-transform duration-300 group-hover:scale-110"
-            >
-              <path
-                d="M15 8C10 16 5 20 5 25C5 30.5228 9.47715 35 15 35C20.5228 35 25 30.5228 25 25C25 20 20 16 15 8Z"
-                fill="hsl(var(--primary))"
-                opacity="0.7"
-              />
-              <path
-                d="M25 5C21 11.5 17 15 17 19C17 23.4183 20.5817 27 25 27C29.4183 27 33 23.4183 33 19C33 15 29 11.5 25 5Z"
-                fill="hsl(var(--primary))"
-              />
-            </svg>
-          </div>
-          <span className={cn(
-            "font-serif text-xl font-bold transition-colors",
-            isScrolled ? "text-foreground" : "text-white"
-          )}>
-            fernanden
-          </span>
+          <motion.img
+            src={logoMain}
+            alt="fernanden"
+            className={cn(
+              "transition-all duration-300 group-hover:scale-105",
+              isScrolled ? "h-12 md:h-14" : "h-14 md:h-16 brightness-0 invert"
+            )}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+          />
         </Link>
 
         {/* Desktop Navigation - Centered */}
