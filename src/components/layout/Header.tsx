@@ -49,8 +49,8 @@ export function Header() {
             src={logoMain}
             alt="fernanden"
             className={cn(
-              "transition-all duration-300 group-hover:scale-105",
-              isScrolled ? "h-12 md:h-14" : "h-14 md:h-16 brightness-0 invert"
+              "transition-all duration-300 group-hover:scale-105 object-contain",
+              isScrolled ? "h-12 md:h-14" : "h-14 md:h-16"
             )}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}

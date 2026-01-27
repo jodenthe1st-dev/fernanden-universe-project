@@ -64,11 +64,11 @@ export function Footer() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <Link to="/" className="flex items-center gap-2 mb-6">
+            <Link to="/" className="inline-block mb-6 p-3 bg-cream/10 rounded-xl backdrop-blur-sm">
               <img 
                 src={logoMain} 
                 alt="fernanden" 
-                className="h-16 brightness-0 invert opacity-90 hover:opacity-100 transition-opacity"
+                className="h-14 object-contain"
               />
             </Link>
             <p className="text-soft-gray body-small mb-4">
