@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronDown, ArrowRight } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
+import logoMain from "@/assets/logo-fernanden-main.png";
 
 export function HeroSection() {
   const containerRef = useRef(null);
@@ -35,9 +36,25 @@ export function HeroSection() {
             backgroundImage: `url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=2532&auto=format&fit=crop')`,
           }}
         />
-        {/* Clean Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-deep-black/95 via-deep-black/70 to-deep-black/40" />
+        {/* Gradient Overlay with brand colors */}
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/70 to-primary/40" />
         <div className="absolute inset-0 bg-gradient-to-t from-deep-black via-transparent to-transparent" />
+        
+        {/* Decorative citron arc */}
+        <motion.div 
+          className="absolute top-1/4 right-[10%] w-[40vw] h-[40vw] opacity-20"
+          animate={{ rotate: [0, 360] }}
+          transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+        >
+          <svg viewBox="0 0 200 200" className="w-full h-full">
+            <path
+              d="M100 20 C60 20, 20 60, 20 100 C20 140, 60 180, 100 180"
+              stroke="hsl(var(--secondary))"
+              strokeWidth="4"
+              fill="none"
+            />
+          </svg>
+        </motion.div>
       </motion.div>
 
       {/* 3D Floating Elements */}
@@ -104,46 +121,53 @@ export function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           >
+            {/* Logo Badge */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2, duration: 0.6 }}
+              className="mb-8"
+            >
+              <img 
+                src={logoMain} 
+                alt="fernanden" 
+                className="h-20 md:h-24 brightness-0 invert"
+              />
+            </motion.div>
+
             {/* Tagline with Line */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2, duration: 0.6 }}
-              className="flex items-center gap-4 mb-8"
+              transition={{ delay: 0.3, duration: 0.6 }}
+              className="flex items-center gap-4 mb-6"
             >
-              <div className="w-12 h-[2px] bg-primary" />
-              <span className="font-heading text-xs uppercase tracking-[0.25em] text-white/70">
-                Un design aux multiples facettes
+              <div className="w-12 h-[2px] bg-secondary" />
+              <span className="font-heading text-xs uppercase tracking-[0.25em] text-white/80">
+                Un design 3en1 aux multiples facettes
               </span>
             </motion.div>
 
-            {/* Main Headline - Larger & Bolder */}
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-[1.1]">
-              <span className="font-serif">Bienvenue dans</span>
-              <br />
-              <span className="font-serif">l'univers de</span>
-              <br />
-              <motion.span 
-                className="text-primary font-serif inline-block"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4, duration: 0.6 }}
-              >
-                fernanden
-              </motion.span>
+            {/* Main Headline */}
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-[1.15]">
+              <span className="font-serif">CaFEE</span>
+              <span className="text-secondary mx-2">•</span>
+              <span className="font-serif">DENSEN</span>
+              <span className="text-secondary mx-2">•</span>
+              <span className="font-serif">SHE</span>
             </h1>
 
-            {/* Description - Cleaner */}
+            {/* Description */}
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5, duration: 0.6 }}
-              className="text-lg md:text-xl text-white/70 max-w-lg mb-10 leading-relaxed"
+              className="text-lg md:text-xl text-white/80 max-w-lg mb-10 leading-relaxed"
             >
-              Mode, espaces, éducation et création graphique — nous transformons vos visions en réalité.
+              Mode, espaces, éducation et création graphique — nous transformons vos visions en réalité depuis 2017.
             </motion.p>
 
-            {/* CTAs - Modern Style */}
+            {/* CTAs */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -153,7 +177,7 @@ export function HeroSection() {
               <Button 
                 asChild 
                 size="lg" 
-                className="text-base px-8 h-14 bg-primary hover:bg-primary/90 group"
+                className="text-base px-8 h-14 bg-secondary hover:bg-secondary/90 text-deep-black font-semibold group"
               >
                 <Link to="/about" className="flex items-center gap-3">
                   <span>Découvrir nos univers</span>
@@ -164,7 +188,7 @@ export function HeroSection() {
                 asChild
                 variant="outline"
                 size="lg"
-                className="text-base px-8 h-14 border-white/30 text-white hover:bg-white hover:text-deep-black backdrop-blur-sm bg-white/5"
+                className="text-base px-8 h-14 border-white/30 text-white hover:bg-white hover:text-primary backdrop-blur-sm bg-white/5"
               >
                 <Link to="/contact">Nous contacter</Link>
               </Button>

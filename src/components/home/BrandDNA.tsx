@@ -82,7 +82,7 @@ export function BrandDNA() {
               whileHover={{ scale: 1.02, y: -2 }}
               className="inline-flex items-center gap-4 bg-card p-4 pr-6 rounded-xl shadow-lg border border-border/30"
             >
-              <div className="w-14 h-14 bg-gradient-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center shadow-terracotta">
+              <div className="w-14 h-14 bg-gradient-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center shadow-primary">
                 <span className="text-white font-heading font-bold text-sm">OAPI</span>
               </div>
               <div>
@@ -92,6 +92,21 @@ export function BrandDNA() {
                 <p className="text-xs text-muted-foreground">
                   Protection intellectuelle certifiée
                 </p>
+              </div>
+            </motion.div>
+
+            {/* Since 2017 Badge */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4 }}
+              className="inline-flex items-center gap-3 ml-4"
+            >
+              <div className="w-[1px] h-10 bg-border" />
+              <div>
+                <p className="font-heading font-semibold text-secondary text-lg">Since 2017</p>
+                <p className="text-xs text-muted-foreground">Cotonou, Bénin</p>
               </div>
             </motion.div>
           </motion.div>

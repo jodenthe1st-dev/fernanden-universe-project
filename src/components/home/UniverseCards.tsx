@@ -1,35 +1,44 @@
 import { Link } from "react-router-dom";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { Home, Shirt, GraduationCap, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { useRef } from "react";
+import logoShe from "@/assets/logo-she.png";
+import logoDensen from "@/assets/logo-densen.png";
+import logoCafee from "@/assets/logo-cafee.png";
 
 const universes = [
   {
     id: "she",
     title: "SHE",
     subtitle: "Spaces, Home & Event Design",
+    tagline: "L'atmosphère qu'il vous faut !",
     description: "Transformez vos espaces et événements en expériences mémorables.",
     image: "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=2798&auto=format&fit=crop",
-    icon: Home,
+    logo: logoShe,
     href: "/she",
+    accentColor: "from-she-saffron/80",
   },
   {
     id: "densen",
     title: "DENSEN",
     subtitle: "Fashion Design",
+    tagline: "Le chic intemporel à l'africaine",
     description: "Mode, Sens, Identité et Inspiration africaine contemporaine.",
     image: "https://images.unsplash.com/photo-1558171813-4c088753af8f?q=80&w=2787&auto=format&fit=crop",
-    icon: Shirt,
+    logo: logoDensen,
     href: "/densen",
+    accentColor: "from-primary/80",
   },
   {
     id: "cafee",
     title: "CaFEE",
     subtitle: "Education & Expressive",
+    tagline: "Apprendre autrement, s'exprimer pleinement !",
     description: "Accompagnement psychopédagogique et design graphique.",
     image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2671&auto=format&fit=crop",
-    icon: GraduationCap,
+    logo: logoCafee,
     href: "/cafee",
+    accentColor: "from-cafee-mint/80",
   },
 ];
 
@@ -89,16 +98,20 @@ function Universe3DCard({ universe, index }: { universe: typeof universes[0]; in
               whileHover={{ scale: 1.15 }}
               transition={{ duration: 0.7 }}
             />
-            {/* Clean Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-deep-black via-deep-black/50 to-transparent" />
+            {/* Clean Overlay with accent color */}
+            <div className={`absolute inset-0 bg-gradient-to-t ${universe.accentColor} via-deep-black/60 to-transparent`} />
             
-            {/* Icon Badge - 3D Effect */}
+            {/* Universe Logo Badge - 3D Effect */}
             <motion.div 
               className="absolute top-6 left-6"
               style={{ transform: "translateZ(40px)" }}
             >
-              <div className="w-12 h-12 rounded-full bg-card/90 backdrop-blur-md border border-border/50 flex items-center justify-center shadow-lg">
-                <universe.icon className="w-5 h-5 text-primary" />
+              <div className="w-16 h-16 rounded-full bg-cream/95 backdrop-blur-md flex items-center justify-center shadow-lg border border-white/20">
+                <img 
+                  src={universe.logo} 
+                  alt={universe.title} 
+                  className="w-14 h-14 object-contain"
+                />
               </div>
             </motion.div>
 
@@ -107,18 +120,21 @@ function Universe3DCard({ universe, index }: { universe: typeof universes[0]; in
               className="absolute bottom-0 left-0 right-0 p-6"
               style={{ transform: "translateZ(30px)" }}
             >
-              <p className="font-heading text-xs uppercase tracking-[0.2em] text-primary mb-2">
+              <p className="font-heading text-xs uppercase tracking-[0.2em] text-secondary mb-2">
                 {universe.subtitle}
               </p>
-              <h3 className="font-serif text-3xl font-bold text-white mb-3">
+              <h3 className="font-serif text-3xl font-bold text-white mb-2">
                 {universe.title}
               </h3>
+              <p className="text-sm text-white/90 italic mb-3">
+                {universe.tagline}
+              </p>
               <p className="text-sm text-white/70 mb-4 line-clamp-2">
                 {universe.description}
               </p>
               
               {/* CTA */}
-              <div className="flex items-center gap-2 text-white/90 group-hover:text-primary transition-colors duration-300">
+              <div className="flex items-center gap-2 text-white/90 group-hover:text-secondary transition-colors duration-300">
                 <span className="text-sm font-medium">Explorer</span>
                 <ArrowUpRight 
                   size={16} 
@@ -128,9 +144,9 @@ function Universe3DCard({ universe, index }: { universe: typeof universes[0]; in
             </motion.div>
           </div>
 
-          {/* Bottom Accent Line */}
+          {/* Bottom Accent Line - Now Secondary Color */}
           <motion.div 
-            className="absolute bottom-0 left-0 right-0 h-1 bg-primary origin-left"
+            className="absolute bottom-0 left-0 right-0 h-1 bg-secondary origin-left"
             initial={{ scaleX: 0 }}
             whileHover={{ scaleX: 1 }}
             transition={{ duration: 0.4 }}
