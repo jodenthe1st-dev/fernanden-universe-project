@@ -2,9 +2,6 @@ import { Link } from "react-router-dom";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { useRef } from "react";
-import logoShe from "@/assets/logo-she.png";
-import logoDensen from "@/assets/logo-densen.png";
-import logoCafee from "@/assets/logo-cafee.png";
 
 const universes = [
   {
@@ -14,7 +11,6 @@ const universes = [
     tagline: "L'atmosphère qu'il vous faut !",
     description: "Transformez vos espaces et événements en expériences mémorables.",
     image: "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=2798&auto=format&fit=crop",
-    logo: logoShe,
     href: "/she",
     accentColor: "from-she-saffron/80",
   },
@@ -25,7 +21,6 @@ const universes = [
     tagline: "Le chic intemporel à l'africaine",
     description: "Mode, Sens, Identité et Inspiration africaine contemporaine.",
     image: "https://images.unsplash.com/photo-1558171813-4c088753af8f?q=80&w=2787&auto=format&fit=crop",
-    logo: logoDensen,
     href: "/densen",
     accentColor: "from-primary/80",
   },
@@ -36,7 +31,6 @@ const universes = [
     tagline: "Apprendre autrement, s'exprimer pleinement !",
     description: "Accompagnement psychopédagogique et design graphique.",
     image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2671&auto=format&fit=crop",
-    logo: logoCafee,
     href: "/cafee",
     accentColor: "from-cafee-mint/80",
   },
@@ -100,20 +94,6 @@ function Universe3DCard({ universe, index }: { universe: typeof universes[0]; in
             />
             {/* Clean Overlay with accent color */}
             <div className={`absolute inset-0 bg-gradient-to-t ${universe.accentColor} via-deep-black/60 to-transparent`} />
-            
-            {/* Universe Logo Badge - 3D Effect */}
-            <motion.div 
-              className="absolute top-6 left-6"
-              style={{ transform: "translateZ(40px)" }}
-            >
-              <div className="w-16 h-16 rounded-full bg-cream/95 backdrop-blur-md flex items-center justify-center shadow-lg border border-white/20">
-                <img 
-                  src={universe.logo} 
-                  alt={universe.title} 
-                  className="w-14 h-14 object-contain"
-                />
-              </div>
-            </motion.div>
 
             {/* Content - 3D Lifted */}
             <motion.div 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ShoppingBag, Heart } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -81,32 +81,9 @@ export function Header() {
         {/* Desktop Right Actions */}
         <div className="hidden lg:flex items-center gap-3">
           <Button 
-            variant="ghost" 
-            size="icon"
-            className={cn(
-              "rounded-full",
-              isScrolled ? "text-foreground hover:bg-muted" : "text-white hover:bg-white/10"
-            )}
-          >
-            <Heart size={18} />
-          </Button>
-          <Button 
-            variant="ghost" 
-            size="icon"
-            className={cn(
-              "rounded-full relative",
-              isScrolled ? "text-foreground hover:bg-muted" : "text-white hover:bg-white/10"
-            )}
-          >
-            <ShoppingBag size={18} />
-            <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary text-white text-[10px] rounded-full flex items-center justify-center">
-              0
-            </span>
-          </Button>
-          <Button 
             asChild 
             size="sm" 
-            className="ml-2 rounded-full px-6 bg-primary hover:bg-primary/90"
+            className="rounded-full px-6 bg-primary hover:bg-primary/90"
           >
             <Link to="/contact">Contact</Link>
           </Button>
