@@ -64,11 +64,11 @@ export function Footer() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <Link to="/" className="inline-block mb-6 p-3 bg-cream/10 rounded-xl backdrop-blur-sm">
+            <Link to="/" className="inline-block mb-6 p-4 bg-cream rounded-2xl shadow-lg">
               <img 
                 src={logoMain} 
                 alt="fernanden" 
-                className="h-14 object-contain"
+                className="h-24 md:h-28 object-contain"
               />
             </Link>
             <p className="text-soft-gray body-small mb-4">

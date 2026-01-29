@@ -128,11 +128,11 @@ export function HeroSection() {
               transition={{ delay: 0.2, duration: 0.6 }}
               className="mb-8 inline-block"
             >
-              <div className="bg-cream/95 backdrop-blur-sm rounded-2xl p-4 shadow-xl">
+              <div className="bg-cream rounded-3xl p-5 md:p-6 shadow-2xl">
                 <img 
                   src={logoMain} 
                   alt="fernanden" 
-                  className="h-16 md:h-20 object-contain"
+                  className="h-24 md:h-32 lg:h-40 object-contain"
                 />
               </div>
             </motion.div>

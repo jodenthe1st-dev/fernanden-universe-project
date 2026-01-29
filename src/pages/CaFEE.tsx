@@ -123,11 +123,11 @@ const CaFEE = () => {
               transition={{ delay: 0.2, type: "spring" }}
               className="mb-8 inline-block"
             >
-              <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-6 shadow-xl inline-block">
+              <div className="bg-cream rounded-3xl p-6 md:p-8 shadow-2xl inline-block">
                 <img 
                   src={logoCafee} 
                   alt="CaFEE by fernanden" 
-                  className="h-32 md:h-40 object-contain"
+                  className="h-40 md:h-52 lg:h-64 object-contain"
                 />
               </div>
             </motion.div>
