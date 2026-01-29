@@ -8,6 +8,7 @@ import { AnimatedLetters } from "@/components/animations/AnimatedLetters";
 import { GradientBlob } from "@/components/animations/GradientBlob";
 import { MagneticButton } from "@/components/animations/MagneticButton";
 import { cn } from "@/lib/utils";
+import logoDensen from "@/assets/logo-densen.png";
 
 const densenMeaning = [
   { letter: "D", word: "Distinctive", description: "Des créations uniques qui vous distinguent" },
@@ -68,9 +69,26 @@ const DENSEN = () => {
 
         <div className="relative z-10 container-main">
           <div className="max-w-2xl">
+            {/* Logo */}
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2, type: "spring" }}
+              className="mb-8 inline-block"
+            >
+              <div className="bg-cream rounded-3xl p-5 md:p-6 shadow-2xl inline-block">
+                <img 
+                  src={logoDensen} 
+                  alt="DENSEN by fernanden" 
+                  className="h-32 md:h-44 lg:h-52 object-contain"
+                />
+              </div>
+            </motion.div>
+
             <motion.span 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
               className="inline-flex items-center gap-2 px-4 py-2 bg-secondary/20 backdrop-blur-sm rounded-full text-secondary font-heading text-sm font-medium mb-6"
             >
               <ShoppingBag size={16} />
@@ -78,11 +96,7 @@ const DENSEN = () => {
             </motion.span>
             
             <h1 className="heading-hero text-white mb-4">
-              <AnimatedLetters text="DENSEN by" type="wave" />
-              <br />
-              <span className="text-primary">
-                <AnimatedLetters text="fernanden" type="wave" delay={0.3} />
-              </span>
+              <span className="font-serif">Mode, Sens & Identité</span>
             </h1>
             
             <motion.p 

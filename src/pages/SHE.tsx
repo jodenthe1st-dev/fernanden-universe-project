@@ -7,6 +7,7 @@ import { useRef } from "react";
 import { AnimatedLetters } from "@/components/animations/AnimatedLetters";
 import { GradientBlob } from "@/components/animations/GradientBlob";
 import { MagneticButton } from "@/components/animations/MagneticButton";
+import logoShe from "@/assets/logo-she.png";
 
 const services = [
   {
@@ -57,30 +58,43 @@ const SHE = () => {
 
         <div className="relative z-10 container-main">
           <div className="max-w-2xl">
+            {/* Logo */}
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2, type: "spring" }}
+              className="mb-8 inline-block"
+            >
+              <div className="bg-cream rounded-3xl p-5 md:p-6 shadow-2xl inline-block">
+                <img 
+                  src={logoShe} 
+                  alt="SHE by fernanden" 
+                  className="h-32 md:h-44 lg:h-52 object-contain"
+                />
+              </div>
+            </motion.div>
+
             <motion.span 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
               className="inline-flex items-center gap-2 px-4 py-2 bg-she-saffron/20 backdrop-blur-sm rounded-full text-she-saffron font-heading text-sm font-medium mb-6"
             >
               <Sparkles size={16} />
               Spaces, Home & Event Design
             </motion.span>
             
-            <h1 className="heading-hero text-white mb-6">
-              <AnimatedLetters text="SHE by" type="wave" />
-              <br />
-              <span className="text-primary">
-                <AnimatedLetters text="fernanden" type="wave" delay={0.3} />
-              </span>
+            <h1 className="heading-hero text-white mb-4">
+              <span className="font-serif">Transformez vos espaces</span>
             </h1>
             
             <motion.p 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
+              transition={{ delay: 0.5 }}
               className="body-large text-white/80 mb-8"
             >
-              Transformez vos espaces et événements en expériences inoubliables. 
+              Événements mémorables et intérieurs d'exception. 
               Nous créons des ambiances uniques qui racontent votre histoire.
             </motion.p>
             

@@ -28,14 +28,23 @@ const Contact = () => {
     {
       icon: Phone,
       title: "Téléphone",
-      content: "+229 00 00 00 00",
-      href: "tel:+22900000000",
+      content: (
+        <>
+          <a href="tel:+22901975126" className="hover:text-primary transition-colors block">
+            +229 01 97 51 26 36
+          </a>
+          <a href="tel:+22901487135" className="hover:text-primary transition-colors block">
+            01 48 71 35 36
+          </a>
+        </>
+      ),
+      href: null,
     },
     {
       icon: Mail,
       title: "Email",
-      content: "contact@fernanden.com",
-      href: "mailto:contact@fernanden.com",
+      content: "fernandenentreprises@gmail.com",
+      href: "mailto:fernandenentreprises@gmail.com",
     },
     {
       icon: Clock,
