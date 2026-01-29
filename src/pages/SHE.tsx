@@ -65,13 +65,11 @@ const SHE = () => {
               transition={{ delay: 0.2, type: "spring" }}
               className="mb-8 inline-block"
             >
-              <div className="bg-cream rounded-3xl p-5 md:p-6 shadow-2xl inline-block">
-                <img 
-                  src={logoShe} 
-                  alt="SHE by fernanden" 
-                  className="h-32 md:h-44 lg:h-52 object-contain"
-                />
-              </div>
+              <img 
+                src={logoShe} 
+                alt="SHE by fernanden" 
+                className="h-36 md:h-48 lg:h-56 object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.25)]"
+              />
             </motion.div>
 
             <motion.span 

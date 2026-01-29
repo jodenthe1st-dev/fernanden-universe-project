@@ -45,24 +45,17 @@ export function Header() {
       <div className="container-main flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-3 group">
-          <motion.div
+          <motion.img
+            src={logoMain}
+            alt="fernanden"
+            className={cn(
+              "transition-all duration-300 group-hover:scale-105 object-contain drop-shadow-lg",
+              isScrolled ? "h-16 md:h-20" : "h-20 md:h-24"
+            )}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
-            className={cn(
-              "transition-all duration-300 rounded-xl p-2",
-              isScrolled ? "bg-cream" : "bg-cream/90 backdrop-blur-sm"
-            )}
-          >
-            <img
-              src={logoMain}
-              alt="fernanden"
-              className={cn(
-                "transition-all duration-300 group-hover:scale-105 object-contain",
-                isScrolled ? "h-14 md:h-16" : "h-16 md:h-20"
-              )}
-            />
-          </motion.div>
+          />
         </Link>
 
         {/* Desktop Navigation - Centered */}
