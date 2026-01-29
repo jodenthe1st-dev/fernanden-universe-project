@@ -121,20 +121,18 @@ export function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           >
-            {/* Logo Badge - with background for visibility */}
+            {/* Logo Badge - transparent with glow effect */}
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2, duration: 0.6 }}
               className="mb-8 inline-block"
             >
-              <div className="bg-cream rounded-3xl p-5 md:p-6 shadow-2xl">
-                <img 
-                  src={logoMain} 
-                  alt="fernanden" 
-                  className="h-24 md:h-32 lg:h-40 object-contain"
-                />
-              </div>
+              <img 
+                src={logoMain} 
+                alt="fernanden" 
+                className="h-28 md:h-36 lg:h-44 object-contain drop-shadow-[0_0_25px_rgba(255,255,255,0.3)]"
+              />
             </motion.div>
 
             {/* Tagline with Line */}

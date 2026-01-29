@@ -13,92 +13,104 @@
 
 /* 
   FERNANDEN DESIGN SYSTEM
-  A design with multiple facets - Terracotta, Citron Green, African Heritage
+  A design with multiple facets - Bordeaux, Citron Green, African Heritage
+  Premium & Chic Aesthetic
 */
 
 @layer base {
   :root {
     /* Primary Brand Colors - FERNANDEN Official */
-    --bordeaux: 0 30% 32%;
-    --bordeaux-light: 0 25% 42%;
-    --citron-green: 75 70% 52%;
-    --citron-green-dark: 75 70% 42%;
-    --soft-cream: 45 40% 96%;
-    --deep-black: 0 0% 11%;
-    --soft-gray: 0 0% 65%;
+    --bordeaux: 0 35% 33%;
+    --bordeaux-light: 0 30% 45%;
+    --bordeaux-dark: 0 40% 25%;
+    --citron-green: 78 72% 50%;
+    --citron-green-light: 78 72% 60%;
+    --citron-green-dark: 78 72% 40%;
+    --soft-cream: 40 45% 96%;
+    --warm-cream: 38 50% 93%;
+    --deep-black: 0 0% 9%;
+    --soft-gray: 30 5% 55%;
     
     /* Legacy Terracotta - Now Bordeaux */
-    --terracotta: 0 30% 32%;
-    --terracotta-dark: 0 30% 26%;
+    --terracotta: 0 35% 33%;
+    --terracotta-dark: 0 40% 25%;
     
     /* Universe-Specific Colors */
-    /* SHE - Spaces & Events */
-    --saffron-rose: 24 71% 70%;
-    --ivory: 45 40% 97%;
-    --bronze: 30 51% 52%;
-    --stone-gray: 30 4% 53%;
+    /* SHE - Spaces & Events (Warm, Elegant) */
+    --saffron-rose: 24 75% 65%;
+    --ivory: 45 50% 97%;
+    --bronze: 30 55% 48%;
+    --gold: 45 70% 50%;
+    --stone-gray: 30 8% 50%;
     
-    /* DENSEN - Fashion */
-    --soft-gold: 43 65% 52%;
+    /* DENSEN - Fashion (Bold, Contemporary) */
+    --soft-gold: 45 70% 55%;
+    --champagne: 40 50% 85%;
     
-    /* CaFEE - Education & Design */
-    --mint-green: 82 53% 49%;
-    --earth-orange: 28 81% 52%;
-    --warm-brown: 25 51% 31%;
+    /* CaFEE - Education & Design (Fresh, Dynamic) */
+    --mint-green: 82 58% 48%;
+    --earth-orange: 25 85% 55%;
+    --warm-brown: 25 55% 28%;
     
     /* Semantic Tokens */
-    --background: 45 40% 96%;
-    --foreground: 0 0% 11%;
+    --background: 40 45% 96%;
+    --foreground: 0 0% 9%;
     
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 11%;
+    --card-foreground: 0 0% 9%;
     
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 11%;
+    --popover-foreground: 0 0% 9%;
     
-    --primary: 0 30% 32%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 0 35% 33%;
+    --primary-foreground: 40 45% 96%;
     
-    --secondary: 75 70% 52%;
-    --secondary-foreground: 0 0% 11%;
+    --secondary: 78 72% 50%;
+    --secondary-foreground: 0 0% 9%;
     
-    --muted: 45 30% 92%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 38 35% 92%;
+    --muted-foreground: 0 0% 40%;
     
-    --accent: 45 30% 90%;
-    --accent-foreground: 0 0% 11%;
+    --accent: 38 40% 88%;
+    --accent-foreground: 0 0% 9%;
     
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     
-    --border: 45 20% 85%;
-    --input: 45 20% 85%;
-    --ring: 0 30% 32%;
+    --border: 38 25% 82%;
+    --input: 38 25% 82%;
+    --ring: 0 35% 33%;
     
-    --radius: 0.5rem;
+    --radius: 0.625rem;
     
     /* Sidebar */
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 0 0% 11%;
-    --sidebar-primary: 0 30% 32%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 45 40% 95%;
-    --sidebar-accent-foreground: 0 0% 11%;
-    --sidebar-border: 45 20% 85%;
-    --sidebar-ring: 0 30% 32%;
+    --sidebar-background: 40 40% 98%;
+    --sidebar-foreground: 0 0% 9%;
+    --sidebar-primary: 0 35% 33%;
+    --sidebar-primary-foreground: 40 45% 96%;
+    --sidebar-accent: 38 40% 94%;
+    --sidebar-accent-foreground: 0 0% 9%;
+    --sidebar-border: 38 25% 85%;
+    --sidebar-ring: 0 35% 33%;
     
-    /* Custom Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(0 30% 32% / 0.95), hsl(0 0% 11% / 0.9));
-    --gradient-primary: linear-gradient(135deg, hsl(0 30% 32%), hsl(0 30% 26%));
-    --gradient-citron: linear-gradient(135deg, hsl(75 70% 52%), hsl(75 70% 42%));
-    --gradient-dark: linear-gradient(180deg, hsl(0 0% 11%), hsl(0 0% 8%));
+    /* Premium Gradients */
+    --gradient-hero: linear-gradient(145deg, hsl(0 35% 33% / 0.96), hsl(0 0% 9% / 0.92));
+    --gradient-primary: linear-gradient(135deg, hsl(0 35% 33%), hsl(0 40% 25%));
+    --gradient-primary-glow: linear-gradient(135deg, hsl(0 35% 38%), hsl(0 35% 33%));
+    --gradient-citron: linear-gradient(135deg, hsl(78 72% 50%), hsl(78 72% 40%));
+    --gradient-citron-glow: linear-gradient(135deg, hsl(78 72% 55%), hsl(78 72% 48%));
+    --gradient-dark: linear-gradient(180deg, hsl(0 0% 9%), hsl(0 0% 5%));
+    --gradient-cream: linear-gradient(180deg, hsl(40 45% 96%), hsl(38 40% 93%));
+    --gradient-elegant: linear-gradient(135deg, hsl(0 35% 33% / 0.1), hsl(78 72% 50% / 0.08));
     
-    /* Shadows */
-    --shadow-sm: 0 2px 8px hsl(0 0% 0% / 0.08);
-    --shadow-md: 0 4px 12px hsl(0 0% 0% / 0.1);
-    --shadow-lg: 0 8px 24px hsl(0 0% 0% / 0.12);
-    --shadow-xl: 0 20px 60px hsl(0 0% 0% / 0.2);
-    --shadow-primary: 0 8px 24px hsl(0 30% 32% / 0.25);
+    /* Premium Shadows */
+    --shadow-sm: 0 2px 8px hsl(0 0% 0% / 0.06);
+    --shadow-md: 0 4px 16px hsl(0 0% 0% / 0.08);
+    --shadow-lg: 0 8px 32px hsl(0 0% 0% / 0.1);
+    --shadow-xl: 0 24px 64px hsl(0 0% 0% / 0.15);
+    --shadow-primary: 0 8px 32px hsl(0 35% 33% / 0.2);
+    --shadow-citron: 0 8px 32px hsl(78 72% 50% / 0.2);
+    --shadow-glow: 0 0 40px hsl(0 35% 33% / 0.15);
   }
 
   .dark {
@@ -143,29 +155,42 @@
     @apply border-border;
   }
   
+  html {
+    scroll-behavior: smooth;
+  }
+  
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Inter', system-ui, sans-serif;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+  
+  /* Selection styling */
+  ::selection {
+    background: hsl(0 35% 33% / 0.2);
+    color: hsl(0 35% 25%);
   }
   
   h1, h2, h3 {
     font-family: 'Playfair Display', Georgia, serif;
+    letter-spacing: -0.02em;
   }
   
   h4, h5, h6 {
     font-family: 'Montserrat', system-ui, sans-serif;
+    letter-spacing: -0.01em;
   }
 }
 
 @layer components {
-  /* Typography Classes */
+  /* Typography Classes - Enhanced */
   .heading-hero {
-    @apply text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight;
+    @apply text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[1.1] tracking-tight;
     font-family: 'Playfair Display', Georgia, serif;
   }
   
   .heading-section {
-    @apply text-3xl md:text-4xl font-bold leading-tight;
+    @apply text-3xl md:text-4xl lg:text-5xl font-bold leading-[1.15];
     font-family: 'Playfair Display', Georgia, serif;
   }
   
@@ -179,8 +204,16 @@
     font-family: 'Montserrat', system-ui, sans-serif;
   }
   
+  .font-heading {
+    font-family: 'Montserrat', system-ui, sans-serif;
+  }
+  
+  .font-serif {
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+  
   .body-large {
-    @apply text-lg leading-relaxed;
+    @apply text-lg md:text-xl leading-relaxed;
   }
   
   .body-regular {
@@ -192,21 +225,21 @@
   }
   
   .caption {
-    @apply text-xs leading-normal;
+    @apply text-xs leading-normal tracking-wide;
   }
   
-  /* Container */
+  /* Container - Optimized spacing */
   .container-main {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-20;
+    @apply max-w-7xl mx-auto px-5 sm:px-8 lg:px-16 xl:px-20;
   }
   
-  /* Gradient Backgrounds */
+  /* Premium Gradient Backgrounds */
   .bg-gradient-hero {
     background: var(--gradient-hero);
   }
   
-  .bg-gradient-terracotta {
-    background: var(--gradient-terracotta);
+  .bg-gradient-primary {
+    background: var(--gradient-primary);
   }
   
   .bg-gradient-citron {
@@ -217,23 +250,49 @@
     background: var(--gradient-dark);
   }
   
-  /* Card Hover Effect */
+  .bg-gradient-cream {
+    background: var(--gradient-cream);
+  }
+  
+  .bg-gradient-elegant {
+    background: var(--gradient-elegant);
+  }
+  
+  /* Glass Effect */
+  .glass {
+    @apply backdrop-blur-xl bg-white/70 border border-white/20;
+  }
+  
+  .glass-dark {
+    @apply backdrop-blur-xl bg-black/30 border border-white/10;
+  }
+  
+  /* Premium Card Hover Effect */
   .card-hover {
-    @apply transition-all duration-300 ease-out;
+    @apply transition-all duration-500 ease-out;
   }
   
   .card-hover:hover {
-    @apply -translate-y-1;
-    box-shadow: var(--shadow-lg);
+    @apply -translate-y-2;
+    box-shadow: var(--shadow-xl);
   }
   
-  /* Link Underline Animation */
+  /* Glow Effects */
+  .glow-primary {
+    box-shadow: 0 0 40px hsl(0 35% 33% / 0.15);
+  }
+  
+  .glow-citron {
+    box-shadow: 0 0 40px hsl(78 72% 50% / 0.2);
+  }
+  
+  /* Link Underline Animation - Enhanced */
   .link-underline {
     @apply relative;
   }
   
   .link-underline::after {
-    @apply absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300;
+    @apply absolute bottom-0 left-0 w-0 h-[2px] bg-gradient-to-r from-primary to-primary/60 transition-all duration-500 ease-out;
     content: '';
   }
   
@@ -241,27 +300,48 @@
     @apply w-full;
   }
   
-  /* Image Zoom on Hover */
+  /* Image Zoom on Hover - Enhanced */
   .image-zoom {
-    @apply overflow-hidden;
+    @apply overflow-hidden rounded-2xl;
   }
   
   .image-zoom img {
-    @apply transition-transform duration-500 ease-out;
+    @apply transition-transform duration-700 ease-out;
   }
   
   .image-zoom:hover img {
-    @apply scale-105;
+    @apply scale-110;
   }
   
   /* African Pattern Background */
   .pattern-african {
-    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23B84027' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%236B3A3A' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   }
   
-  /* Droplet Brand Pattern */
+  /* Droplet Brand Pattern - Enhanced */
   .pattern-droplet {
-    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 5c-5 8-10 12-10 17a10 10 0 0020 0c0-5-5-9-10-17z' fill='%23B84027' fill-opacity='0.03'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 5c-5 8-10 12-10 17a10 10 0 0020 0c0-5-5-9-10-17z' fill='%236B3A3A' fill-opacity='0.02'/%3E%3C/svg%3E");
+  }
+  
+  /* Premium Dividers */
+  .divider-gradient {
+    @apply h-px w-full;
+    background: linear-gradient(90deg, transparent, hsl(0 35% 33% / 0.2), transparent);
+  }
+  
+  /* Button Glow on Hover */
+  .btn-glow {
+    @apply relative overflow-hidden;
+  }
+  
+  .btn-glow::before {
+    @apply absolute inset-0 opacity-0 transition-opacity duration-300;
+    content: '';
+    background: radial-gradient(circle at center, hsl(0 35% 50% / 0.2), transparent 70%);
+  }
+  
+  .btn-glow:hover::before {
+    @apply opacity-100;
   }
 }
 
