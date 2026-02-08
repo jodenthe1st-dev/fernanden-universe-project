@@ -92,7 +92,7 @@ export function CTASection() {
                   asChild
                   variant="outline"
                   size="lg"
-                  className="text-base px-10 h-14 border-white/20 text-white hover:bg-white hover:text-deep-black"
+                  className="text-base px-10 h-14 border-primary text-primary hover:border-transparent hover:bg-transparent hover:text-primary"
                 >
                   <Link to="/portfolio">Voir nos réalisations</Link>
                 </Button>

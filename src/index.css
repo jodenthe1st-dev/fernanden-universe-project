@@ -43,11 +43,11 @@
     --gold: 45 70% 50%;
     --stone-gray: 30 8% 50%;
     
-    /* DENSEN - Fashion (Bold, Contemporary) */
+    /* DENSE - Fashion (Bold, Contemporary) */
     --soft-gold: 45 70% 55%;
     --champagne: 40 50% 85%;
     
-    /* CaFEE - Education & Design (Fresh, Dynamic) */
+    /* CafEE - Education & Design (Fresh, Dynamic) */
     --mint-green: 82 58% 48%;
     --earth-orange: 25 85% 55%;
     --warm-brown: 25 55% 28%;
@@ -381,5 +381,15 @@
   
   .scroll-snap-item {
     scroll-snap-align: start;
+  }
+  
+  /* Fix for scroll offset warning - ensure containers have proper positioning */
+  .scroll-container,
+  [data-scroll-container],
+  .overflow-auto,
+  .overflow-y-auto,
+  .overflow-x-auto,
+  .overflow-scroll {
+    position: relative;
   }
 }

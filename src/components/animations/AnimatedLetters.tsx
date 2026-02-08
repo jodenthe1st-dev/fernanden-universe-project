@@ -5,7 +5,7 @@ interface AnimatedLettersProps {
   className?: string;
   delay?: number;
   staggerDelay?: number;
-  type?: "fade" | "slide" | "scale" | "wave";
+  type?: "slide" | "scale" | "wave";
 }
 
 export function AnimatedLetters({ 
@@ -18,26 +18,21 @@ export function AnimatedLetters({
   const letters = text.split("");
 
   const getVariants = () => {
+    const createTransition = (stiffness: number, damping?: number) => ({
+      delay: delay + staggerDelay,
+      type: "spring" as const,
+      stiffness,
+      ...(damping && { damping }),
+    });
+
     switch (type) {
-      case "fade":
-        return {
-          hidden: { opacity: 0 },
-          visible: (i: number) => ({
-            opacity: 1,
-            transition: { delay: delay + i * staggerDelay },
-          }),
-        };
       case "slide":
         return {
           hidden: { opacity: 0, y: 50 },
           visible: (i: number) => ({
             opacity: 1,
             y: 0,
-            transition: { 
-              delay: delay + i * staggerDelay,
-              type: "spring",
-              stiffness: 100,
-            },
+            transition: createTransition(100),
           }),
         };
       case "scale":
@@ -46,11 +41,7 @@ export function AnimatedLetters({
           visible: (i: number) => ({
             opacity: 1,
             scale: 1,
-            transition: { 
-              delay: delay + i * staggerDelay,
-              type: "spring",
-              stiffness: 200,
-            },
+            transition: createTransition(200),
           }),
         };
       case "wave":
@@ -61,12 +52,7 @@ export function AnimatedLetters({
             opacity: 1,
             y: 0,
             rotateX: 0,
-            transition: { 
-              delay: delay + i * staggerDelay,
-              type: "spring",
-              stiffness: 100,
-              damping: 10,
-            },
+            transition: createTransition(100, 10),
           }),
         };
     }

@@ -13,7 +13,7 @@ const testimonials = [
   },
   {
     id: 2,
-    quote: "Les créations DENSEN reflètent parfaitement l'élégance africaine. Chaque pièce raconte une histoire unique.",
+    quote: "Les créations DENSE reflètent parfaitement l'élégance africaine. Chaque pièce raconte une histoire unique.",
     author: "Jean-Pierre Mensah",
     role: "CEO",
     company: "AfricaConnect",
@@ -21,7 +21,7 @@ const testimonials = [
   },
   {
     id: 3,
-    quote: "L'accompagnement CaFEE a été déterminant pour le développement de notre identité visuelle. Professionnalisme et créativité au rendez-vous.",
+    quote: "L'accompagnement CafEE a été déterminant pour le développement de notre identité visuelle. Professionnalisme et créativité au rendez-vous.",
     author: "Aminata Diallo",
     role: "Fondatrice",
     company: "StartupLab Dakar",

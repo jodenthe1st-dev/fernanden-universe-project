@@ -6,7 +6,7 @@ interface GlowingTextareaProps extends React.TextareaHTMLAttributes<HTMLTextArea
   label?: string;
 }
 
-export function GlowingTextarea({ label, className, ...props }: GlowingTextareaProps) {
+export function GlowingTextarea({ label, className, placeholder, ...props }: GlowingTextareaProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [value, setValue] = useState("");
 
@@ -43,9 +43,10 @@ export function GlowingTextarea({ label, className, ...props }: GlowingTextareaP
           onChange={(e) => setValue(e.target.value)}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
+          placeholder={isFocused || value ? "" : (placeholder || label)}
           className={cn(
             "w-full px-4 py-4 bg-card border-2 rounded-xl font-sans text-foreground resize-none",
-            "placeholder:text-transparent transition-colors duration-300",
+            "placeholder:text-muted-foreground transition-colors duration-300",
             "focus:outline-none focus:border-primary",
             isFocused ? "border-primary" : "border-border",
             className

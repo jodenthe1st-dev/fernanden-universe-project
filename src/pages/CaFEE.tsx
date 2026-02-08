@@ -24,6 +24,9 @@ import {
 import { GradientBlob } from "@/components/animations/GradientBlob";
 import { MagneticButton } from "@/components/animations/MagneticButton";
 import logoCafee from "@/assets/logo-cafee.png";
+import { useState, useEffect } from "react";
+import logger from '@/lib/logger';
+import { DatabaseService, Service } from "@/services/DatabaseService";
 
 const educationServices = [
   { 
@@ -82,7 +85,7 @@ const stats = [
 
 const testimonials = [
   {
-    quote: "L'accompagnement de CaFEE a transformé l'approche scolaire de mon fils. Merci infiniment !",
+    quote: "L'accompagnement de CafEE a transformé l'approche scolaire de mon fils. Merci infiniment !",
     author: "Marie K.",
     role: "Parent d'élève"
   },
@@ -93,87 +96,98 @@ const testimonials = [
   },
 ];
 
-const CaFEE = () => {
+const CafEE = () => {
+  const [services, setServices] = useState<Service[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadServices = async () => {
+      try {
+        const data = await DatabaseService.getServices('CafEE');
+        setServices(data);
+      } catch (error) {
+        logger.error('Error loading CafEE services:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadServices();
+  }, []);
+
+  const getIconForService = (iconName: string) => {
+    switch (iconName) {
+      case 'brain': return Brain;
+      case 'users': return Users;
+      case 'message-circle': return MessageCircle;
+      case 'heart': return Heart;
+      case 'palette': return Palette;
+      case 'book-open': return BookOpen;
+      case 'lightbulb': return Lightbulb;
+      case 'award': return Award;
+      default: return BookOpen;
+    }
+  };
+
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="pt-28 pb-16 relative overflow-hidden bg-gradient-to-b from-muted/50 to-background">
-        <GradientBlob 
-          className="-top-40 -right-40" 
-          color1="hsl(var(--cafee-mint) / 0.1)"
-          size="500px"
-        />
-        <GradientBlob 
-          className="-bottom-40 -left-40" 
-          color1="hsl(var(--cafee-orange) / 0.1)"
-          size="400px"
-        />
+      <section className="pt-24 pb-16 relative overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0">
+          <img 
+            src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2671&auto=format&fit=crop"
+            alt="CafEE Education Background"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-cafee-mint/30 via-cafee-mint/20 to-deep-black/80" />
+        </div>
         
-        <div className="container-main relative z-10">
-          <motion.div
+        <GradientBlob color1="rgba(134, 239, 172, 0.1)" />
+        <div className="container mx-auto px-4 relative z-10">
+          <motion.div 
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             className="text-center max-w-4xl mx-auto"
           >
-            {/* Logo */}
-            <motion.div
+            <motion.div 
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.2, type: "spring" }}
-              className="mb-8 inline-block"
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="mb-8"
             >
               <img 
                 src={logoCafee} 
-                alt="CaFEE by fernanden" 
-                className="h-44 md:h-56 lg:h-64 object-contain drop-shadow-[0_4px_20px_rgba(0,0,0,0.15)]"
+                alt="CafEE Logo" 
+                className="w-32 h-32 mx-auto drop-shadow-lg"
               />
             </motion.div>
-
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
-              className="font-serif text-xl md:text-2xl italic text-muted-foreground mb-6"
-            >
-              "Apprendre autrement, s'exprimer pleinement !"
-            </motion.p>
-
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="body-large text-muted-foreground max-w-2xl mx-auto mb-10"
-            >
-              Cabinet innovant alliant psychopédagogie et design graphique. 
-              Nous accompagnons enfants, adolescents et adultes dans leur développement 
-              et créons des identités visuelles impactantes pour les entreprises.
-            </motion.p>
-
-            {/* Dual CTA */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center"
-            >
+            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
+              CafEE
+            </h1>
+            <p className="text-2xl md:text-3xl text-cafee-mint font-semibold mb-4">
+              Ludopédagogie & Médiation
+            </p>
+            <p className="text-xl text-white/90 mb-8 leading-relaxed">
+              Apprendre autrement, s'exprimer pleinement !<br/>
+              Accompagnement psychopédagogique et médiation.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <MagneticButton>
-                <Button asChild size="lg" className="rounded-xl bg-cafee-mint hover:bg-cafee-mint/90 text-white">
-                  <a href="#education" className="flex items-center gap-2">
-                    <GraduationCap size={20} />
-                    Services Éducation
-                  </a>
+                <Button size="lg" className="bg-cafee-mint hover:bg-cafee-mint/90 text-white text-lg px-8">
+                  Commencer votre parcours
                 </Button>
               </MagneticButton>
               <MagneticButton>
-                <Button asChild size="lg" className="rounded-xl bg-cafee-orange hover:bg-cafee-orange/90 text-white">
+                <Button asChild size="lg" className="rounded-xl bg-terracotta hover:bg-terracotta/90 text-white">
                   <a href="#design" className="flex items-center gap-2">
                     <Palette size={20} />
                     Services Design
                   </a>
                 </Button>
               </MagneticButton>
-            </motion.div>
+            </div>
           </motion.div>
         </div>
       </section>
@@ -221,14 +235,25 @@ const CaFEE = () => {
             </div>
             <div>
               <h2 className="heading-section text-foreground">
-                CaFEE <span className="text-cafee-mint">Éducation</span>
+                CafEE <span className="text-cafee-mint">Éducation</span>
               </h2>
               <p className="text-muted-foreground">Ludopédagogie, Psychométrie et Médiation</p>
             </div>
           </motion.div>
 
           <div className="grid md:grid-cols-2 gap-6">
-            {educationServices.map((service, index) => (
+            {loading ? (
+              <div className="col-span-full text-center py-12">
+                <div className="text-muted-foreground">Chargement des services éducatifs...</div>
+              </div>
+            ) : services.length === 0 ? (
+              <div className="col-span-full text-center py-12">
+                <div className="text-muted-foreground">Aucun service disponible pour le moment</div>
+              </div>
+            ) : (
+              services.map((service, index) => {
+                const IconComponent = getIconForService(service.icon_name || 'brain');
+                return (
               <motion.div
                 key={service.title}
                 initial={{ opacity: 0, y: 30 }}
@@ -239,13 +264,13 @@ const CaFEE = () => {
               >
                 <div className="flex items-start gap-4">
                   <div className="w-14 h-14 bg-cafee-mint/10 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-cafee-mint/20 transition-colors">
-                    <service.icon className="w-7 h-7 text-cafee-mint" />
+                    <IconComponent className="w-7 h-7 text-cafee-mint" />
                   </div>
                   <div className="flex-1">
                     <h3 className="font-heading font-semibold text-lg text-foreground mb-2">{service.title}</h3>
                     <p className="body-small text-muted-foreground mb-4">{service.description}</p>
                     <div className="flex flex-wrap gap-2">
-                      {service.features.map((feature) => (
+                      {(service.features || []).map((feature) => (
                         <span 
                           key={feature}
                           className="inline-flex items-center gap-1 text-xs bg-cafee-mint/10 text-cafee-mint px-3 py-1 rounded-full"
@@ -258,7 +283,9 @@ const CaFEE = () => {
                   </div>
                 </div>
               </motion.div>
-            ))}
+                );
+              })
+            )}
           </div>
 
           <motion.div
@@ -284,7 +311,7 @@ const CaFEE = () => {
       <section id="design" className="py-20 bg-muted/30 relative overflow-hidden">
         <GradientBlob 
           className="top-20 -right-20" 
-          color1="hsl(var(--cafee-orange) / 0.08)"
+          color1="hsl(var(--terracotta) / 0.08)"
           size="350px"
         />
         
@@ -295,12 +322,12 @@ const CaFEE = () => {
             viewport={{ once: true }}
             className="flex items-center gap-4 mb-12"
           >
-            <div className="w-16 h-16 bg-cafee-orange/20 rounded-2xl flex items-center justify-center">
-              <Palette className="w-8 h-8 text-cafee-orange" />
+            <div className="w-16 h-16 bg-terracotta/20 rounded-2xl flex items-center justify-center">
+              <Palette className="w-8 h-8 text-terracotta" />
             </div>
             <div>
               <h2 className="heading-section text-foreground">
-                CaFEE <span className="text-cafee-orange">Expressive</span>
+                CafEE <span className="text-terracotta">Expressive</span>
               </h2>
               <p className="text-muted-foreground">Design graphique et Communication visuelle</p>
             </div>
@@ -314,10 +341,10 @@ const CaFEE = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="group bg-card rounded-2xl p-6 border border-border hover:border-cafee-orange/50 hover:shadow-lg transition-all duration-300"
+                className="group bg-card rounded-2xl p-6 border border-border hover:border-terracotta/50 hover:shadow-lg transition-all duration-300"
               >
-                <div className="w-14 h-14 bg-cafee-orange/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-cafee-orange/20 transition-colors">
-                  <service.icon className="w-7 h-7 text-cafee-orange" />
+                <div className="w-14 h-14 bg-terracotta/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-terracotta/20 transition-colors">
+                  <service.icon className="w-7 h-7 text-terracotta" />
                 </div>
                 <h3 className="font-heading font-semibold text-lg text-foreground mb-2">{service.title}</h3>
                 <p className="body-small text-muted-foreground mb-4">{service.description}</p>
@@ -325,7 +352,7 @@ const CaFEE = () => {
                   {service.features.map((feature) => (
                     <span 
                       key={feature}
-                      className="inline-flex items-center gap-1 text-xs bg-cafee-orange/10 text-cafee-orange px-3 py-1 rounded-full"
+                      className="inline-flex items-center gap-1 text-xs bg-terracotta/10 text-terracotta px-3 py-1 rounded-full"
                     >
                       <CheckCircle2 size={12} />
                       {feature}
@@ -343,7 +370,7 @@ const CaFEE = () => {
             className="mt-10 text-center"
           >
             <MagneticButton>
-              <Button asChild size="lg" className="rounded-xl bg-cafee-orange hover:bg-cafee-orange/90">
+              <Button asChild size="lg" className="rounded-xl bg-terracotta hover:bg-terracotta/90">
                 <Link to="/portfolio" className="flex items-center gap-2">
                   Voir nos réalisations
                   <ArrowRight size={18} />
@@ -364,7 +391,7 @@ const CaFEE = () => {
             className="text-center mb-12"
           >
             <h2 className="heading-section text-foreground mb-4">
-              Pourquoi choisir <span className="text-primary">CaFEE</span> ?
+              Pourquoi choisir <span className="text-primary">CafEE</span> ?
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Une approche unique combinant expertise pédagogique et créativité visuelle
@@ -443,7 +470,7 @@ const CaFEE = () => {
             {/* Split background */}
             <div className="absolute inset-0 flex">
               <div className="w-1/2 bg-cafee-mint" />
-              <div className="w-1/2 bg-cafee-orange" />
+              <div className="w-1/2 bg-terracotta" />
             </div>
             
             <div className="relative z-10 p-10 md:p-16 text-center text-white">
@@ -473,7 +500,7 @@ const CaFEE = () => {
                   </Button>
                 </MagneticButton>
                 <MagneticButton>
-                  <Button asChild size="lg" variant="outline" className="rounded-xl border-white/40 text-white hover:bg-white/10 hover:border-white">
+                  <Button asChild size="lg" variant="outline" className="rounded-xl border-cafee-mint text-cafee-mint hover:bg-cafee-mint/10 hover:border-cafee-mint">
                     <a href="tel:+22901975126" className="flex items-center gap-2">
                       <Phone size={18} />
                       +229 01 97 51 26 36
@@ -489,4 +516,4 @@ const CaFEE = () => {
   );
 };
 
-export default CaFEE;
+export default CafEE;

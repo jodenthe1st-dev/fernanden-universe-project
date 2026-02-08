@@ -1,15 +1,16 @@
 import { Layout } from "@/components/layout/Layout";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { AnimatedLetters } from "@/components/animations/AnimatedLetters";
 import { GradientBlob } from "@/components/animations/GradientBlob";
-import { ExternalLink, Eye } from "lucide-react";
+import { ExternalLink, Eye, ArrowRight, Calendar, MapPin } from "lucide-react";
 
 const categories = [
   { id: "all", label: "Tous", color: "bg-primary" },
   { id: "she", label: "SHE", color: "bg-she-saffron" },
-  { id: "densen", label: "DENSEN", color: "bg-primary" },
+  { id: "dense", label: "DENSE", color: "bg-primary" },
   { id: "cafee", label: "CaFEE", color: "bg-cafee-mint" },
 ];
 
@@ -20,13 +21,25 @@ const portfolioItems = [
     category: "she",
     image: "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=800&auto=format&fit=crop",
     description: "Décoration florale et mise en scène",
+    client: "Clara & Marc",
+    date: "2024-01-15",
+    location: "Cotonou, Bénin",
+    tags: ["Mariage", "Floral", "Élégant"],
+    link: "/she/realizations/mariage-clara-marc",
+    featured: true
   },
   {
     id: 2,
     title: "Collection Été 2024",
-    category: "densen",
+    category: "dense",
     image: "https://images.unsplash.com/photo-1558171813-4c088753af8f?q=80&w=800&auto=format&fit=crop",
     description: "Lookbook mode africaine",
+    client: "DENSE Fashion",
+    date: "2024-06-20",
+    location: "Paris, France",
+    tags: ["Fashion", "Été", "Lookbook"],
+    link: "/dense/collections/les-drapés",
+    featured: true
   },
   {
     id: 3,
@@ -34,6 +47,12 @@ const portfolioItems = [
     category: "cafee",
     image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=800&auto=format&fit=crop",
     description: "Branding complet",
+    client: "TechCorp Africa",
+    date: "2024-03-10",
+    location: "Lagos, Nigeria",
+    tags: ["Branding", "Tech", "Startup"],
+    link: "/cafee",
+    featured: false
   },
   {
     id: 4,
@@ -41,13 +60,25 @@ const portfolioItems = [
     category: "she",
     image: "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=800&auto=format&fit=crop",
     description: "Design d'intérieur corporate",
+    client: "International Bank",
+    date: "2024-02-28",
+    location: "Dakar, Sénégal",
+    tags: ["Interior", "Corporate", "Design"],
+    link: "/she/services/interior-design",
+    featured: false
   },
   {
     id: 5,
     title: "Lookbook Automne",
-    category: "densen",
+    category: "dense",
     image: "https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=800&auto=format&fit=crop",
     description: "Collection prêt-à-porter",
+    client: "DENSE Fashion",
+    date: "2024-09-15",
+    location: "Abidjan, Côte d'Ivoire",
+    tags: ["Fashion", "Automne", "Collection"],
+    link: "/dense/collections/les-modulables",
+    featured: false
   },
   {
     id: 6,
@@ -55,6 +86,12 @@ const portfolioItems = [
     category: "cafee",
     image: "https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?q=80&w=800&auto=format&fit=crop",
     description: "Design éditorial",
+    client: "Global Finance",
+    date: "2024-12-01",
+    location: "Paris, France",
+    tags: ["Editorial", "Design", "Finance"],
+    link: "/cafee",
+    featured: false
   },
   {
     id: 7,
@@ -62,13 +99,25 @@ const portfolioItems = [
     category: "she",
     image: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=800&auto=format&fit=crop",
     description: "Gala d'entreprise",
+    client: "TechCorp",
+    date: "2024-04-20",
+    location: "Paris, France",
+    tags: ["Événement", "Gala", "Corporate"],
+    link: "/she/services/events",
+    featured: false
   },
   {
     id: 8,
     title: "Accessoires Artisanaux",
-    category: "densen",
+    category: "dense",
     image: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=800&auto=format&fit=crop",
     description: "Collection limitée",
+    client: "DENSE Fashion",
+    date: "2024-11-10",
+    location: "Cotonou, Bénin",
+    tags: ["Accessoires", "Artisanal", "Limited"],
+    link: "/dense/collections/les-accessoires",
+    featured: false
   },
 ];
 
@@ -119,6 +168,77 @@ const Portfolio = () => {
         </div>
       </section>
 
+      {/* Featured Projects */}
+      <section className="pb-12">
+        <div className="container-main">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
+            className="mb-12"
+          >
+            <h2 className="heading-section text-center mb-8">
+              Projets <span className="text-primary">Phares</span>
+            </h2>
+            <div className="grid md:grid-cols-2 gap-8">
+              {portfolioItems.filter(item => item.featured).map((item, index) => (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.8 + index * 0.2 }}
+                  className="bg-card rounded-3xl overflow-hidden border border-border/50 hover:shadow-2xl transition-all duration-500"
+                >
+                  <div className="relative h-48">
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-deep-black/80 to-transparent" />
+                    <div className="absolute bottom-4 left-4">
+                      <span className={cn(
+                        "inline-block px-3 py-1 rounded-full text-white text-xs font-heading font-semibold mb-2",
+                        item.category === "she" ? "bg-she-saffron" :
+                        item.category === "dense" ? "bg-primary" : "bg-cafee-mint"
+                      )}>
+                        {item.category.toUpperCase()}
+                      </span>
+                      <h3 className="font-heading font-semibold text-xl text-white">{item.title}</h3>
+                    </div>
+                  </div>
+                  <div className="p-6">
+                    <p className="text-muted-foreground mb-4">{item.description}</p>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4 text-muted-foreground text-sm">
+                        <div className="flex items-center gap-1">
+                          <Calendar size={14} />
+                          <span>{item.date}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <MapPin size={14} />
+                          <span>{item.location}</span>
+                        </div>
+                      </div>
+                      <Link to={item.link}>
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="px-4 py-2 bg-primary text-white rounded-full text-sm font-medium hover:bg-primary/90 transition-colors flex items-center gap-2"
+                        >
+                          Voir le projet
+                          <ArrowRight size={14} />
+                        </motion.button>
+                      </Link>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Filter & Gallery */}
       <section className="pb-16">
         <div className="container-main">
@@ -127,7 +247,7 @@ const Portfolio = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
-            className="flex justify-center gap-2 mb-10 flex-wrap"
+            className="flex justify-center gap-1.5 sm:gap-2 mb-6 sm:mb-8 md:mb-10 flex-wrap px-2 sm:px-4 md:px-0 overflow-x-auto scrollbar-hide"
           >
             {categories.map((category) => (
               <motion.button
@@ -136,7 +256,7 @@ const Portfolio = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className={cn(
-                  "px-6 py-2.5 rounded-full font-heading font-medium text-sm transition-all duration-300 relative overflow-hidden",
+                  "px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 md:py-2.5 rounded-full font-heading font-medium text-[11px] sm:text-xs md:text-sm transition-all duration-300 relative overflow-hidden whitespace-nowrap",
                   activeCategory === category.id
                     ? "text-white"
                     : "bg-muted text-muted-foreground hover:bg-muted/80"
@@ -157,7 +277,7 @@ const Portfolio = () => {
           {/* Gallery Grid - Masonry-like */}
           <motion.div 
             layout
-            className="grid md:grid-cols-2 lg:grid-cols-3 gap-5"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-5"
           >
             <AnimatePresence mode="popLayout">
               {filteredItems.map((item, index) => (
@@ -206,27 +326,54 @@ const Portfolio = () => {
                     <span className={cn(
                       "inline-block w-fit px-3 py-1 rounded-full text-white text-xs font-heading font-semibold mb-3",
                       item.category === "she" ? "bg-she-saffron" :
-                      item.category === "densen" ? "bg-primary" : "bg-cafee-mint"
+                      item.category === "dense" ? "bg-primary" : "bg-cafee-mint"
                     )}>
                       {item.category.toUpperCase()}
                     </span>
                     <h3 className="font-heading font-semibold text-xl text-white mb-1">
                       {item.title}
                     </h3>
-                    <p className="text-white/70 text-sm mb-4">{item.description}</p>
+                    <p className="text-white/70 text-sm mb-3">{item.description}</p>
                     
+                    {/* Meta infos */}
+                    <div className="flex items-center gap-4 text-white/60 text-xs mb-3">
+                      <div className="flex items-center gap-1">
+                        <Calendar size={12} />
+                        <span>{item.date}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <MapPin size={12} />
+                        <span>{item.location}</span>
+                      </div>
+                    </div>
+                    
+                    {/* Tags */}
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {item.tags.map((tag, tagIndex) => (
+                        <span key={tagIndex} className="px-2 py-1 bg-white/10 backdrop-blur-sm rounded-full text-white text-xs">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                    
+                    {/* Action buttons */}
                     <div className="flex gap-3">
+                      <Link to={`/portfolio/${item.id}`}>
+                        <motion.button
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/30 transition-colors"
+                          title="Voir le projet"
+                        >
+                          <Eye size={18} />
+                        </motion.button>
+                      </Link>
                       <motion.button
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.95 }}
                         className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/30 transition-colors"
-                      >
-                        <Eye size={18} />
-                      </motion.button>
-                      <motion.button
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/30 transition-colors"
+                        onClick={() => window.open(item.link, '_blank')}
+                        title="Visiter la page"
                       >
                         <ExternalLink size={18} />
                       </motion.button>

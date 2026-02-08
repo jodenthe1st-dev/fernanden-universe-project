@@ -2,36 +2,50 @@ import { Layout } from "@/components/layout/Layout";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Play, Clock, MapPin, Headphones, Pause, Volume2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import logger from '@/lib/logger';
 import { AnimatedLetters } from "@/components/animations/AnimatedLetters";
 import { GradientBlob } from "@/components/animations/GradientBlob";
 import { cn } from "@/lib/utils";
-
-const densenMinuteEpisodes = [
-  { id: 1, title: "Style Parisien", location: "Paris, France", duration: "1:00", color: "bg-primary" },
-  { id: 2, title: "Couleurs de Lagos", location: "Lagos, Nigeria", duration: "1:00", color: "bg-primary" },
-  { id: 3, title: "Élégance Dakaroise", location: "Dakar, Sénégal", duration: "1:00", color: "bg-primary" },
-  { id: 4, title: "Influences de Cotonou", location: "Cotonou, Bénin", duration: "1:00", color: "bg-primary" },
-];
-
-const parenTipsEpisodes = [
-  { id: 1, title: "Accompagner les devoirs avec bienveillance", duration: "2:30" },
-  { id: 2, title: "Gérer le temps d'écran efficacement", duration: "3:00" },
-  { id: 3, title: "Encourager la créativité au quotidien", duration: "2:45" },
-  { id: 4, title: "Communiquer avec son adolescent", duration: "3:15" },
-];
+import { PodcastsService, Podcast } from "@/integrations/supabase/services/podcasts";
 
 const Podcasts = () => {
   const [playingId, setPlayingId] = useState<string | null>(null);
+  const [podcasts, setPodcasts] = useState<Podcast[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadPodcasts = async () => {
+      try {
+        const data = await PodcastsService.getActivePodcasts();
+        setPodcasts(data);
+      } catch (error) {
+        logger.error('Error loading podcasts:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadPodcasts();
+  }, []);
 
   const togglePlay = (id: string) => {
     setPlayingId(playingId === id ? null : id);
   };
 
+  // Filter podcasts by series (using tags)
+  const denseMinuteEpisodes = podcasts.filter(p => 
+    p.tags.includes('dense-minute')
+  ).slice(0, 4);
+
+  const parenTipsEpisodes = podcasts.filter(p => 
+    p.tags.includes('paren-tips')
+  ).slice(0, 4);
+
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="relative pt-28 pb-12 overflow-hidden">
+      <section className="relative pt-24 pb-16 overflow-hidden">
         <GradientBlob 
           className="-top-40 left-1/3" 
           color1="hsl(var(--primary) / 0.15)"
@@ -79,7 +93,7 @@ const Podcasts = () => {
       <section className="pb-16">
         <div className="container-main">
           <div className="grid lg:grid-cols-2 gap-8">
-            {/* DENSEN Minute */}
+            {/* DENSE Minute */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -96,7 +110,7 @@ const Podcasts = () => {
                     <span className="font-serif text-2xl font-bold">DM</span>
                   </motion.div>
                   <div>
-                    <h2 className="heading-card text-white">DENSEN Minute</h2>
+                    <h2 className="heading-card text-white">DENSE Minute</h2>
                     <p className="text-white/80 text-sm">60 secondes d'inspiration style</p>
                   </div>
                 </div>
@@ -104,79 +118,91 @@ const Podcasts = () => {
 
               {/* Episodes */}
               <div className="p-5 space-y-3">
-                {densenMinuteEpisodes.map((episode, index) => (
-                  <motion.div
-                    key={episode.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: index * 0.1 }}
-                    className={cn(
-                      "flex items-center gap-4 p-4 rounded-xl transition-all cursor-pointer group",
-                      playingId === `dm-${episode.id}` 
-                        ? "bg-primary/10 border border-primary/30" 
-                        : "bg-muted hover:bg-muted/80"
-                    )}
-                    onClick={() => togglePlay(`dm-${episode.id}`)}
-                  >
-                    <motion.button 
+                {loading ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    Chargement des épisodes...
+                  </div>
+                ) : denseMinuteEpisodes.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    Aucun épisode disponible pour le moment
+                  </div>
+                ) : (
+                  denseMinuteEpisodes.map((episode, index) => (
+                    <motion.div
+                      key={episode.id}
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: index * 0.1 }}
                       className={cn(
-                        "w-12 h-12 rounded-full flex items-center justify-center shrink-0 transition-colors",
-                        playingId === `dm-${episode.id}` ? "bg-primary" : "bg-primary/80 group-hover:bg-primary"
+                        "flex items-center gap-4 p-4 rounded-xl transition-all cursor-pointer group",
+                        playingId === `dm-${episode.id}` 
+                          ? "bg-primary/10 border border-primary/30" 
+                          : "bg-muted hover:bg-muted/80"
                       )}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
+                      onClick={() => togglePlay(`dm-${episode.id}`)}
                     >
-                      {playingId === `dm-${episode.id}` ? (
-                        <Pause size={18} className="text-white" />
-                      ) : (
-                        <Play size={18} className="text-white ml-0.5" />
-                      )}
-                    </motion.button>
-                    
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-heading font-semibold text-foreground truncate">
-                        {episode.title}
-                      </h4>
-                      <div className="flex items-center gap-3 text-muted-foreground text-sm mt-1">
-                        <span className="flex items-center gap-1">
-                          <MapPin size={12} />
-                          {episode.location}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Clock size={12} />
-                          {episode.duration}
-                        </span>
-                      </div>
-                    </div>
-
-                    {playingId === `dm-${episode.id}` && (
-                      <motion.div 
-                        initial={{ opacity: 0, scale: 0 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="flex items-center gap-1"
+                      <motion.button 
+                        className={cn(
+                          "w-12 h-12 rounded-full flex items-center justify-center shrink-0 transition-colors",
+                          playingId === `dm-${episode.id}` ? "bg-primary" : "bg-primary/80 group-hover:bg-primary"
+                        )}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
                       >
-                        {[...Array(4)].map((_, i) => (
-                          <motion.div
-                            key={i}
-                            className="w-1 bg-primary rounded-full"
-                            animate={{ 
-                              height: [8, 20, 8],
-                            }}
-                            transition={{ 
-                              repeat: Infinity, 
-                              duration: 0.8,
-                              delay: i * 0.1 
-                            }}
-                          />
-                        ))}
-                      </motion.div>
-                    )}
-                  </motion.div>
-                ))}
+                        {playingId === `dm-${episode.id}` ? (
+                          <Pause size={18} className="text-white" />
+                        ) : (
+                          <Play size={18} className="text-white ml-0.5" />
+                        )}
+                      </motion.button>
+                      
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-heading font-semibold text-foreground truncate">
+                          {episode.title}
+                        </h4>
+                        <div className="flex items-center gap-3 text-muted-foreground text-sm mt-1">
+                          {episode.guest_name && (
+                            <span className="flex items-center gap-1">
+                              <MapPin size={12} />
+                              {episode.guest_name}
+                            </span>
+                          )}
+                          <span className="flex items-center gap-1">
+                            <Clock size={12} />
+                            {episode.duration}
+                          </span>
+                        </div>
+                      </div>
+
+                      {playingId === `dm-${episode.id}` && (
+                        <motion.div 
+                          initial={{ opacity: 0, scale: 0 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          className="flex items-center gap-1"
+                        >
+                          {[...Array(4)].map((_, i) => (
+                            <motion.div
+                              key={i}
+                              className="w-1 bg-primary rounded-full"
+                              animate={{ 
+                                height: [8, 20, 8],
+                              }}
+                              transition={{ 
+                                repeat: Infinity, 
+                                duration: 0.8,
+                                delay: i * 0.1 
+                              }}
+                            />
+                          ))}
+                        </motion.div>
+                      )}
+                    </motion.div>
+                  ))
+                )}
 
                 <Link
-                  to="/podcasts/densen-minute"
+                  to="/podcasts/dense-minute"
                   className="inline-flex items-center gap-2 mt-4 font-heading font-medium text-primary hover:underline"
                 >
                   Voir tous les épisodes →
@@ -305,20 +331,7 @@ const Podcasts = () => {
             
             <div className="relative z-10 text-center md:text-left">
               <h3 className="heading-subsection mb-2">Ne manquez aucun épisode</h3>
-              <p className="text-white/70">Abonnez-vous à nos podcasts sur votre plateforme préférée</p>
-            </div>
-            
-            <div className="flex gap-3 relative z-10">
-              {["Spotify", "Apple", "YouTube"].map((platform) => (
-                <motion.button
-                  key={platform}
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-6 py-3 bg-white/10 backdrop-blur-sm rounded-xl font-heading font-medium hover:bg-white/20 transition-colors"
-                >
-                  {platform}
-                </motion.button>
-              ))}
+              <p className="text-white/70">Découvrez tous nos podcasts et restez informé</p>
             </div>
           </motion.div>
         </div>

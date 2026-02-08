@@ -6,7 +6,7 @@ interface GlowingInputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   label?: string;
 }
 
-export function GlowingInput({ label, className, ...props }: GlowingInputProps) {
+export function GlowingInput({ label, className, placeholder, ...props }: GlowingInputProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [value, setValue] = useState("");
 
@@ -43,9 +43,10 @@ export function GlowingInput({ label, className, ...props }: GlowingInputProps) 
           onChange={(e) => setValue(e.target.value)}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
+          placeholder={isFocused || value ? "" : (placeholder || label)}
           className={cn(
             "w-full px-4 py-4 bg-card border-2 rounded-xl font-sans text-foreground",
-            "placeholder:text-transparent transition-colors duration-300",
+            "placeholder:text-muted-foreground transition-colors duration-300",
             "focus:outline-none focus:border-primary",
             isFocused ? "border-primary" : "border-border",
             className
@@ -67,9 +68,9 @@ export function GlowingInput({ label, className, ...props }: GlowingInputProps) 
       {/* Floating particles on focus */}
       {isFocused && (
         <>
-          {[...Array(3)].map((_, i) => (
+          {Array.from({ length: 3 }, (_, i) => (
             <motion.div
-              key={i}
+              key={`particle-${i}`}
               className="absolute w-1 h-1 rounded-full bg-primary"
               initial={{ 
                 opacity: 0,
