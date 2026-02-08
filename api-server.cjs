@@ -278,7 +278,7 @@ app.get('/api/admin/me', (req, res) => {
 });
 
 // Gestion des erreurs 404
-app.use('*', (req, res) => {
+app.use((req, res) => {
   res.status(404).json({ 
     error: 'Route non trouvée',
     code: 'NOT_FOUND',
