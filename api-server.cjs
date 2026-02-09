@@ -102,6 +102,17 @@ if (createClient && process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_KEY
   console.warn('SUPABASE_URL or SUPABASE_SERVICE_KEY not set — admin DB auth disabled');
 }
 
+// Helpful debug logging for login attempts (do not log passwords)
+function logLoginAttempt(req, result, extra) {
+  try {
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
+    const email = (req.body && req.body.email) ? String(req.body.email) : 'unknown';
+    console.log(`🔐 [${new Date().toISOString()}] Login attempt for ${email} from ${ip}: ${result}${extra ? ' - ' + extra : ''}`);
+  } catch (e) {
+    // ignore logging errors
+  }
+}
+
 // Route upload améliorée - ACCEPTE PLUSIEURS FICHIERS
 app.post('/api/upload', checkAdmin, upload.array('uploads', 10), async (req, res) => {
   try {
@@ -268,15 +279,27 @@ app.post('/api/admin/login', async (req, res) => {
       const { data, error } = await supabase.from('admins').select('id, email, password_hash, role, disabled').eq('email', email).limit(1).single();
       if (error && error.code !== 'PGRST116') {
         console.error('Supabase error during admin lookup', error);
+        logLoginAttempt(req, 'error', 'supabase lookup failed');
         return res.status(500).json({ error: 'internal' });
       }
-      if (!data || data.disabled) return res.status(401).json({ error: 'Invalid credentials' });
+      if (!data) {
+        logLoginAttempt(req, 'rejected', 'no admin record');
+        return res.status(401).json({ error: 'Invalid credentials' });
+      }
+      if (data.disabled) {
+        logLoginAttempt(req, 'rejected', 'admin disabled');
+        return res.status(401).json({ error: 'Invalid credentials' });
+      }
       const matches = await bcrypt.compare(String(password), String(data.password_hash));
-      if (!matches) return res.status(401).json({ error: 'Invalid credentials' });
+      if (!matches) {
+        logLoginAttempt(req, 'rejected', 'wrong password');
+        return res.status(401).json({ error: 'Invalid credentials' });
+      }
 
       const user = { id: data.id, email: data.email, role: data.role };
       const token = signToken({ sub: user.id, email: user.email, role: user.role, iat: Date.now() });
       res.cookie('admin_token', token, { httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production', maxAge: 24 * 60 * 60 * 1000 });
+      logLoginAttempt(req, 'accepted');
       return res.json({ success: true, user });
     }
 
@@ -341,6 +364,62 @@ app.get('/api/admin/me', (req, res) => {
   } catch (err) {
     console.error('Me error', err);
     return res.status(500).json({ error: 'Internal error' });
+  }
+});
+
+/**
+ * POST /api/cloudinary/destroy - Delete file from Cloudinary (server-side with secrets)
+ * Never expose API_KEY or API_SECRET to frontend
+ */
+app.post('/api/cloudinary/destroy', checkAdmin, async (req, res) => {
+  try {
+    const { public_id, resource_type = 'image' } = req.body;
+
+    if (!public_id) {
+      return res.status(400).json({ error: 'public_id is required' });
+    }
+
+    const CLOUDINARY_CLOUD_NAME = process.env.VITE_CLOUDINARY_CLOUD_NAME;
+    const CLOUDINARY_API_KEY = process.env.VITE_CLOUDINARY_API_KEY;
+    const CLOUDINARY_API_SECRET = process.env.VITE_CLOUDINARY_API_SECRET;
+
+    if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_API_KEY || !CLOUDINARY_API_SECRET) {
+      console.warn('Cloudinary credentials not configured');
+      return res.status(500).json({ error: 'Cloudinary not configured' });
+    }
+
+    const timestamp = Math.floor(Date.now() / 1000);
+    
+    // Build signature for Cloudinary API (server-side only)
+    const signatureString = `public_id=${public_id}&timestamp=${timestamp}${CLOUDINARY_API_SECRET}`;
+    const crypto = require('crypto');
+    const signature = crypto.createHash('sha1').update(signatureString).digest('hex');
+
+    // Call Cloudinary API from server (secrets never leave backend)
+    const formData = new URLSearchParams();
+    formData.append('public_id', public_id);
+    formData.append('signature', signature);
+    formData.append('timestamp', timestamp.toString());
+    formData.append('api_key', CLOUDINARY_API_KEY);
+
+    const response = await fetch(
+      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/${resource_type}/destroy`,
+      {
+        method: 'POST',
+        body: formData,
+      }
+    );
+
+    if (!response.ok) {
+      console.error(`Cloudinary delete failed: ${response.statusText}`);
+      return res.status(response.status).json({ error: 'Cloudinary deletion failed' });
+    }
+
+    const result = await response.json();
+    return res.json({ success: true, result });
+  } catch (error) {
+    console.error('[Cloudinary Delete] Error:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 });
 
