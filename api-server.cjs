@@ -6,6 +6,15 @@ const { join, resolve } = require('path');
 const { existsSync } = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const bcrypt = require('bcryptjs');
+
+// Supabase client for server-side admin lookup (requires SUPABASE_URL and SUPABASE_SERVICE_KEY env vars)
+let createClient;
+try {
+  createClient = require('@supabase/supabase-js').createClient;
+} catch (e) {
+  createClient = null;
+}
 
 // Optional security middleware (use if installed)
 let helmet;
@@ -82,6 +91,16 @@ const upload = multer({
     files: 10 // Max 10 fichiers
   }
 });
+
+// Initialize Supabase client if available
+let supabase = null;
+if (createClient && process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_KEY) {
+  supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
+} else if (!createClient) {
+  console.warn('@supabase/supabase-js not installed — admin DB auth disabled');
+} else {
+  console.warn('SUPABASE_URL or SUPABASE_SERVICE_KEY not set — admin DB auth disabled');
+}
 
 // Route upload améliorée - ACCEPTE PLUSIEURS FICHIERS
 app.post('/api/upload', checkAdmin, upload.array('uploads', 10), async (req, res) => {
@@ -244,7 +263,24 @@ app.post('/api/admin/login', async (req, res) => {
   try {
     const { email, password } = req.body || {};
     if (!email || !password) return res.status(400).json({ error: 'email and password required' });
+    // If Supabase client is available, authenticate against the `admins` table
+    if (supabase) {
+      const { data, error } = await supabase.from('admins').select('id, email, password_hash, role, disabled').eq('email', email).limit(1).single();
+      if (error && error.code !== 'PGRST116') {
+        console.error('Supabase error during admin lookup', error);
+        return res.status(500).json({ error: 'internal' });
+      }
+      if (!data || data.disabled) return res.status(401).json({ error: 'Invalid credentials' });
+      const matches = await bcrypt.compare(String(password), String(data.password_hash));
+      if (!matches) return res.status(401).json({ error: 'Invalid credentials' });
 
+      const user = { id: data.id, email: data.email, role: data.role };
+      const token = signToken({ sub: user.id, email: user.email, role: user.role, iat: Date.now() });
+      res.cookie('admin_token', token, { httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production', maxAge: 24 * 60 * 60 * 1000 });
+      return res.json({ success: true, user });
+    }
+
+    // Fallback to env-based auth if Supabase not configured
     if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
       const user = { id: '1', email: ADMIN_EMAIL, name: 'Administrateur', role: 'admin' };
       const token = signToken({ sub: user.id, email: user.email, role: user.role, iat: Date.now() });
@@ -256,6 +292,37 @@ app.post('/api/admin/login', async (req, res) => {
   } catch (err) {
     console.error('Login error', err);
     return res.status(500).json({ error: 'Internal error' });
+  }
+});
+
+// Endpoint to update admin email/password (protected)
+app.post('/api/admin/update', checkAdmin, async (req, res) => {
+  try {
+    const { email, currentPassword, newPassword } = req.body || {};
+    if (!supabase) return res.status(500).json({ error: 'Supabase not configured' });
+    if (!currentPassword) return res.status(400).json({ error: 'currentPassword required' });
+
+    // Load admin record by id from token payload
+    const adminId = req.admin && req.admin.sub;
+    if (!adminId) return res.status(401).json({ error: 'Unauthorized' });
+
+    const { data } = await supabase.from('admins').select('id,email,password_hash').eq('id', adminId).limit(1).single();
+    if (!data) return res.status(404).json({ error: 'Admin not found' });
+
+    const ok = await bcrypt.compare(String(currentPassword), String(data.password_hash));
+    if (!ok) return res.status(403).json({ error: 'Current password incorrect' });
+
+    const updates = {};
+    if (email) updates.email = email;
+    if (newPassword) updates.password_hash = await bcrypt.hash(String(newPassword), 10);
+
+    if (Object.keys(updates).length === 0) return res.status(400).json({ error: 'Nothing to update' });
+
+    await supabase.from('admins').update(updates).eq('id', adminId);
+    return res.json({ success: true });
+  } catch (e) {
+    console.error('Admin update error', e);
+    return res.status(500).json({ error: 'Internal' });
   }
 });
 
