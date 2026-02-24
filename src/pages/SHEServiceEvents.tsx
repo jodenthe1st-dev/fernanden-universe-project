@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EventFeatures } from "@/components/she/EventFeatures";
+import { placeholderImages } from "@/components/ui/BrandedPlaceholder";
 
 // Données configurables pour l'administration future
 const eventPageConfig = {
@@ -26,7 +27,7 @@ const eventPageConfig = {
       description: "Séminaires, lancements produits, galas d'entreprise",
       features: ["Planning stratégique", "Coordination fournisseurs", "Gestion budget", "Animation sur mesure"],
       price: "À partir de 5 000€",
-      image: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=800&auto=format&fit=crop",
+      image: placeholderImages.product.she,
       capacity: "50-500 personnes"
     },
     {
@@ -35,7 +36,7 @@ const eventPageConfig = {
       description: "Mariages, anniversaires, fêtes d'anniversaire, baptêmes",
       features: ["Thème personnalisé", "Décoration complète", "Traiteur partenaire", "Photographie/Vidéo"],
       price: "À partir de 3 000€",
-      image: "https://images.unsplash.com/photo-1519225421980-715cb021e6cf?q=80&w=800&auto=format&fit=crop",
+      image: placeholderImages.blog.she,
       capacity: "20-200 personnes"
     },
     {
@@ -44,7 +45,7 @@ const eventPageConfig = {
       description: "Expositions, vernissages, concerts, festivals",
       features: ["Scénographie", "Éclairage professionnel", "Sonorisation", "Accueil VIP"],
       price: "À partir de 8 000€",
-      image: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=800&auto=format&fit=crop",
+      image: placeholderImages.collection.she,
       capacity: "100-2000 personnes"
     }
   ]
@@ -89,21 +90,21 @@ const testimonials = [
     project: "Mariage 150 personnes - Château de Versailles",
     rating: 5,
     text: "Un mariage de rêve ! SHE a géré chaque détail avec perfection. Le thème était magnifique et tous nos invités étaient éblouis.",
-    image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?q=80&w=100&auto=format&fit=crop"
+    image: placeholderImages.avatar.she
   },
   {
     name: "Marc Durand",
     project: "Lancement produit Tech - Paris",
     rating: 5,
     text: "Professionnalisme exceptionnel pour notre lancement. L'événement était parfaitement organisé et a généré une excellente couverture médiatique.",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=100&auto=format&fit=crop"
+    image: placeholderImages.avatar.she
   },
   {
     name: "Sophie Lemoine",
     project: "Gala annuel 300 personnes - Lyon",
     rating: 5,
     text: "SHE a transformé notre gala annuel en un événement mémorable. Créativité, organisation et réactivité au top !",
-    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=100&auto=format&fit=crop"
+    image: placeholderImages.avatar.she
   }
 ];
 

@@ -5,6 +5,7 @@ import { Calendar, Clock, User, ArrowRight, Newspaper, TrendingUp, Bell } from "
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { placeholderImages } from "@/components/ui/BrandedPlaceholder";
 
 const actualitesPosts = [
   {
@@ -16,7 +17,7 @@ const actualitesPosts = [
     readTime: "3 min",
     category: "DENSE",
     type: "nouvelle-collection",
-    image: "https://images.unsplash.com/photo-1558171813-4c088753af8f?q=80&w=600&auto=format&fit=crop",
+    image: placeholderImages.blog.dense,
     urgent: true,
     link: "/dense/collections/les-drapés"
   },
@@ -29,7 +30,7 @@ const actualitesPosts = [
     readTime: "2 min",
     category: "SHE",
     type: "ateliers",
-    image: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?q=80&w=600&auto=format&fit=crop",
+    image: placeholderImages.blog.she,
     urgent: false,
     link: "/she"
   },
@@ -42,7 +43,7 @@ const actualitesPosts = [
     readTime: "4 min",
     category: "CaFEE",
     type: "nouveaux-services",
-    image: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=600&auto=format&fit=crop",
+    image: placeholderImages.blog.cafee,
     urgent: true,
     link: "/cafee"
   },
@@ -55,7 +56,7 @@ const actualitesPosts = [
     readTime: "3 min",
     category: "DENSE",
     type: "evenement",
-    image: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=600&auto=format&fit=crop",
+    image: placeholderImages.product.dense,
     urgent: false,
     link: "/dense"
   },
@@ -68,7 +69,7 @@ const actualitesPosts = [
     readTime: "2 min",
     category: "CaFEE",
     type: "podcast",
-    image: "https://images.unsplash.com/photo-1591115765373-5207764f72e7?q=80&w=600&auto=format&fit=crop",
+    image: placeholderImages.avatar.cafee,
     urgent: false,
     link: "/podcasts"
   },
@@ -81,7 +82,7 @@ const actualitesPosts = [
     readTime: "3 min",
     category: "SHE",
     type: "ouverture",
-    image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=600&auto=format&fit=crop",
+    image: placeholderImages.collection.she,
     urgent: false,
     link: "/she"
   }

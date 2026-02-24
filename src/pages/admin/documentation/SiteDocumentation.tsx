@@ -149,7 +149,7 @@ GET /api/services?category=she
 
 ## Configuration de Production
 
-1. **Variables d\'environnement**
+1. **Variables d'environnement**
    \`\`\`bash
    VITE_SUPABASE_URL=your_supabase_url
    VITE_SUPABASE_ANON_KEY=your_supabase_key
@@ -199,12 +199,12 @@ netlify deploy --prod --dir=dist
 **Symptôme**: "Failed to connect to Supabase"
 
 **Solutions**:
-- Vérifiez les variables d\'environnement
-- Assurez-vous que l\'URL Supabase est correcte
+- Vérifiez les variables d'environnement
+- Assurez-vous que l'URL Supabase est correcte
 - Vérifiez les permissions RLS
 
 ### 2. Upload Cloudinary échoue
-**Symptôme**: Les images ne s\'uploadent pas
+**Symptôme**: Les images ne s'uploadent pas
 
 **Solutions**:
 - Vérifiez votre quota Cloudinary
@@ -212,7 +212,7 @@ netlify deploy --prod --dir=dist
 - Vérifiez la taille du fichier (< 10MB)
 
 ### 3. Performance lente
-**Symptôme**: L\'administration est lente
+**Symptôme**: L'administration est lente
 
 **Solutions**:
 - Optimisez les images avant upload
@@ -223,7 +223,7 @@ netlify deploy --prod --dir=dist
 
 ### Console Navigateur
 - F12 pour ouvrir les outils de développement
-- Vérifiez l\'onglet "Network" pour les erreurs API
+- Vérifiez l'onglet "Network" pour les erreurs API
 - Utilisez "Application" pour le stockage local
 
 ### Extensions VS Code Recommandées

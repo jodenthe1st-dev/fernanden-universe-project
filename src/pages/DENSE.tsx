@@ -423,7 +423,7 @@ const DENSEN = () => {
           <div className="absolute inset-0">
             {[...Array(20)].map((_, i) => (
               <motion.div
-                key={i}
+                key={`particle-${i}`}
                 className="absolute w-1 h-1 bg-densen-gold rounded-full"
                 style={{
                   left: `${Math.random() * 100}%`,
@@ -460,7 +460,7 @@ const DENSEN = () => {
                 <img 
                   src={logoDensen} 
                   alt="DENSEN by fernanden" 
-                  className="h-40 md:h-52 lg:h-64 object-contain drop-shadow-[0_0_40px_rgba(255,255,255,0.3)] relative z-10"
+                  className="h-40 md:h-52 lg:h-64 object-contain drop-shadow-lg shadow-black/30 relative z-10"
                 />
               </div>
             </motion.div>
@@ -732,7 +732,7 @@ const DENSEN = () => {
                   <div className="flex gap-3 justify-center mb-8">
                     {[...Array(quizQuestions.length)].map((_, i) => (
                       <motion.div
-                        key={i}
+                        key={`progress-dot-${i}`}
                         className={`h-3 rounded-full transition-all duration-700 ${
                           i <= currentQuestion 
                             ? 'bg-gradient-to-r from-densen-gold to-primary w-12' 

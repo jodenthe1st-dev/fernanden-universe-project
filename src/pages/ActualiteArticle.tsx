@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ContentRenderer } from "@/components/ui/ContentRenderer";
+import { placeholderImages } from "@/components/ui/BrandedPlaceholder";
 
 // Mock actualité data - in real app, this would come from API
 const actualitesData: Record<string, {
@@ -130,7 +131,7 @@ Nous espérons que vous serez nombreux à découvrir et à adopter ces création
     readTime: "3 min",
     category: "DENSE",
     type: "nouvelle-collection",
-    image: "https://images.unsplash.com/photo-1558171813-4c088753af8f?q=80&w=1200&auto=format&fit=crop",
+    image: placeholderImages.blog.dense,
     urgent: true,
     contactEmail: "contact@densen.fernanden.com",
     eventDate: "2024-03-15",
@@ -204,7 +205,7 @@ Ces ateliers sont l'occasion parfaite de transformer votre espace de vie tout en
     readTime: "2 min",
     category: "SHE",
     type: "ateliers",
-    image: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?q=80&w=1200&auto=format&fit=crop",
+    image: placeholderImages.blog.she,
     urgent: false,
     contactEmail: "ateliers@she.fernanden.com"
   },
@@ -288,7 +289,7 @@ L'orientation ne devrait pas être une source de stress, mais une opportunité d
     readTime: "4 min",
     category: "CaFEE",
     type: "nouveaux-services",
-    image: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=1200&auto=format&fit=crop",
+    image: placeholderImages.blog.cafee,
     urgent: true,
     contactEmail: "orientation@cafee.fernanden.com"
   }

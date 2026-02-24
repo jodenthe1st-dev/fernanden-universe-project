@@ -9,14 +9,18 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { 
   Save, 
-  Settings, 
+  Settings as SettingsIcon, 
   Globe, 
   Mail, 
   Phone,
   MapPin,
   Palette,
   Shield,
-  Database
+  Database,
+  User,
+  Bell,
+  Lock,
+  HelpCircle
 } from 'lucide-react';
 
 interface SiteSettings {
@@ -62,7 +66,16 @@ export default function AdminSettings() {
     social_linkedin: ''
   });
   const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<'general' | 'appearance' | 'seo' | 'social'>('general');
+  const [activeTab, setActiveTab] = useState<'general' | 'appearance' | 'seo' | 'social' | 'security'>('general');
+  const [securityForm, setSecurityForm] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+    newEmail: ''
+  });
+  const [securityLoading, setSecurityLoading] = useState(false);
+  const [securityMessage, setSecurityMessage] = useState('');
+  const [securityError, setSecurityError] = useState('');
 
   useEffect(() => {
     loadSettings();
@@ -123,11 +136,70 @@ export default function AdminSettings() {
     }
   };
 
+  const handleSecuritySubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSecurityError('');
+    setSecurityMessage('');
+
+    // Validation
+    if (!securityForm.currentPassword) {
+      setSecurityError('Le mot de passe actuel est requis');
+      return;
+    }
+    if (securityForm.newPassword && securityForm.newPassword.length < 8) {
+      setSecurityError('Le nouveau mot de passe doit contenir au moins 8 caractères');
+      return;
+    }
+    if (securityForm.newPassword && securityForm.newPassword !== securityForm.confirmPassword) {
+      setSecurityError('Les mots de passe ne correspondent pas');
+      return;
+    }
+    if (!securityForm.newPassword && !securityForm.newEmail) {
+      setSecurityError('Veuillez remplir au moins un champ à modifier');
+      return;
+    }
+
+    setSecurityLoading(true);
+    try {
+      const payload: any = { currentPassword: securityForm.currentPassword };
+      if (securityForm.newPassword) payload.newPassword = securityForm.newPassword;
+      if (securityForm.newEmail) payload.email = securityForm.newEmail;
+
+      const r = await fetch('/api/admin/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(payload)
+      });
+
+      if (!r.ok) {
+        const data = await r.json().catch(() => ({ error: 'Unknown error' }));
+        throw new Error(data.error || `HTTP ${r.status}`);
+      }
+
+      logger.info('Admin security update successful');
+      setSecurityMessage('Paramètres de sécurité mis à jour avec succès');
+      setSecurityForm({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+        newEmail: ''
+      });
+      setTimeout(() => setSecurityMessage(''), 3000);
+    } catch (error) {
+      logger.error('Admin security update failed:', error);
+      setSecurityError(error instanceof Error ? error.message : 'Erreur lors de la mise à jour');
+    } finally {
+      setSecurityLoading(false);
+    }
+  };
+
   const tabs = [
-    { id: 'general', label: 'Général', icon: Settings },
+    { id: 'general', label: 'Général', icon: SettingsIcon },
     { id: 'appearance', label: 'Apparence', icon: Palette },
     { id: 'seo', label: 'SEO', icon: Globe },
-    { id: 'social', label: 'Réseaux Sociaux', icon: Mail }
+    { id: 'social', label: 'Réseaux Sociaux', icon: Mail },
+    { id: 'security', label: 'Sécurité', icon: Shield }
   ];
 
   return (
@@ -161,7 +233,7 @@ export default function AdminSettings() {
             <Button
               key={tab.id}
               variant={activeTab === tab.id ? 'default' : 'outline'}
-              onClick={() => setActiveTab(tab.id as 'general' | 'appearance' | 'seo' | 'social')}
+              onClick={() => setActiveTab(tab.id as any)}
               className="flex items-center"
             >
               <Icon className="h-4 w-4 mr-2" />
@@ -454,6 +526,108 @@ export default function AdminSettings() {
                     placeholder="https://linkedin.com/in/votreprofil"
                   />
                 </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {activeTab === 'security' && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Lock className="h-5 w-5 mr-2 text-terracotta" />
+                  Sécurité & Authentification
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSecuritySubmit} className="space-y-6">
+                  {securityMessage && (
+                    <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 rounded-md">
+                      {securityMessage}
+                    </div>
+                  )}
+                  {securityError && (
+                    <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 rounded-md">
+                      {securityError}
+                    </div>
+                  )}
+
+                  <div>
+                    <Label htmlFor="currentPassword">Mot de passe actuel *</Label>
+                    <Input
+                      id="currentPassword"
+                      type="password"
+                      value={securityForm.currentPassword}
+                      onChange={(e) => setSecurityForm({ ...securityForm, currentPassword: e.target.value })}
+                      placeholder="Entrez votre mot de passe actuel"
+                      disabled={securityLoading}
+                      required
+                    />
+                    <p className="text-xs text-gray-500 mt-1">Requis pour confirmer toute modification de sécurité</p>
+                  </div>
+
+                  <div className="border-t pt-6">
+                    <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Modifier l'email</h3>
+                    <div>
+                      <Label htmlFor="newEmail">Nouvel email</Label>
+                      <Input
+                        id="newEmail"
+                        type="email"
+                        value={securityForm.newEmail}
+                        onChange={(e) => setSecurityForm({ ...securityForm, newEmail: e.target.value })}
+                        placeholder="nouveau@email.com"
+                        disabled={securityLoading}
+                      />
+                      <p className="text-xs text-gray-500 mt-1">Laissez vide si vous ne voulez pas changer l'email</p>
+                    </div>
+                  </div>
+
+                  <div className="border-t pt-6">
+                    <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Modifier le mot de passe</h3>
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="newPassword">Nouveau mot de passe</Label>
+                        <Input
+                          id="newPassword"
+                          type="password"
+                          value={securityForm.newPassword}
+                          onChange={(e) => setSecurityForm({ ...securityForm, newPassword: e.target.value })}
+                          placeholder="••••••••••"
+                          disabled={securityLoading}
+                        />
+                        <p className="text-xs text-gray-500 mt-1">Min. 8 caractères</p>
+                      </div>
+                      <div>
+                        <Label htmlFor="confirmPassword">Confirmer le mot de passe</Label>
+                        <Input
+                          id="confirmPassword"
+                          type="password"
+                          value={securityForm.confirmPassword}
+                          onChange={(e) => setSecurityForm({ ...securityForm, confirmPassword: e.target.value })}
+                          placeholder="••••••••••"
+                          disabled={securityLoading}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-4">
+                    <Button type="submit" disabled={securityLoading}>
+                      {securityLoading ? 'Mise à jour...' : 'Mettre à jour la sécurité'}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        setSecurityForm({ currentPassword: '', newPassword: '', confirmPassword: '', newEmail: '' });
+                        setSecurityError('');
+                        setSecurityMessage('');
+                      }}
+                      disabled={securityLoading}
+                    >
+                      Annuler
+                    </Button>
+                  </div>
+                </form>
               </CardContent>
             </Card>
           )}

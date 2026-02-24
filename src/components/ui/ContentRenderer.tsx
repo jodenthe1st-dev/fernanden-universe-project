@@ -1,43 +1,40 @@
 import React from 'react';
+import { marked } from 'marked';
+import DOMPurify from 'dompurify';
 
 interface ContentRendererProps {
   content: string;
   className?: string;
 }
 
+// Configure marked for safe rendering
+marked.setOptions({
+  breaks: true,
+  gfm: true,
+});
+
 export const ContentRenderer: React.FC<ContentRendererProps> = ({ content, className = "" }) => {
-  const processContent = (text: string) => {
+  const processContent = (text: string): string => {
     if (!text) return '';
     
-    // Échapper les caractères HTML dangereux avant le traitement
-    let processed = text
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#x27;');
-    
-    // Remplacer les sauts de ligne par des balises <br>
-    processed = processed.replace(/\n/g, '<br>');
-    
-    // Remplacer les titres markdown par des balises HTML appropriées
-    processed = processed.replace(/#{1,6}\s(.+)$/gm, '<h$1>$2</h$1>');
-    
-    // Remplacer le texte en gras (après échappement HTML)
-    processed = processed.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    
-    // Remplacer le texte en italique
-    processed = processed.replace(/\*(.*?)\*/g, '<em>$1</em>');
-    
-    // Remplacer les liens markdown
-    processed = processed.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
-    
-    return processed;
+    try {
+      // Parse markdown to HTML
+      const html = marked.parse(text);
+      // Sanitize HTML to prevent XSS attacks
+      return DOMPurify.sanitize(html, {
+        ALLOWED_TAGS: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'br', 'strong', 'em', 'a', 'ul', 'ol', 'li', 'blockquote', 'code', 'pre'],
+        ALLOWED_ATTR: ['href', 'target', 'rel', 'class'],
+        ALLOW_DATA_ATTR: false,
+      });
+    } catch (error) {
+      console.error('Error processing markdown content:', error);
+      return DOMPurify.sanitize(text);
+    }
   };
 
   return (
     <div 
-      className={className}
+      className={`prose prose-sm max-w-none ${className}`}
       dangerouslySetInnerHTML={{ __html: processContent(content) }}
     />
   );

@@ -145,9 +145,8 @@ export class NewsletterSubscriptionsService {
 
   // Créer un abonné
   static async create(subscription: NewsletterSubscriptionInsert): Promise<NewsletterSubscription> {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data, error } = await (supabaseRaw
-      .from('newsletter_subscribers') as any)
+      .from('newsletter_subscribers') as any)  // eslint-disable-line @typescript-eslint/no-explicit-any
       .insert(subscription)
       .select()
       .single()
@@ -158,9 +157,8 @@ export class NewsletterSubscriptionsService {
 
   // Mettre à jour un abonné
   static async update(id: string, updates: NewsletterSubscriptionUpdate): Promise<NewsletterSubscription> {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data, error } = await (supabaseRaw
-      .from('newsletter_subscribers') as any)
+      .from('newsletter_subscribers') as any)  // eslint-disable-line @typescript-eslint/no-explicit-any
       .update(updates)
       .eq('id', id)
       .select()

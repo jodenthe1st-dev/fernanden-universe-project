@@ -1,4 +1,5 @@
 import { FacebookPageInfo, FacebookPost } from "./FacebookTypes";
+import { placeholderImages } from "@/components/ui/BrandedPlaceholder";
 
 export const mockFacebookPageInfo: FacebookPageInfo = {
   name: "fernanden",
@@ -6,11 +7,11 @@ export const mockFacebookPageInfo: FacebookPageInfo = {
   followers_count: 12500,
   about: "Un design aux multiples facettes ! Depuis 2017 et labellisé par l'OAPI, fernanden incarne l'alliance parfaite entre tradition africaine et innovation contemporaine.",
   cover: {
-    source: "https://images.unsplash.com/photo-1558171813-4c088753af8f?q=80&w=1200&auto=format&fit=crop"
+    source: placeholderImages.hero.fernanden
   },
   picture: {
     data: {
-      url: "https://images.unsplash.com/photo-1558171813-4c088753af8f?q=80&w=200&auto=format&fit=crop"
+      url: placeholderImages.avatar.fernanden
     }
   }
 };
@@ -18,13 +19,13 @@ export const mockFacebookPageInfo: FacebookPageInfo = {
 export const mockFacebookPosts: FacebookPost[] = [
   {
     id: "1",
-    message: "🎨 Nouvelle collection DENSEN disponible ! Découvrez nos créations uniques qui célèbrent l'héritage africain avec une touche contemporaine. #DENSEN #Fashion #AfricanDesign",
+    message: "🎨 Nouvelle collection DENSE disponible ! Découvrez nos créations uniques qui célèbrent l'héritage africain avec une touche contemporaine. #DENSE #Fashion #AfricanDesign",
     created_time: "2024-01-30T10:00:00Z",
     likes_count: 245,
     comments_count: 32,
     shares_count: 18,
     permalink_url: "https://facebook.com/fernanden/posts/1",
-    full_picture: "https://images.unsplash.com/photo-1558171813-4c088753af8f?q=80&w=600&auto=format&fit=crop"
+    full_picture: placeholderImages.blog.dense
   },
   {
     id: "2",
@@ -43,6 +44,6 @@ export const mockFacebookPosts: FacebookPost[] = [
     comments_count: 19,
     shares_count: 12,
     permalink_url: "https://facebook.com/fernanden/posts/3",
-    full_picture: "https://images.unsplash.com/photo-1558171813-4c088753af8f?q=80&w=600&auto=format&fit=crop"
+    full_picture: placeholderImages.blog.she
   }
 ];

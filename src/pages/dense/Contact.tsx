@@ -8,6 +8,8 @@ import { MagneticButton } from "@/components/animations/MagneticButton";
 import logoDensen from "@/assets/logo-densen.png";
 
 const Contact = () => {
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -17,8 +19,6 @@ const Contact = () => {
     message: ''
   });
 
-  const [isSubmitted, setIsSubmitted] = useState(false);
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,
@@ -26,10 +26,31 @@ const Contact = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitted(true);
-    setTimeout(() => setIsSubmitted(false), 3000);
+    setIsSubmitting(true);
+
+    try {
+      const { ContactSubscriptionsService } = await import("@/integrations/supabase/services/contactSubscriptions");
+      await ContactSubscriptionsService.create({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone || null,
+        subject: `RDV Styliste DENSE - ${formData.date} à ${formData.time}`,
+        message: formData.message,
+        source: 'DENSE Appointment Form'
+      });
+
+      setIsSubmitted(true);
+      const { showSuccessToast } = await import("@/lib/toast");
+      showSuccessToast("Votre demande de rendez-vous a été envoyée avec succès !");
+    } catch (error: unknown) {
+      console.error('Error submitting DENSE contact form:', error);
+      const { showErrorToast } = await import("@/lib/toast");
+      showErrorToast(getErrorMessage(error));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const timeSlots = [
@@ -42,8 +63,8 @@ const Contact = () => {
       <section className="py-20 relative">
         {/* Background decoration */}
         <div className="absolute inset-0 bg-gradient-to-br from-densen-gold/5 via-transparent to-primary/3 pointer-events-none" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,theme(colors.densen-gold/8),transparent_50%)]" />
-        
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(var(--soft-gold)/0.08),transparent_50%)]" />
+
         <div className="container-main relative">
           {/* Header */}
           <motion.div
@@ -56,11 +77,11 @@ const Contact = () => {
               <span className="font-heading text-sm font-medium text-densen-gold">RDV Personnalisé</span>
               <Star size={16} className="text-primary animate-pulse delay-300" />
             </div>
-            
+
             <h1 className="heading-section text-foreground mb-6">
               Prendre <span className="bg-gradient-to-r from-densen-gold to-primary bg-clip-text text-transparent">Rendez-vous</span>
             </h1>
-            
+
             <p className="body-large text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               Un RDV personnalisé avec notre styliste pour découvrir la pièce qui vous ressemble et transformer votre style
             </p>
@@ -91,7 +112,7 @@ const Contact = () => {
                           placeholder="Votre nom"
                         />
                       </div>
-                      
+
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">
                           Email *
@@ -107,7 +128,7 @@ const Contact = () => {
                         />
                       </div>
                     </div>
-                    
+
                     <div>
                       <label className="block text-sm font-medium text-foreground mb-2">
                         Téléphone
@@ -121,7 +142,7 @@ const Contact = () => {
                         placeholder="+33 6 XX XX XX XX"
                       />
                     </div>
-                    
+
                     <div className="grid md:grid-cols-2 gap-6">
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">
@@ -137,7 +158,7 @@ const Contact = () => {
                           className="w-full px-4 py-3 rounded-xl border border-border/30 focus:border-densen-gold/50 focus:outline-none transition-colors bg-background/50 backdrop-blur-sm"
                         />
                       </div>
-                      
+
                       <div>
                         <label className="block text-sm font-medium text-foreground mb-2">
                           Heure souhaitée *
@@ -156,7 +177,7 @@ const Contact = () => {
                         </select>
                       </div>
                     </div>
-                    
+
                     <div>
                       <label className="block text-sm font-medium text-foreground mb-2">
                         Message (optionnel)
@@ -170,14 +191,26 @@ const Contact = () => {
                         placeholder="Décrivez vos besoins, votre style, ou toute question..."
                       />
                     </div>
-                    
+
                     <MagneticButton>
-                      <Button 
-                        type="submit" 
-                        size="lg" 
+                      <Button
+                        type="submit"
+                        size="lg"
+                        disabled={isSubmitting}
                         className="w-full rounded-xl bg-gradient-to-r from-densen-gold to-primary hover:from-densen-gold/90 hover:to-primary/90 text-black shadow-xl hover:shadow-2xl transition-all duration-300 px-8 py-4 text-lg"
                       >
-                        Confirmer le rendez-vous
+                        {isSubmitting ? (
+                          <div className="flex items-center gap-2">
+                            <motion.div
+                              animate={{ rotate: 360 }}
+                              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                              className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full"
+                            />
+                            Envoi en cours...
+                          </div>
+                        ) : (
+                          "Confirmer le rendez-vous"
+                        )}
                       </Button>
                     </MagneticButton>
                   </form>
@@ -190,15 +223,15 @@ const Contact = () => {
                     <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
                       <Check size={40} className="text-green-500" />
                     </div>
-                    
+
                     <h3 className="font-heading font-bold text-2xl text-foreground mb-4">
                       Rendez-vous confirmé !
                     </h3>
-                    
+
                     <p className="text-muted-foreground mb-8">
                       Nous vous enverrons une confirmation par email dans les prochaines minutes.
                     </p>
-                    
+
                     <MagneticButton>
                       <Button variant="outline" className="rounded-xl border-densen-gold text-densen-gold hover:bg-densen-gold hover:text-black transition-all duration-300">
                         <Link to="/dense" className="flex items-center gap-2">
@@ -224,7 +257,7 @@ const Contact = () => {
                 <h3 className="font-heading font-bold text-2xl text-densen-gold mb-6">
                   Pourquoi prendre RDV avec nous ?
                 </h3>
-                
+
                 <div className="space-y-4">
                   <div className="flex items-start gap-4">
                     <div className="w-10 h-10 bg-densen-gold/20 rounded-full flex items-center justify-center flex-shrink-0">
@@ -235,7 +268,7 @@ const Contact = () => {
                       <p className="text-white/70 text-sm">Consultation personnalisée sans engagement</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-4">
                     <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0">
                       <Shield size={20} className="text-primary" />
@@ -245,7 +278,7 @@ const Contact = () => {
                       <p className="text-white/70 text-sm">Styliste professionnel avec 10+ ans d'expérience</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-4">
                     <div className="w-10 h-10 bg-secondary/20 rounded-full flex items-center justify-center flex-shrink-0">
                       <Star size={20} className="text-secondary" />
@@ -263,7 +296,7 @@ const Contact = () => {
                 <h3 className="font-heading font-bold text-2xl text-foreground mb-6">
                   Informations de contact
                 </h3>
-                
+
                 <div className="space-y-4">
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 bg-densen-gold/20 rounded-full flex items-center justify-center">
@@ -274,7 +307,7 @@ const Contact = () => {
                       <p className="text-muted-foreground">+229 01 97 51 26 36</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
                       <Mail size={20} className="text-primary" />
@@ -284,7 +317,7 @@ const Contact = () => {
                       <p className="text-muted-foreground">fernandenentreprises@gmail.com</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 bg-secondary/20 rounded-full flex items-center justify-center">
                       <MapPin size={20} className="text-secondary" />
@@ -299,7 +332,7 @@ const Contact = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="mt-6 pt-6 border-t border-border/20">
                   <div className="flex items-center justify-between text-sm text-muted-foreground">
                     <span>Disponible 7j/7</span>
@@ -326,3 +359,6 @@ const Contact = () => {
 };
 
 export default Contact;
+  const getErrorMessage = (error: unknown): string => {
+    return error instanceof Error ? error.message : "Une erreur est survenue lors de l'envoi.";
+  };

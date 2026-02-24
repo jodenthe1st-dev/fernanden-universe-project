@@ -1,4 +1,4 @@
-// src/pages/admin/newsletter/AdminNewsletterList.tsx
+﻿// src/pages/admin/newsletter/AdminNewsletterList.tsx
 import React, { useState, useEffect } from 'react';
 import logger from '@/lib/logger';
 import { Button } from '@/components/ui/button';

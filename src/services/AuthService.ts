@@ -1,8 +1,7 @@
-// src/services/AuthService.ts
+﻿// src/services/AuthService.ts
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { supabase } from '@/integrations/supabase/client';
 import logger from '@/lib/logger';
-import { User } from './DatabaseService';
 
 export interface LoginCredentials {
   email: string;
@@ -15,119 +14,125 @@ export interface AuthUser {
   name?: string;
   role: string;
   avatar_url?: string;
+  full_name?: string;
 }
 
 export class AuthService {
   private static currentUser: AuthUser | null = null;
 
-  // Connexion
+  // Connexion via Supabase Auth
   static async login(credentials: LoginCredentials): Promise<AuthUser> {
     try {
-      // 1. Connexion Supabase
+      // 1. Authentification Supabase
       const { data, error } = await supabase.auth.signInWithPassword({
         email: credentials.email,
         password: credentials.password,
       });
 
       if (error) throw error;
+      if (!data.user) throw new Error('Utilisateur non trouvé');
 
-      // 2. Récupérer les infos utilisateur depuis notre table
-      const { data: userData, error: userError } = await supabase
-        .from('users')
+      // 2. Récupérer le profil utilisateur (rôle)
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
         .select('*')
-        .eq('email', credentials.email)
+        .eq('id', data.user.id)
         .single();
 
-      if (userError && userError.code !== 'PGRST116') {
-        throw userError;
+      if (profileError && profileError.code !== 'PGRST116') {
+        logger.error('Error fetching profile:', profileError);
+        // Fallback: si pas de profil, on assume 'user' basic
       }
 
-      // 3. Créer l'utilisateur s'il n'existe pas
-      if (!userData) {
-        const newUser = await this.createUserFromAuth(data.user);
-        this.currentUser = newUser;
-        return newUser;
-      }
-
-      // 4. Retourner l'utilisateur existant
+      // 3. Construire l'objet utilisateur unifié
       this.currentUser = {
-        id: (userData as any).id,
-        email: (userData as any).email,
-        name: (userData as any).name,
-        role: (userData as any).role,
-        avatar_url: (userData as any).avatar_url,
+        id: data.user.id,
+        email: data.user.email!,
+        role: profile?.role || 'user',
+        name: profile?.full_name || data.user.user_metadata?.full_name,
+        avatar_url: profile?.avatar_url || data.user.user_metadata?.avatar_url,
+        full_name: profile?.full_name
       };
 
       return this.currentUser;
     } catch (error) {
       logger.error('Login error:', error);
-      throw new Error('Erreur lors de la connexion');
+      throw error; // Propager l'erreur pour l'UI
     }
   }
 
-  // Inscription
+  // Inscription via Supabase Auth
   static async register(credentials: LoginCredentials & { name?: string }): Promise<AuthUser> {
     try {
-      // 1. Création utilisateur Supabase
       const { data, error } = await supabase.auth.signUp({
         email: credentials.email,
         password: credentials.password,
+        options: {
+          data: {
+            full_name: credentials.name,
+          }
+        }
       });
 
       if (error) throw error;
+      if (!data.user) throw new Error('Erreur lors de la création');
 
-      // 2. Création utilisateur dans notre table
-      const newUser = await this.createUserFromAuth(data.user, credentials.name);
-      this.currentUser = newUser;
-      return newUser;
+      // Le trigger SQL devrait créer le profil automatiquement.
+      // On retourne l'utilisateur immédiatement.
+
+      this.currentUser = {
+        id: data.user.id,
+        email: data.user.email!,
+        role: 'user', // Défaut
+        name: credentials.name,
+        full_name: credentials.name
+      };
+
+      return this.currentUser;
     } catch (error) {
       logger.error('Register error:', error);
-      throw new Error('Erreur lors de l\'inscription');
+      throw error;
     }
   }
 
   // Déconnexion
   static async logout(): Promise<void> {
     try {
-      await supabase.auth.signOut();
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
       this.currentUser = null;
     } catch (error) {
       logger.error('Logout error:', error);
-      throw new Error('Erreur lors de la déconnexion');
+      throw error;
     }
   }
 
-  // Vérifier si connecté
+  // Récupérer l'utilisateur courant (et rafraîchir le profil)
   static async getCurrentUser(): Promise<AuthUser | null> {
     try {
-      if (this.currentUser) {
-        return this.currentUser;
-      }
+      // 1. Vérifier la session active
+      const { data: { session }, error } = await supabase.auth.getSession();
 
-      // 1. Vérifier session Supabase
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
+      if (error || !session?.user) {
+        this.currentUser = null;
         return null;
       }
 
-      // 2. Récupérer infos utilisateur
-      const { data: userData } = await supabase
-        .from('users')
+      // 2. Récupérer le profil à jour
+      const { data: profile } = await supabase
+        .from('profiles')
         .select('*')
-        .eq('email', session.user.email)
+        .eq('id', session.user.id)
         .single();
 
-      if (!userData) {
-        return null;
-      }
-
+      // 3. Mettre à jour l'état local
       this.currentUser = {
-        id: (userData as any).id,
-        email: (userData as any).email,
-        name: (userData as any).name,
-        role: (userData as any).role,
-        avatar_url: (userData as any).avatar_url,
+        id: session.user.id,
+        email: session.user.email!,
+        role: profile?.role || 'user',
+        name: profile?.full_name || session.user.user_metadata?.full_name,
+        avatar_url: profile?.avatar_url || session.user.user_metadata?.avatar_url,
+        full_name: profile?.full_name
       };
 
       return this.currentUser;
@@ -140,7 +145,8 @@ export class AuthService {
   // Écouteur de changement d'état
   static onAuthStateChange(callback: (user: AuthUser | null) => void) {
     return supabase.auth.onAuthStateChange(async (event, session) => {
-      if (session) {
+      if (session?.user) {
+        // On re-fetch le user pour avoir le rôle à jour
         const user = await this.getCurrentUser();
         callback(user);
       } else {
@@ -150,60 +156,42 @@ export class AuthService {
     });
   }
 
-  // Vérifier si admin
+  // Vérifier si admin (Helpers)
   static isAdmin(user: AuthUser | null): boolean {
     return user?.role === 'admin';
   }
 
-  // Créer utilisateur depuis auth Supabase
-  private static async createUserFromAuth(authUser: { email?: string | null; id?: string }, name?: string): Promise<AuthUser> {
-    const { data, error } = await (supabase
-      .from('users') as any)
-      .insert({
-        email: authUser.email!,
-        name: name || authUser.email?.split('@')[0],
-        role: 'user',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      })
-      .select()
-      .single();
-
-    if (error) throw error;
-
-    const newUser = {
-      id: (data as any).id,
-      email: (data as any).email,
-      name: (data as any).name,
-      role: (data as any).role,
-      avatar_url: (data as any).avatar_url,
-    };
-
-    this.currentUser = newUser;
-    return newUser;
-  }
-
-  // Mettre à jour le profil
+  // Mettre à jour le profil 
   static async updateProfile(updates: Partial<AuthUser>): Promise<AuthUser> {
     try {
-      if (!this.currentUser) {
-        throw new Error('Utilisateur non connecté');
-      }
+      const user = await this.getCurrentUser();
+      if (!user) throw new Error('Non connecté');
 
-      const { data, error } = await (supabase
-        .from('users') as any)
-        .update({ ...updates, updated_at: new Date().toISOString() })
-        .eq('id', this.currentUser.id)
+      const { data, error } = await supabase
+        .from('profiles')
+        .update({
+          full_name: updates.name || updates.full_name,
+          avatar_url: updates.avatar_url,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', user.id)
         .select()
         .single();
 
       if (error) throw error;
 
-      this.currentUser = { ...this.currentUser, ...(data as any) };
+      // Update local state
+      this.currentUser = {
+        ...user,
+        name: data.full_name,
+        full_name: data.full_name,
+        avatar_url: data.avatar_url
+      };
+
       return this.currentUser;
     } catch (error) {
       logger.error('Update profile error:', error);
-      throw new Error('Erreur lors de la mise à jour du profil');
+      throw error;
     }
   }
 }

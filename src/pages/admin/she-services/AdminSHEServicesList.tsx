@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { DatabaseService, Service } from '@/services/DatabaseService';
+import { ConfirmDeleteDialog } from '@/components/admin/ConfirmDeleteDialog';
 import { 
   Plus, 
   Search, 
@@ -21,6 +22,8 @@ export default function AdminSHEServicesList() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
+  const [deleteServiceId, setDeleteServiceId] = useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -44,17 +47,19 @@ export default function AdminSHEServicesList() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer ce service ?')) {
-      return;
-    }
+  const handleDelete = (id: string) => {
+    setDeleteServiceId(id);
+    setShowDeleteConfirm(true);
+  };
 
+  const handleDeleteConfirmed = async () => {
+    if (!deleteServiceId) return;
     try {
-      await DatabaseService.deleteService(id);
+      await DatabaseService.deleteService(deleteServiceId);
       await loadServices();
     } catch (error) {
       logger.error('Error deleting service:', error);
-      alert('Erreur lors de la suppression du service');
+      throw error;
     }
   };
 
@@ -228,6 +233,16 @@ export default function AdminSHEServicesList() {
           ))}
         </div>
       )}
+
+      <ConfirmDeleteDialog
+        open={showDeleteConfirm}
+        onOpenChange={setShowDeleteConfirm}
+        title="Êtes-vous sûr ?"
+        description="Supprimer ce service ? Cette action est irréversible."
+        confirmText="Supprimer le service"
+        onConfirm={handleDeleteConfirmed}
+        isLoading={loading}
+      />
     </div>
   );
 }

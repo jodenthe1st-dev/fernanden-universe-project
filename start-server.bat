@@ -9,7 +9,7 @@ echo.
 
 :loop
 echo [%date% %time%] Serveur en cours d'execution...
-node api-server.js
+node start-server.cjs
 
 echo.
 echo [%date% %time%] Serveur arrete. Redemarrage dans 5 secondes...

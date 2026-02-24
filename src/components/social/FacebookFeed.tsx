@@ -6,6 +6,7 @@ import { FacebookPostCard } from "./FacebookPostCard";
 import { Users, Facebook, TrendingUp, Heart, MessageCircle, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { placeholderImages } from "@/components/ui/BrandedPlaceholder";
 
 export const FacebookPageHeader = ({ pageInfo }: { pageInfo: FacebookPageInfo }) => {
   return (

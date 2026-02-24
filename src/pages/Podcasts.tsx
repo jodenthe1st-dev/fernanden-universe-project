@@ -1,7 +1,7 @@
 import { Layout } from "@/components/layout/Layout";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Play, Clock, MapPin, Headphones, Pause, Volume2 } from "lucide-react";
+import { Play, Pause, Volume2, Download, Share2, Clock, Calendar, User } from 'lucide-react';
 import { useState, useEffect } from "react";
 import logger from '@/lib/logger';
 import { AnimatedLetters } from "@/components/animations/AnimatedLetters";

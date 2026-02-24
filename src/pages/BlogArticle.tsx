@@ -1,4 +1,5 @@
 import { Layout } from "@/components/layout/Layout";
+import { ContentRenderer } from "@/components/ui/ContentRenderer";
 import { motion } from "framer-motion";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { Calendar, Clock, User, ArrowLeft, ArrowRight, Share2, Heart, Bookmark, MessageCircle } from "lucide-react";
@@ -320,6 +321,10 @@ const BlogArticle = () => {
           src={article.image}
           alt={article.title}
           className="w-full h-full object-cover"
+          loading="eager"
+          fetchPriority="high"
+          width={1200}
+          height={800}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 container-main pb-8">
@@ -364,9 +369,9 @@ const BlogArticle = () => {
                 transition={{ delay: 0.2 }}
                 className="prose prose-lg max-w-none"
               >
-                <div 
+                <ContentRenderer 
+                  content={article.content}
                   className="text-foreground leading-relaxed"
-                  dangerouslySetInnerHTML={{ __html: article.content.replace(/\n/g, '<br>').replace(/#{1,6}\s/g, '').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>') }}
                 />
               </motion.div>
 
@@ -507,6 +512,9 @@ const BlogArticle = () => {
                       src={relatedArticle.image}
                       alt={relatedArticle.title}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      loading="lazy"
+                      width={400}
+                      height={250}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                     <div className="absolute top-4 left-4">

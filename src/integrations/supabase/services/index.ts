@@ -4,7 +4,7 @@ export { RealizationsService } from './realizations'
 export { ProductsService } from './products'
 export { ServicesService } from './services'
 export { MediaService } from './media'
-export { contactService, newsletterService } from './contact'
+// `contact.ts` was unused and removed from the public surface; use typed services instead.
 
 // Nouveaux services
 export { TestimonialsService } from './testimonials'
@@ -24,7 +24,6 @@ export type { Realization, RealizationInsert, RealizationUpdate } from './realiz
 export type { Product, ProductInsert, ProductUpdate } from './products'
 export type { Service, ServiceInsert, ServiceUpdate } from './services'
 export type { MediaFile, MediaInsert, MediaUpdate } from './media'
-export type { ContactSubmission, NewsletterSubscriber } from './contact'
 
 // Types exportés - Nouveaux services
 export type { Testimonial, TestimonialInsert, TestimonialUpdate } from './testimonials'
@@ -36,4 +35,4 @@ export type { SiteSetting, SiteSettingInsert, SiteSettingUpdate } from './siteSe
 export type { SiteText, SiteTextInsert, SiteTextUpdate } from './siteTexts'
 export type { UniversePage, UniversePageInsert, UniversePageUpdate } from './universePages'
 export type { ContactSubscription, ContactSubscriptionInsert, ContactSubscriptionUpdate } from './contactSubscriptions'
-export type { NewsletterSubscription, NewsletterSubscriptionInsert, NewsletterSubscriptionUpdate } from './newsletterSubscriptions'
+export type { NewsletterSubscriber, NewsletterSubscriberInsert } from './newsletterSubscriptions'

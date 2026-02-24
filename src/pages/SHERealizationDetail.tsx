@@ -377,7 +377,7 @@ const SHERealizationDetail = () => {
               </h2>
               <div className="space-y-4">
                 {realization.challenges.map((challenge, index) => (
-                  <Card key={index} className="p-4 border-red-200">
+                  <Card key={`challenge-${index}-${challenge.slice(0, 10)}`} className="p-4 border-red-200">
                     <p className="text-muted-foreground">{challenge}</p>
                   </Card>
                 ))}
@@ -395,7 +395,7 @@ const SHERealizationDetail = () => {
               </h2>
               <div className="space-y-4">
                 {realization.solutions.map((solution, index) => (
-                  <Card key={index} className="p-4 border-green-200">
+                  <Card key={`solution-${index}-${solution.slice(0, 10)}`} className="p-4 border-green-200">
                     <p className="text-muted-foreground">{solution}</p>
                   </Card>
                 ))}

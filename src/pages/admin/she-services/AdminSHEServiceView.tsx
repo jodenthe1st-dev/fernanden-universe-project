@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DatabaseService, Service } from '@/services/DatabaseService';
 import { CloudinaryService } from '@/services/CloudinaryService';
+import { ConfirmDeleteDialog } from '@/components/admin/ConfirmDeleteDialog';
 import { 
   ArrowLeft, 
   Save, 
@@ -26,6 +27,7 @@ export default function AdminSHEServiceView() {
   const [uploading, setUploading] = useState(false);
   const [service, setService] = useState<Service | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
     const loadService = async () => {
@@ -122,19 +124,18 @@ export default function AdminSHEServiceView() {
     }
   };
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
+    setShowDeleteConfirm(true);
+  };
+
+  const handleDeleteConfirmed = async () => {
     if (!service || !id) return;
-
-    if (!confirm('Êtes-vous sûr de vouloir supprimer ce service ? Cette action est irréversible.')) {
-      return;
-    }
-
     try {
       await DatabaseService.deleteService(id);
       navigate('/admin/she-services');
     } catch (error) {
       logger.error('Error deleting service:', error);
-      alert('Erreur lors de la suppression du service');
+      throw error;
     }
   };
 
@@ -354,6 +355,16 @@ export default function AdminSHEServiceView() {
           </Card>
         </div>
       </div>
+
+      <ConfirmDeleteDialog
+        open={showDeleteConfirm}
+        onOpenChange={setShowDeleteConfirm}
+        title="Êtes-vous sûr ?"
+        description={`Supprimer le service "${service?.title}" ? Cette action est irréversible.`}
+        confirmText="Supprimer le service"
+        onConfirm={handleDeleteConfirmed}
+        isLoading={loading}
+      />
     </div>
   );
 }

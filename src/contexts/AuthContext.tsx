@@ -1,12 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import logger from '@/lib/logger';
-
-interface AuthUser {
-  id: string;
-  email: string;
-  name: string;
-  role: string;
-}
+import AuthService, { AuthUser } from '@/services/AuthService';
 
 interface AuthContextType {
   user: AuthUser | null;
@@ -17,7 +11,6 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -36,50 +29,54 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Try to restore session from server (/api/admin/me)
-    (async () => {
+    // Initial load
+    const initAuth = async () => {
       try {
-        const r = await fetch('/api/admin/me', { credentials: 'include' });
-        if (r.ok) {
-          const body = await r.json();
-          setUser(body.user || null);
-        }
-      } catch (e) {
-        // ignore
+        const currentUser = await AuthService.getCurrentUser();
+        setUser(currentUser);
+      } catch (error) {
+        logger.error('Error initializing auth:', error);
       } finally {
         setIsLoading(false);
       }
-    })();
+    };
+
+    initAuth();
+
+    // Subscribe to auth changes
+    const { data: { subscription } } = AuthService.onAuthStateChange((newUser) => {
+      setUser(newUser);
+      setIsLoading(false); // Ensure loading is cleared on change
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
     try {
-      const r = await fetch('/api/admin/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ email, password })
-      });
-      if (!r.ok) return false;
-      const body = await r.json();
-      setUser(body.user || null);
+      await AuthService.login({ email, password });
+      // State will be updated by onAuthStateChange subscription
       return true;
     } catch (error) {
       logger.error('Login error:', error);
+      setIsLoading(false); // Reset loading if error strictly (otherwise subscription might do it)
       return false;
-    } finally {
-      setIsLoading(false);
     }
   };
 
-  const logout = () => {
-    (async () => {
-      try {
-        await fetch('/api/admin/logout', { method: 'POST', credentials: 'include' });
-      } catch (e) {}
-    })();
-    setUser(null);
+  const logout = async () => {
+    setIsLoading(true);
+    try {
+      await AuthService.logout();
+      // State updated by subscription
+    } catch (error) {
+      logger.error('Logout error:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const value: AuthContextType = {

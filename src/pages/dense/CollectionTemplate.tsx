@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, Star, Heart, ShoppingBag, Check, Shield, ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import { MagneticButton } from "@/components/animations/MagneticButton";
+import { placeholderImages } from "@/components/ui/BrandedPlaceholder";
 
 // Stockage partagé du panier
 const getSharedCart = (): number[] => {
@@ -93,7 +94,7 @@ const DenseCollectionTemplate: React.FC<CollectionTemplateProps> = ({
       id: 2,
       name: `Classique ${collectionName}`,
       price: "89€",
-      image: "https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=600&auto=format&fit=crop",
+      image: placeholderImages.product.dense,
       description: "Élégance intemporelle",
       badge: "Tendance"
     },
@@ -101,7 +102,7 @@ const DenseCollectionTemplate: React.FC<CollectionTemplateProps> = ({
       id: 3,
       name: `Premium ${collectionName}`,
       price: "189€",
-      image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=600&auto=format&fit=crop",
+      image: placeholderImages.product.dense,
       description: "Luxe et sophistication",
       badge: "Exclusive"
     },
@@ -109,7 +110,7 @@ const DenseCollectionTemplate: React.FC<CollectionTemplateProps> = ({
       id: 4,
       name: `Essentiel ${collectionName}`,
       price: "69€",
-      image: "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?q=80&w=600&auto=format&fit=crop",
+      image: placeholderImages.product.dense,
       description: "Le quotidien chic",
       badge: "Basique"
     }
@@ -121,13 +122,13 @@ const DenseCollectionTemplate: React.FC<CollectionTemplateProps> = ({
       name: "Sophie L.",
       text: "Une collection exceptionnelle qui transforme vraiment le style !",
       rating: 5,
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=150&auto=format&fit=crop"
+      image: placeholderImages.avatar.dense
     },
     {
       name: "Marie K.",
       text: "La qualité et le design sont absolument parfaits. Je recommande !",
       rating: 5,
-      image: "https://images.unsplash.com/photo-1494790108755-2616b332c1ca?q=80&w=150&auto=format&fit=crop"
+      image: placeholderImages.avatar.dense
     }
   ];
 

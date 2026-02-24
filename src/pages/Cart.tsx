@@ -6,6 +6,7 @@ import { ArrowLeft, ShoppingBag, Plus, Minus, Trash2, Heart, Star, Shield, Clock
 import { useState, useEffect } from "react";
 import { MagneticButton } from "@/components/animations/MagneticButton";
 import logoDensen from "@/assets/logo-densen.png";
+import { placeholderImages } from "@/components/ui/BrandedPlaceholder";
 
 // Stockage partagé du panier (compatible avec les autres pages)
 const getSharedCart = (): { collectionId: number; quantity: number }[] => {
@@ -42,7 +43,7 @@ const collections = [
     name: "Les Drapés",
     subtitle: "Sans Couture",
     price: 89,
-    image: "https://images.unsplash.com/photo-1558171813-4c088753af8f?q=80&w=600&auto=format&fit=crop",
+    image: placeholderImages.product.dense,
     icon: "🌊"
   },
   {
@@ -50,7 +51,7 @@ const collections = [
     name: "Les Passe-Partout",
     subtitle: "Multi-Looks",
     price: 79,
-    image: "https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=600&auto=format&fit=crop",
+    image: placeholderImages.blog.dense,
     icon: "🔄"
   },
   {
@@ -58,7 +59,7 @@ const collections = [
     name: "Les Modulables",
     subtitle: "2, 3, 4... en 1",
     price: 99,
-    image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=600&auto=format&fit=crop",
+    image: placeholderImages.hero.dense,
     icon: "🧩"
   },
   {
@@ -66,7 +67,7 @@ const collections = [
     name: "Les Escamotables",
     subtitle: "Démontables",
     price: 119,
-    image: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=600&auto=format&fit=crop",
+    image: placeholderImages.collection.dense,
     icon: "✨"
   },
   {
@@ -74,7 +75,7 @@ const collections = [
     name: "Les Ajustables",
     subtitle: "Unisexes & Unitailles",
     price: 69,
-    image: "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?q=80&w=600&auto=format&fit=crop",
+    image: placeholderImages.avatar.dense,
     icon: "🤝"
   },
   {
@@ -82,7 +83,7 @@ const collections = [
     name: "Les Panachés",
     subtitle: "Recomposés",
     price: 89,
-    image: "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=600&auto=format&fit=crop",
+    image: placeholderImages.product.dense,
     icon: "🎨"
   },
   {
@@ -90,7 +91,7 @@ const collections = [
     name: "Les Accessoires",
     subtitle: "Compléments Parfaits",
     price: 29,
-    image: "https://images.unsplash.com/photo-1620799140408-edc698cb5d6e?q=80&w=600&auto=format&fit=crop",
+    image: placeholderImages.blog.dense,
     icon: "💎"
   }
 ];

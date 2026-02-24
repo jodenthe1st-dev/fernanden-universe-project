@@ -8,6 +8,7 @@ import { GradientBlob } from "@/components/animations/GradientBlob";
 import { MagneticButton } from "@/components/animations/MagneticButton";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { placeholderImages } from "@/components/ui/BrandedPlaceholder";
 
 // Ligne éditoriale - Piliers de contenu
 const editorialPillars = [
@@ -256,7 +257,7 @@ const About = () => {
               {/* Premium image with overlay */}
               <div className="relative group">
                 <img
-                  src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2670&auto=format&fit=crop"
+                  src={placeholderImages.hero.fernanden}
                   alt="Design studio"
                   className="rounded-3xl shadow-2xl w-full object-cover aspect-square group-hover:scale-105 transition-transform duration-700"
                 />
@@ -296,10 +297,11 @@ const About = () => {
       {/* Piliers Éditoriaux - Ultra Premium */}
       <section className="py-24 relative">
         {/* Sophisticated background */}
-        <div className="absolute inset-0">
+          <div className="absolute inset-0">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/3 via-transparent to-secondary/3" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,theme(colors.primary/5),transparent_50%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,theme(colors.secondary/5),transparent_50%)]" />
+          {/* Tailwind: use CSS var colors with explicit alpha (theme(colors.primary/5) is invalid). */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,hsl(var(--primary)/0.05),transparent_50%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,hsl(var(--secondary)/0.05),transparent_50%)]" />
         </div>
         
         <div className="container-main relative z-10">
@@ -495,7 +497,7 @@ const About = () => {
         {/* Sophisticated background */}
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/3 via-transparent to-secondary/3" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,theme(colors.densen-gold/5),transparent_70%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(var(--soft-gold)/0.05),transparent_70%)]" />
         </div>
         
         <div className="container-main relative z-10">

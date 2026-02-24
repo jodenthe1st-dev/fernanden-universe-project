@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ProtectedRoute } from "./components/admin/ProtectedRoute";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -119,88 +119,89 @@ function App() {
             <BrowserRouter>
               <ScrollToTop />
               <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/she" element={<SHE />} />
-            <Route path="/she/services/interior-design" element={<SHEServiceInteriorDesign />} />
-            <Route path="/she/services/events" element={<SHEServiceEvents />} />
-            <Route path="/she/services/decoration" element={<SHEServiceDecoration />} />
-            <Route path="/she/realizations/:id" element={<SHERealizationDetail />} />
-            <Route path="/dense" element={<DENSE />} />
-            <Route path="/dense/contact" element={<DenseContact />} />
-            <Route path="/manifeste" element={<Manifeste />} />
-            <Route path="/cart" element={<Cart />} />
-            
-            {/* DENSE Collection Routes */}
-            <Route path="/dense/collections/les-drapés" element={<DenseCollectionLesDrapes />} />
-            <Route path="/dense/collections/les-passe-partout" element={<DenseCollectionLesPassePartout />} />
-            <Route path="/dense/collections/les-modulables" element={<DenseCollectionLesModulables />} />
-            <Route path="/dense/collections/les-escamotables" element={<DenseCollectionLesEscamotables />} />
-            <Route path="/dense/collections/les-ajustables" element={<DenseCollectionLesAjustables />} />
-            <Route path="/dense/collections/les-panachés" element={<DenseCollectionLesPanaches />} />
-            <Route path="/dense/collections/les-accessoires" element={<DenseCollectionLesAccessoires />} />
-            
-            <Route path="/cafee" element={<CaFEE />} />
-            <Route path="/portfolio" element={<Portfolio />} />
-            <Route path="/portfolio/:id" element={<PortfolioDetail />} />
-            <Route path="/podcasts" element={<Podcasts />} />
-            <Route path="/social" element={<Social />} />
-            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-            <Route path="/legal-mentions" element={<LegalMentions />} />
-            
-            {/* Blog Routes */}
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/she" element={<BlogSHE />} />
-            <Route path="/blog/densen" element={<BlogDENSE />} />
-            <Route path="/blog/cafee" element={<BlogCaFEE />} />
-            <Route path="/blog/:id" element={<BlogArticle />} />
-            
-            {/* Actualites Routes */}
-            <Route path="/actualites" element={<Actualites />} />
-            <Route path="/actualites/:id" element={<ActualiteArticle />} />
-            
-            {/* Admin Login Route */}
-            <Route path="/admin/login" element={<AdminLogin />} />
-            
-            {/* Admin Protected Routes */}
-            <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
-              <Route index element={<AdminDashboard />} />
-              <Route path="dashboard" element={<AdminDashboard />} />
-              <Route path="products" element={<AdminProductsList />} />
-              <Route path="products/new" element={<AdminProductForm />} />
-              <Route path="products/edit/:id" element={<AdminProductForm />} />
-              <Route path="products/view/:id" element={<AdminProductView />} />
-              <Route path="podcasts" element={<AdminPodcastsList />} />
-              <Route path="podcasts/new" element={<AdminPodcastForm />} />
-              <Route path="podcasts/edit/:id" element={<AdminPodcastForm />} />
-              <Route path="podcasts/view/:id" element={<AdminPodcastView />} />
-              <Route path="cafee-services" element={<AdminCafeeServicesList />} />
-              <Route path="cafee-services/new" element={<AdminCafeeServiceForm />} />
-              <Route path="cafee-services/edit/:id" element={<AdminCafeeServiceForm />} />
-              <Route path="cafee-services/view/:id" element={<AdminCafeeServiceView />} />
-              <Route path="she-services" element={<AdminSHEServicesList />} />
-              <Route path="she-services/new" element={<AdminSHEServiceForm />} />
-              <Route path="she-services/edit/:id" element={<AdminSHEServiceForm />} />
-              <Route path="she-services/view/:id" element={<AdminSHEServiceView />} />
-              <Route path="services" element={<AdminSHEServicesList />} />
-              <Route path="blog" element={<AdminBlogList />} />
-              <Route path="blog/new" element={<AdminBlogForm />} />
-              <Route path="blog/edit/:id" element={<AdminBlogForm />} />
-              <Route path="contacts" element={<AdminContactsList />} />
-              <Route path="newsletter" element={<AdminNewsletterList />} />
-              <Route path="media" element={<AdminMediaList />} />
-              <Route path="settings" element={<AdminSettings />} />
-              <Route path="documentation" element={<SiteDocumentation />} />
-              <Route path="guide" element={<AdminGuide />} />
-            </Route>
-            
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
+                <Route path="/" element={<Index />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/she" element={<SHE />} />
+                <Route path="/she/services/interior-design" element={<SHEServiceInteriorDesign />} />
+                <Route path="/she/services/events" element={<SHEServiceEvents />} />
+                <Route path="/she/services/decoration" element={<SHEServiceDecoration />} />
+                <Route path="/she" element={<SHE />} />
+                <Route path="/she/realizations/:id" element={<SHERealizationDetail />} />
+                <Route path="/dense" element={<DENSE />} />
+                <Route path="/dense/contact" element={<DenseContact />} />
+                <Route path="/manifeste" element={<Manifeste />} />
+                <Route path="/cart" element={<Cart />} />
+                
+                {/* DENSE Collection Routes */}
+                <Route path="/dense/collections/les-drapés" element={<DenseCollectionLesDrapes />} />
+                <Route path="/dense/collections/les-passe-partout" element={<DenseCollectionLesPassePartout />} />
+                <Route path="/dense/collections/les-modulables" element={<DenseCollectionLesModulables />} />
+                <Route path="/dense/collections/les-escamotables" element={<DenseCollectionLesEscamotables />} />
+                <Route path="/dense/collections/les-ajustables" element={<DenseCollectionLesAjustables />} />
+                <Route path="/dense/collections/les-panachés" element={<DenseCollectionLesPanaches />} />
+                <Route path="/dense/collections/les-accessoires" element={<DenseCollectionLesAccessoires />} />
+                
+                <Route path="/cafee" element={<CaFEE />} />
+                <Route path="/portfolio" element={<Portfolio />} />
+                <Route path="/portfolio/:id" element={<PortfolioDetail />} />
+                <Route path="/podcasts" element={<Podcasts />} />
+                <Route path="/social" element={<Social />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/legal-mentions" element={<LegalMentions />} />
+                
+                {/* Blog Routes */}
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/blog/she" element={<BlogSHE />} />
+                <Route path="/blog/densen" element={<BlogDENSE />} />
+                <Route path="/blog/cafee" element={<BlogCaFEE />} />
+                <Route path="/blog/:id" element={<BlogArticle />} />
+                
+                {/* Actualites Routes */}
+                <Route path="/actualites" element={<Actualites />} />
+                <Route path="/actualites/:id" element={<ActualiteArticle />} />
+                
+                {/* Admin Login Route */}
+                <Route path="/admin/login" element={<AdminLogin />} />
+                
+                {/* Admin Protected Routes */}
+                <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
+                  <Route index element={<AdminDashboard />} />
+                  <Route path="dashboard" element={<AdminDashboard />} />
+                  <Route path="products" element={<AdminProductsList />} />
+                  <Route path="products/new" element={<AdminProductForm />} />
+                  <Route path="products/edit/:id" element={<AdminProductForm />} />
+                  <Route path="products/view/:id" element={<AdminProductView />} />
+                  <Route path="podcasts" element={<AdminPodcastsList />} />
+                  <Route path="podcasts/new" element={<AdminPodcastForm />} />
+                  <Route path="podcasts/edit/:id" element={<AdminPodcastForm />} />
+                  <Route path="podcasts/view/:id" element={<AdminPodcastView />} />
+                  <Route path="cafee-services" element={<AdminCafeeServicesList />} />
+                  <Route path="cafee-services/new" element={<AdminCafeeServiceForm />} />
+                  <Route path="cafee-services/edit/:id" element={<AdminCafeeServiceForm />} />
+                  <Route path="cafee-services/view/:id" element={<AdminCafeeServiceView />} />
+                  <Route path="she-services" element={<AdminSHEServicesList />} />
+                  <Route path="she-services/new" element={<AdminSHEServiceForm />} />
+                  <Route path="she-services/edit/:id" element={<AdminSHEServiceForm />} />
+                  <Route path="she-services/view/:id" element={<AdminSHEServiceView />} />
+                  <Route path="services" element={<AdminSHEServicesList />} />
+                  <Route path="blog" element={<AdminBlogList />} />
+                  <Route path="blog/new" element={<AdminBlogForm />} />
+                  <Route path="blog/edit/:id" element={<AdminBlogForm />} />
+                  <Route path="contacts" element={<AdminContactsList />} />
+                  <Route path="newsletter" element={<AdminNewsletterList />} />
+                  <Route path="media" element={<AdminMediaList />} />
+                  <Route path="settings" element={<AdminSettings />} />
+                  <Route path="documentation" element={<SiteDocumentation />} />
+                  <Route path="guide" element={<AdminGuide />} />
+                </Route>
+                
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </TooltipProvider>
+        </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

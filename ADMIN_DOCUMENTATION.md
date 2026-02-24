@@ -10,8 +10,7 @@ Bienvenue dans l'interface d'administration de Fernanden ! Ce guide vous expliqu
 
 ### **Connexion**
 - **URL** : `http://localhost:8080/admin/login`
-- **Email** : `admin@fernanden.com`
-- **Mot de passe** : `admin123`
+- **Identifiants** : Utilisez les accès configurés dans votre base de données Supabase.
 
 ### **Navigation**
 L'administration est organisée en 5 sections principales accessibles via la barre latérale gauche.

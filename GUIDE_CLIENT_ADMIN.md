@@ -9,8 +9,7 @@
 ### **Connexion à Votre Espace Admin**
 ```
 🌐 URL : http://localhost:8080/admin/login
-📧 Email : admin@fernanden.com
-🔑 Mot de passe : admin123
+📧 Identifiants : Utilisez vos accès personnalisés
 ```
 
 ---

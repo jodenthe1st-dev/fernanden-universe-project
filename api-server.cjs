@@ -1,4 +1,4 @@
-const express = require('express');
+﻿const express = require('express');
 const cors = require('cors');
 const multer = require('multer');
 const { writeFile, mkdir, unlink } = require('fs').promises;
@@ -26,18 +26,23 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware amélioré
+const corsOrigin = process.env.CORS_ORIGIN || 'http://localhost:5173,http://localhost:3000,http://localhost:8080';
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:3000', 'http://localhost:8080', 'https://ton-domaine.com'],
+  origin: corsOrigin.split(',').map(s => s.trim()),
   credentials: true
 }));
-app.use(express.json({ limit: '50mb' }));
+app.use(express.json({ limit: '10mb' })); // Reduced from 50mb; use CloudinaryService for large media uploads
 app.use(express.static('public'));
 
 if (helmet) app.use(helmet());
 if (rateLimit) {
+  // Global rate limiter (lenient)
   app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 200 }));
+  // Export loginLimiter for use on /api/admin/login route
+  global.loginLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 5, skipSuccessfulRequests: false });
 } else {
   console.warn('express-rate-limit not installed — skipping rate limiter');
+  global.loginLimiter = (req, res, next) => next(); // noop
 }
 
 // Logs des requêtes
@@ -47,9 +52,17 @@ app.use((req, res, next) => {
 });
 
 // Configuration Multer améliorée
+// Whitelist folders para path traversal prevention
+const ALLOWED_FOLDERS = ['documents', 'images', 'general', 'dense', 'she', 'cafee'];
+
 const storage = multer.diskStorage({
   destination: async (req, file, cb) => {
-    const folder = String(req.body.folder || 'documents').replace(/[^a-zA-Z0-9-_]/g, '_');
+    let folder = String(req.body.folder || 'documents').replace(/[^a-zA-Z0-9-_]/g, '_');
+    // Strict whitelist validation
+    if (!ALLOWED_FOLDERS.includes(folder)) {
+      folder = 'documents';
+      console.warn(`[Multer] Invalid folder requested, defaulting to 'documents'`);
+    }
     const uploadDir = join(__dirname, '..', 'public', 'uploads', folder);
 
     try {
@@ -72,18 +85,23 @@ const storage = multer.diskStorage({
 const folderMimeMap = {
   images: ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/gif', 'image/svg+xml'],
   documents: ['application/pdf', 'application/zip', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
-  default: ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'application/pdf', 'application/zip']
+  general: ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'application/pdf'],
+  dense: ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'],
+  she: ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'],
+  cafee: ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'],
+  default: ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'application/pdf']
 };
 
 const fileFilter = (req, file, cb) => {
   if (!file || !file.mimetype) return cb(null, false);
-  const rawFolder = String((req.body && req.body.folder) || '').replace(/[^a-zA-Z0-9-_]/g, '_');
-  const folderKey = rawFolder || 'default';
-  const allowed = folderMimeMap[folderKey] || folderMimeMap.default;
+  const rawFolder = String((req.body && req.body.folder) || 'default').replace(/[^a-zA-Z0-9-_]/g, '_');
+  // Strict whitelist: only allow folders in ALLOWED_FOLDERS
+  if (!ALLOWED_FOLDERS.includes(rawFolder)) return cb(null, false);
+  const allowed = folderMimeMap[rawFolder] || folderMimeMap.default;
   cb(null, allowed.includes(file.mimetype));
 };
 
-const upload = multer({ 
+const upload = multer({
   storage,
   fileFilter,
   limits: {
@@ -117,7 +135,7 @@ function logLoginAttempt(req, result, extra) {
 app.post('/api/upload', checkAdmin, upload.array('uploads', 10), async (req, res) => {
   try {
     if (!req.files || req.files.length === 0) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         error: 'Aucun fichier fourni',
         code: 'NO_FILE'
       });
@@ -125,7 +143,7 @@ app.post('/api/upload', checkAdmin, upload.array('uploads', 10), async (req, res
 
     const { folder, category } = req.body;
     const uploadedFiles = [];
-    
+
     // Traiter chaque fichier
     for (const file of req.files) {
       const safeFolder = String(folder || 'documents').replace(/[^a-zA-Z0-9-_]/g, '_');
@@ -136,12 +154,12 @@ app.post('/api/upload', checkAdmin, upload.array('uploads', 10), async (req, res
         size: file.size,
         type: file.mimetype
       });
-      
+
       console.log(`✅ [${new Date().toISOString()}] Fichier uploadé: ${file.path} (${file.size} bytes)`);
     }
 
-    res.json({ 
-      success: true, 
+    res.json({
+      success: true,
       files: uploadedFiles,
       folder,
       category,
@@ -150,7 +168,7 @@ app.post('/api/upload', checkAdmin, upload.array('uploads', 10), async (req, res
 
   } catch (error) {
     console.error(`❌ [${new Date().toISOString()}] Erreur upload:`, error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Erreur lors de l\'upload',
       code: 'UPLOAD_ERROR',
       details: error.message
@@ -164,7 +182,7 @@ app.post('/api/delete', checkAdmin, async (req, res) => {
     const { publicUrl, filename } = req.body;
 
     if (!publicUrl && !filename) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         error: 'publicUrl ou filename requis',
         code: 'NO_URL'
       });
@@ -196,15 +214,15 @@ app.post('/api/delete', checkAdmin, async (req, res) => {
       console.log(`✅ [${new Date().toISOString()}] Fichier supprimé: ${targetPath}`);
     }
 
-    res.json({ 
-      success: true, 
+    res.json({
+      success: true,
       message: 'Fichier supprimé',
       code: 'DELETED'
     });
 
   } catch (error) {
     console.error(`❌ [${new Date().toISOString()}] Erreur suppression:`, error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Erreur lors de la suppression',
       code: 'DELETE_ERROR',
       details: error.message
@@ -212,13 +230,11 @@ app.post('/api/delete', checkAdmin, async (req, res) => {
   }
 });
 
-// Route de santé
+// Route de santé (minimal info)
 app.get('/api/health', (req, res) => {
-  res.json({ 
+  res.json({
     status: 'OK',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-    memory: process.memoryUsage()
+    timestamp: new Date().toISOString()
   });
 });
 
@@ -229,7 +245,11 @@ const ADMIN_SECRET = process.env.ADMIN_TOKEN_SECRET || 'dev_admin_secret_change_
 
 function signToken(payload) {
   const header = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url');
-  const body = Buffer.from(JSON.stringify(payload)).toString('base64url');
+  const now = Math.floor(Date.now() / 1000);
+  // Ensure an expiration is present (default 24h)
+  const bodyPayload = Object.assign({}, payload);
+  if (!bodyPayload.exp) bodyPayload.exp = now + 24 * 60 * 60;
+  const body = Buffer.from(JSON.stringify(bodyPayload)).toString('base64url');
   const signature = crypto.createHmac('sha256', ADMIN_SECRET).update(`${header}.${body}`).digest('base64url');
   return `${header}.${body}.${signature}`;
 }
@@ -240,130 +260,113 @@ function verifyToken(token) {
   if (parts.length !== 3) return null;
   const [header, body, signature] = parts;
   const expected = crypto.createHmac('sha256', ADMIN_SECRET).update(`${header}.${body}`).digest('base64url');
-  if (!crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) return null;
   try {
-    return JSON.parse(Buffer.from(body, 'base64url').toString('utf8'));
+    const sigBuf = Buffer.from(String(signature));
+    const expBuf = Buffer.from(String(expected));
+    if (sigBuf.length !== expBuf.length) return null; // avoid timingSafeEqual throwing
+    if (!crypto.timingSafeEqual(sigBuf, expBuf)) return null;
+  } catch (e) {
+    return null;
+  }
+  try {
+    const payload = JSON.parse(Buffer.from(body, 'base64url').toString('utf8'));
+    if (payload && payload.exp && Math.floor(Date.now() / 1000) > Number(payload.exp)) return null; // expired
+    return payload;
   } catch (e) {
     return null;
   }
 }
 
-function parseCookies(req) {
-  const header = req.headers?.cookie;
-  if (!header) return {};
-  return Object.fromEntries(header.split(';').map(c => c.trim().split('=').map(decodeURIComponent)));
-}
-
-// Middleware pour vérifier si l'utilisateur est admin via cookie
-function checkAdmin(req, res, next) {
+// Middleware pour vérifier si l'utilisateur est admin via Token Bearer (Supabase)
+async function checkAdmin(req, res, next) {
   try {
-    const cookies = parseCookies(req);
-    const token = cookies['admin_token'];
-    const payload = verifyToken(token);
-    if (!payload || payload.role !== 'admin') {
-      return res.status(401).json({ error: 'Unauthorized', code: 'UNAUTHORIZED' });
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res.status(401).json({ error: 'No authorization header', code: 'UNAUTHORIZED' });
     }
-    req.admin = payload; // attach payload for later use
+
+    const token = authHeader.replace('Bearer ', '');
+
+    // 1. Vérifier le token via Supabase Auth
+    if (!supabase) {
+      console.error('Supabase client not initialized on server');
+      return res.status(500).json({ error: 'Server misconfiguration' });
+    }
+
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+
+    if (error || !user) {
+      return res.status(401).json({ error: 'Invalid token', code: 'UNAUTHORIZED' });
+    }
+
+    // 2. Vérifier le rôle dans la table profiles
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+
+    if (profileError || profile?.role !== 'admin') {
+      console.warn(`⛔ [Auth] Access denied for user ${user.email} (role: ${profile?.role})`);
+      return res.status(403).json({ error: 'Forbidden', code: 'FORBIDDEN' });
+    }
+
+    req.admin = { sub: user.id, email: user.email, role: profile.role };
     return next();
+
   } catch (e) {
+    console.error('Auth error:', e);
     return res.status(401).json({ error: 'Unauthorized', code: 'UNAUTHORIZED' });
   }
 }
 
-app.post('/api/admin/login', async (req, res) => {
-  try {
-    const { email, password } = req.body || {};
-    if (!email || !password) return res.status(400).json({ error: 'email and password required' });
-    // If Supabase client is available, authenticate against the `admins` table
-    if (supabase) {
-      const { data, error } = await supabase.from('admins').select('id, email, password_hash, role, disabled').eq('email', email).limit(1).single();
-      if (error && error.code !== 'PGRST116') {
-        console.error('Supabase error during admin lookup', error);
-        logLoginAttempt(req, 'error', 'supabase lookup failed');
-        return res.status(500).json({ error: 'internal' });
-      }
-      if (!data) {
-        logLoginAttempt(req, 'rejected', 'no admin record');
-        return res.status(401).json({ error: 'Invalid credentials' });
-      }
-      if (data.disabled) {
-        logLoginAttempt(req, 'rejected', 'admin disabled');
-        return res.status(401).json({ error: 'Invalid credentials' });
-      }
-      const matches = await bcrypt.compare(String(password), String(data.password_hash));
-      if (!matches) {
-        logLoginAttempt(req, 'rejected', 'wrong password');
-        return res.status(401).json({ error: 'Invalid credentials' });
-      }
+// --- LEGACY AUTH ROUTES REMOVED ---
+// The frontend now uses Supabase Auth directly.
+// The following routes are deprecated and removed to prevent confusion/security risks.
+// POST /api/admin/login -> Use Supabase SDK
+// POST /api/admin/logout -> Use Supabase SDK
+// GET /api/admin/me -> Use Supabase SDK
+// POST /api/admin/update -> Use Supabase SDK
 
-      const user = { id: data.id, email: data.email, role: data.role };
-      const token = signToken({ sub: user.id, email: user.email, role: user.role, iat: Date.now() });
-      res.cookie('admin_token', token, { httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production', maxAge: 24 * 60 * 60 * 1000 });
-      logLoginAttempt(req, 'accepted');
-      return res.json({ success: true, user });
+/**
+ * POST /api/cloudinary/sign - Generate signature for client-side upload
+ * Only allow ALREADY AUTHENTICATED admins to get a signature.
+ */
+app.post('/api/cloudinary/sign', checkAdmin, (req, res) => {
+  try {
+    const CLOUDINARY_CLOUD_NAME = process.env.VITE_CLOUDINARY_CLOUD_NAME;
+    const CLOUDINARY_API_KEY = process.env.VITE_CLOUDINARY_API_KEY;
+    const CLOUDINARY_API_SECRET = process.env.VITE_CLOUDINARY_API_SECRET;
+
+    if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_API_KEY || !CLOUDINARY_API_SECRET) {
+      return res.status(500).json({ error: 'Cloudinary not configured on server' });
     }
 
-    // Fallback to env-based auth if Supabase not configured
-    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-      const user = { id: '1', email: ADMIN_EMAIL, name: 'Administrateur', role: 'admin' };
-      const token = signToken({ sub: user.id, email: user.email, role: user.role, iat: Date.now() });
-      res.cookie('admin_token', token, { httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production', maxAge: 24 * 60 * 60 * 1000 });
-      return res.json({ success: true, user });
-    }
+    const timestamp = Math.floor(Date.now() / 1000);
 
-    return res.status(401).json({ error: 'Invalid credentials' });
-  } catch (err) {
-    console.error('Login error', err);
-    return res.status(500).json({ error: 'Internal error' });
-  }
-});
+    // Parameters to sign (must match what is sent to Cloudinary)
+    // We can enforce specific folders or transform options here if we want stricter security
+    const paramsToSign = {
+      timestamp: timestamp,
+      // upload_preset: 'ml_default' // If using signed preset, include it here
+    };
 
-// Endpoint to update admin email/password (protected)
-app.post('/api/admin/update', checkAdmin, async (req, res) => {
-  try {
-    const { email, currentPassword, newPassword } = req.body || {};
-    if (!supabase) return res.status(500).json({ error: 'Supabase not configured' });
-    if (!currentPassword) return res.status(400).json({ error: 'currentPassword required' });
+    // Construct signature string: key=value&key=value... + secret
+    // Note: Cloudinary requires parameters to be sorted alphabetically by key
+    const signatureString = `timestamp=${timestamp}${CLOUDINARY_API_SECRET}`;
 
-    // Load admin record by id from token payload
-    const adminId = req.admin && req.admin.sub;
-    if (!adminId) return res.status(401).json({ error: 'Unauthorized' });
+    const signature = crypto.createHash('sha1').update(signatureString).digest('hex');
 
-    const { data } = await supabase.from('admins').select('id,email,password_hash').eq('id', adminId).limit(1).single();
-    if (!data) return res.status(404).json({ error: 'Admin not found' });
+    res.json({
+      signature,
+      timestamp,
+      api_key: CLOUDINARY_API_KEY,
+      cloud_name: CLOUDINARY_CLOUD_NAME
+    });
 
-    const ok = await bcrypt.compare(String(currentPassword), String(data.password_hash));
-    if (!ok) return res.status(403).json({ error: 'Current password incorrect' });
-
-    const updates = {};
-    if (email) updates.email = email;
-    if (newPassword) updates.password_hash = await bcrypt.hash(String(newPassword), 10);
-
-    if (Object.keys(updates).length === 0) return res.status(400).json({ error: 'Nothing to update' });
-
-    await supabase.from('admins').update(updates).eq('id', adminId);
-    return res.json({ success: true });
-  } catch (e) {
-    console.error('Admin update error', e);
-    return res.status(500).json({ error: 'Internal' });
-  }
-});
-
-app.post('/api/admin/logout', (req, res) => {
-  res.clearCookie('admin_token');
-  res.json({ success: true });
-});
-
-app.get('/api/admin/me', (req, res) => {
-  try {
-    const cookies = parseCookies(req);
-    const token = cookies['admin_token'];
-    const payload = verifyToken(token);
-    if (!payload) return res.status(401).json({ error: 'Not authenticated' });
-    return res.json({ user: { id: payload.sub, email: payload.email, role: payload.role } });
-  } catch (err) {
-    console.error('Me error', err);
-    return res.status(500).json({ error: 'Internal error' });
+  } catch (error) {
+    console.error('Signature generation error:', error);
+    res.status(500).json({ error: 'Internal signature error' });
   }
 });
 
@@ -389,10 +392,9 @@ app.post('/api/cloudinary/destroy', checkAdmin, async (req, res) => {
     }
 
     const timestamp = Math.floor(Date.now() / 1000);
-    
+
     // Build signature for Cloudinary API (server-side only)
     const signatureString = `public_id=${public_id}&timestamp=${timestamp}${CLOUDINARY_API_SECRET}`;
-    const crypto = require('crypto');
     const signature = crypto.createHash('sha1').update(signatureString).digest('hex');
 
     // Call Cloudinary API from server (secrets never leave backend)
@@ -425,7 +427,7 @@ app.post('/api/cloudinary/destroy', checkAdmin, async (req, res) => {
 
 // Gestion des erreurs 404
 app.use((req, res) => {
-  res.status(404).json({ 
+  res.status(404).json({
     error: 'Route non trouvée',
     code: 'NOT_FOUND',
     path: req.originalUrl
@@ -435,7 +437,7 @@ app.use((req, res) => {
 // Gestion des erreurs globales
 app.use((error, req, res, next) => {
   console.error(`❌ [${new Date().toISOString()}] Erreur serveur:`, error);
-  res.status(500).json({ 
+  res.status(500).json({
     error: 'Erreur serveur interne',
     code: 'INTERNAL_ERROR'
   });

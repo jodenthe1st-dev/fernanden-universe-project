@@ -10,9 +10,10 @@ const universes = [
     subtitle: "Education & Expressive",
     tagline: "Apprendre autrement, s'exprimer pleinement !",
     description: "Accompagnement psychopédagogique et design graphique.",
-    image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2671&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=800&auto=format&fit=crop",
     href: "/cafee",
     accentColor: "from-cafee-mint/80",
+    bgImage: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=2000&auto=format&fit=crop",
   },
   {
     id: "dense",
@@ -20,9 +21,10 @@ const universes = [
     subtitle: "Fashion Design",
     tagline: "Le chic intemporel à l'africaine",
     description: "Mode, Sens, Identité et Inspiration africaine contemporaine.",
-    image: "https://images.unsplash.com/photo-1558171813-4c088753af8f?q=80&w=2787&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1558171813-4c088753af8f?q=80&w=800&auto=format&fit=crop",
     href: "/dense",
     accentColor: "from-primary/80",
+    bgImage: "https://images.unsplash.com/photo-1558171813-4c088753af8f?q=80&w=2000&auto=format&fit=crop",
   },
   {
     id: "she",
@@ -30,9 +32,10 @@ const universes = [
     subtitle: "Spaces, Home & Event Design",
     tagline: "L'atmosphère qu'il vous faut !",
     description: "Transformez vos espaces et événements en expériences mémorables.",
-    image: "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=2798&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=800&auto=format&fit=crop",
     href: "/she",
     accentColor: "from-she-saffron/80",
+    bgImage: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=2000&auto=format&fit=crop",
   },
 ];
 
@@ -182,7 +185,7 @@ export function UniverseCards() {
             Nos univers
           </p>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-foreground">
-            Découvrez nos <span className="text-red-500">expertises</span>
+            Découvrez nos <span className="text-primary">expertises</span>
           </h2>
         </motion.div>
 

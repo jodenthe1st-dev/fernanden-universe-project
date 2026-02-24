@@ -1,173 +1,147 @@
 import { supabaseRaw } from '../client'
-import { ServiceUtils } from './utils'
+import type { Database } from '../types'
 
-// Types basés sur la structure exacte de la base de données
-export interface Service {
-  id: string
-  title: string
-  description: string
-  category: string
-  features: string[]
-  price_range: string | null
-  duration: string | null
-  icon_name: string
-  featured: boolean
-  status: string
-  order_index: number
-  detailed_inclusions: string | null
-  images: string[]
-  featured_image: string | null
-  meta_title: string | null
-  meta_description: string | null
-  created_at: string
-  updated_at: string
-  // Extended fields for CaFEE services
-  target_audience: string | null
-  session_duration: string | null
-  session_type: string | null
-  approach_method: string | null
-  objectives: string[]
-  materials_included: boolean
-  // Extended fields for SHE services
-  client_type: string | null
-  budget_range: string | null
-  team_size: number | null
-  consultation_required: boolean
-}
+type ServiceRow = Database['public']['Tables']['services']['Row']
+type ServiceInsert = Database['public']['Tables']['services']['Insert']
+type ServiceUpdate = Database['public']['Tables']['services']['Update']
+type ServiceFeaturedSelect = { featured: boolean | null }
 
-export interface ServiceInsert {
-  id?: string
-  title: string
-  description: string
-  category: string
-  features?: string[]
-  price_range?: string | null
-  duration?: string | null
-  icon_name: string
-  featured?: boolean
-  status?: string
-  order_index?: number
-  detailed_inclusions?: string | null
-  images?: string[]
-  featured_image?: string | null
-  meta_title?: string | null
-  meta_description?: string | null
-  // Extended fields for CaFEE services
-  target_audience?: string | null
-  session_duration?: string | null
-  session_type?: string | null
-  approach_method?: string | null
-  objectives?: string[]
-  materials_included?: boolean
-  // Extended fields for SHE services
-  client_type?: string | null
-  budget_range?: string | null
-  team_size?: number | null
-  consultation_required?: boolean
-  created_at?: string
-  updated_at?: string
-}
-
-export interface ServiceUpdate {
-  id?: string
-  title?: string
-  description?: string
-  category?: string
-  features?: string[]
-  price_range?: string | null
-  duration?: string | null
-  icon_name?: string
-  featured?: boolean
-  status?: string
-  order_index?: number
-  detailed_inclusions?: string | null
-  images?: string[]
-  featured_image?: string | null
-  meta_title?: string | null
-  meta_description?: string | null
-  // Extended fields for CaFEE services
-  target_audience?: string | null
-  session_duration?: string | null
-  session_type?: string | null
-  approach_method?: string | null
-  objectives?: string[]
-  materials_included?: boolean
-  // Extended fields for SHE services
-  client_type?: string | null
-  budget_range?: string | null
-  team_size?: number | null
-  consultation_required?: boolean
-  created_at?: string
-  updated_at?: string
-}
+export type Service = ServiceRow
+export type { ServiceInsert, ServiceUpdate }
 
 export class ServicesService {
-  private static readonly TABLE_NAME = 'services'
-
-  // Récupérer tous les services
   static async getAll(): Promise<Service[]> {
-    return ServiceUtils.getAll(this.TABLE_NAME) as Promise<Service[]>
+    const { data, error } = await supabaseRaw
+      .from('services')
+      .select('*')
+      .order('order_index', { ascending: true })
+      .order('created_at', { ascending: false })
+
+    if (error) throw error
+    return (data as Service[]) || []
   }
 
-  // Récupérer les services par catégorie
-  static async getByCategory(category: string): Promise<Service[]> {
+  static async getPublished(): Promise<Service[]> {
     const { data, error } = await supabaseRaw
-      .from(this.TABLE_NAME)
+      .from('services')
+      .select('*')
+      .eq('status', 'published')
+      .order('order_index', { ascending: true })
+
+    if (error) throw error
+    return (data as Service[]) || []
+  }
+
+  static async getByCategoryAll(category: string): Promise<Service[]> {
+    const { data, error } = await supabaseRaw
+      .from('services')
       .select('*')
       .eq('category', category)
-      .eq('status', 'active')
+      .order('order_index', { ascending: true })
+      .order('created_at', { ascending: false })
+
+    if (error) throw error
+    return (data as Service[]) || []
+  }
+
+  static async getByCategoryPublished(category: string): Promise<Service[]> {
+    const { data, error } = await supabaseRaw
+      .from('services')
+      .select('*')
+      .eq('category', category)
+      .eq('status', 'published')
       .order('order_index', { ascending: true })
 
     if (error) throw error
-    return data || []
+    return (data as Service[]) || []
   }
 
-  // Récupérer les services featured
-  static async getFeatured(): Promise<Service[]> {
-    return ServiceUtils.getFeatured(this.TABLE_NAME) as Promise<Service[]>
-  }
-
-  // Récupérer un service par ID
-  static async getById(id: string): Promise<Service | null> {
-    return ServiceUtils.getById(this.TABLE_NAME, id) as Promise<Service | null>
-  }
-
-  // Créer un service
-  static async create(service: ServiceInsert): Promise<Service> {
-    return ServiceUtils.create(this.TABLE_NAME, service) as Promise<Service>
-  }
-
-  // Mettre à jour un service
-  static async update(id: string, service: ServiceUpdate): Promise<Service> {
-    return ServiceUtils.update(this.TABLE_NAME, id, service) as Promise<Service>
-  }
-
-  // Supprimer un service
-  static async delete(id: string): Promise<void> {
-    return ServiceUtils.delete(this.TABLE_NAME, id)
-  }
-
-  // Toggle featured status
-  static async toggleFeatured(id: string): Promise<Service> {
-    return ServiceUtils.toggleFeatured(this.TABLE_NAME, id) as Promise<Service>
-  }
-
-  // Mettre à jour l'ordre
-  static async updateOrder(id: string, orderIndex: number): Promise<Service> {
-    return ServiceUtils.updateOrder(this.TABLE_NAME, id, orderIndex) as Promise<Service>
-  }
-
-  // Rechercher des services
-  static async search(query: string): Promise<Service[]> {
+  static async getFeaturedPublished(): Promise<Service[]> {
     const { data, error } = await supabaseRaw
-      .from(this.TABLE_NAME)
+      .from('services')
       .select('*')
-      .eq('status', 'active')
-      .or(`title.ilike.%${query}%,description.ilike.%${query}%,features.cs.{${query}}`)
+      .eq('featured', true)
+      .eq('status', 'published')
+      .order('order_index', { ascending: true })
+
+    if (error) throw error
+    return (data as Service[]) || []
+  }
+
+  static async getById(id: string): Promise<Service | null> {
+    const { data, error } = await supabaseRaw
+      .from('services')
+      .select('*')
+      .eq('id', id)
+      .single()
+
+    if (error) throw error
+    return (data as Service) || null
+  }
+
+  static async create(service: ServiceInsert): Promise<Service> {
+    const { data, error } = await (supabaseRaw
+      .from('services') as any) // eslint-disable-line @typescript-eslint/no-explicit-any
+      .insert(service)
+      .select('*')
+      .single()
+
+    if (error) throw error
+    return data as Service
+  }
+
+  static async update(id: string, updates: ServiceUpdate): Promise<Service> {
+    const { data, error } = await (supabaseRaw
+      .from('services') as any) // eslint-disable-line @typescript-eslint/no-explicit-any
+      .update(updates)
+      .eq('id', id)
+      .select('*')
+      .single()
+
+    if (error) throw error
+    return data as Service
+  }
+
+  static async delete(id: string): Promise<void> {
+    const { error } = await supabaseRaw
+      .from('services')
+      .delete()
+      .eq('id', id)
+
+    if (error) throw error
+  }
+
+  static async toggleFeatured(id: string): Promise<Service> {
+    const { data: service } = await supabaseRaw
+      .from('services')
+      .select('featured')
+      .eq('id', id)
+      .single()
+
+    if (!service) throw new Error('Service not found')
+    return this.update(id, { featured: !(service as ServiceFeaturedSelect).featured })
+  }
+
+  static async searchPublished(query: string, category?: string): Promise<Service[]> {
+    if (!query || query.trim().length === 0) return []
+
+    const cleanedQuery = query.trim().slice(0, 100)
+    let q = supabaseRaw
+      .from('services')
+      .select('*')
+      .eq('status', 'published')
+      .or(`title.ilike.%${cleanedQuery}%,description.ilike.%${cleanedQuery}%,features.cs.{${cleanedQuery}}`)
       .order('category', { ascending: true })
       .order('order_index', { ascending: true })
+      .limit(50)
 
+    if (category) {
+      q = q.eq('category', category)
+    }
+
+    const { data, error } = await q
     if (error) throw error
-    return data || []
+    return (data as Service[]) || []
   }
 }
+

@@ -158,7 +158,7 @@ const SHE = () => {
               <img 
                 src={logoShe} 
                 alt="SHE by fernanden" 
-                className="h-36 md:h-48 lg:h-56 object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.25)]"
+                className="h-36 md:h-48 lg:h-56 object-contain drop-shadow-lg shadow-black/30"
               />
             </motion.div>
 

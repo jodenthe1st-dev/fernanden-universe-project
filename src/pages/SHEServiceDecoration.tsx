@@ -12,6 +12,7 @@ import {
   decorationStyles, 
   faq 
 } from "@/data/decorationData";
+import { placeholderImages } from "@/components/ui/BrandedPlaceholder";
 
 const SHEServiceDecoration = () => {
   const navigate = useNavigate();

@@ -39,8 +39,8 @@ export function Header() {
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
         isScrolled
-          ? "bg-background/95 backdrop-blur-xl shadow-lg py-3 border-b border-border/20"
-          : "bg-transparent backdrop-blur-xl py-4"
+          ? "bg-transparent backdrop-blur-xl shadow-sm py-3 border-b border-border/10"
+          : "bg-transparent backdrop-blur-xl py-3"
       )}
     >
       <div className="container-main flex items-center justify-between">
@@ -51,7 +51,7 @@ export function Header() {
             alt="fernanden"
             className={cn(
               "transition-all duration-300 group-hover:scale-105 object-contain drop-shadow-lg",
-              isScrolled ? "h-20 md:h-24 lg:h-28" : "h-24 md:h-28 lg:h-32"
+              isScrolled ? "h-16 md:h-20 lg:h-24" : "h-20 md:h-24 lg:h-28"
             )}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}

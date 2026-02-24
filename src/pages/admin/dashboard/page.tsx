@@ -7,18 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { DatabaseService } from '@/services/DatabaseService';
 import { useAuth } from '@/contexts/AuthContext';
 import logger from '@/lib/logger';
-import { 
-  Users, 
-  Package, 
-  Mic, 
-  Briefcase, 
-  Image as ImageIcon, 
-  MessageSquare, 
-  Settings,
-  TrendingUp,
-  Eye,
-  Clock
-} from 'lucide-react';
+import { Package, Mic, Briefcase, Image as ImageIcon, Settings, TrendingUp, Eye, Clock } from 'lucide-react';
 
 interface DashboardStats {
   totalProducts: number;

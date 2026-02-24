@@ -3,10 +3,10 @@ import { Button } from "@/components/ui/button";
 import { ChevronDown, ArrowRight } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
-import logoMain from "@/assets/logo-fernanden-main.png";
+import { placeholderImages } from "@/components/ui/BrandedPlaceholder";
 
 export function HeroSection() {
-  const containerRef = useRef(null);
+  const containerRef = useRef<HTMLElement | null>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end start"],
@@ -33,12 +33,12 @@ export function HeroSection() {
         <div 
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?q=80&w=2532&auto=format&fit=crop')`,
+            backgroundImage: `url('https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?q=80&w=2000&auto=format&fit=crop')`,
           }}
         />
-        {/* Gradient Overlay with brand colors - reduced opacity */}
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-primary/10 to-primary/5" />
-        <div className="absolute inset-0 bg-gradient-to-t from-deep-black/30 via-transparent to-transparent" />
+        {/* Sophisticated gradient overlays */}
+        <div className="absolute inset-0 bg-gradient-to-br from-terracotta/25 via-transparent to-primary/15" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-background/20" />
         
       </motion.div>
 
@@ -48,66 +48,101 @@ export function HeroSection() {
         className="relative z-10 container-main w-full"
       >
         <div className="max-w-2xl">
+          {/* Elegant Text with Blur Backdrop */}
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            className="space-y-6"
           >
-            
-            {/* Tagline with Line */}
+            {/* Tagline with blur backdrop */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3, duration: 0.6 }}
-              className="flex items-center gap-2 md:gap-4 mb-4 md:mb-6"
+              className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full"
+              style={{
+                background: 'rgba(255,255,255,0.15)',
+                backdropFilter: 'blur(12px)',
+                WebkitBackdropFilter: 'blur(12px)',
+                border: '1px solid rgba(255,255,255,0.2)',
+              }}
             >
-              <div className="w-8 md:w-12 h-[2px] bg-secondary" />
-              <span className="font-heading text-[10px] md:text-xs uppercase tracking-[0.15em] md:tracking-[0.25em] text-foreground/80">
+              <div className="w-8 md:w-10 h-[2px] bg-terracotta" />
+              <span className="font-heading text-[10px] md:text-xs uppercase tracking-[0.2em] text-foreground/95">
                 Un design 3en1 aux multiples facettes
               </span>
             </motion.div>
 
-            {/* Main Headline */}
-            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-foreground mb-6 sm:mb-8 md:mb-10 leading-[1.1] md:leading-[1.15]">
-              <span className="font-serif text-terracotta block mb-1 md:mb-0">CafEE</span>
-              <span className="text-secondary mx-1 md:mx-2 inline-block">•</span>
-              <span className="font-serif text-terracotta block mb-1 md:mb-0">DENSE</span>
-              <span className="text-secondary mx-1 md:mx-2 inline-block">•</span>
-              <span className="font-serif text-terracotta block md:inline">SHE</span>
-            </h1>
+            {/* Main Headline with elegant blur */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.6 }}
+              className="inline-block px-6 py-4 rounded-2xl"
+              style={{
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.06) 100%)',
+                backdropFilter: 'blur(16px)',
+                WebkitBackdropFilter: 'blur(16px)',
+                border: '1px solid rgba(255,255,255,0.15)',
+              }}
+            >
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-[1.15]">
+                <span className="font-serif text-terracotta">CafEE</span>
+                <span className="text-secondary mx-2">•</span>
+                <span className="font-serif text-terracotta">DENSE</span>
+                <span className="text-secondary mx-2">•</span>
+                <span className="font-serif text-terracotta">SHE</span>
+              </h1>
+            </motion.div>
 
-            {/* Description */}
-            <motion.p
+            {/* Description with soft blur */}
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5, duration: 0.6 }}
-              className="text-sm sm:text-base md:text-lg lg:text-xl text-foreground/90 max-w-lg mb-6 sm:mb-8 md:mb-10 leading-relaxed px-2 sm:px-4 md:px-0"
+              className="max-w-lg"
             >
-              Mode, espaces, éducation et création graphique — nous transformons vos visions en réalité depuis 2017.
-            </motion.p>
+              <p 
+                className="text-base sm:text-lg md:text-xl text-foreground/95 leading-relaxed px-5 py-4 rounded-xl inline-block"
+                style={{
+                  background: 'rgba(255,255,255,0.1)',
+                  backdropFilter: 'blur(10px)',
+                  WebkitBackdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255,255,255,0.12)',
+                }}
+              >
+                Mode, espaces, éducation et création graphique — nous transformons vos visions en réalité depuis 2017.
+              </p>
+            </motion.div>
 
             {/* CTAs */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.7, duration: 0.6 }}
-              className="flex flex-col sm:flex-row gap-3 sm:gap-4"
+              className="flex flex-col sm:flex-row gap-4 pt-4"
             >
               <Button 
                 asChild 
                 size="lg" 
-                className="text-sm sm:text-base px-6 sm:px-8 h-12 sm:h-14 bg-terracotta hover:bg-terracotta/90 text-white font-semibold group"
+                className="text-sm sm:text-base px-8 sm:px-10 h-14 sm:h-16 bg-terracotta hover:bg-terracotta/90 text-white font-semibold group rounded-full shadow-lg shadow-terracotta/25"
               >
                 <Link to="/about" className="flex items-center gap-3">
                   <span>Découvrir nos univers</span>
-                  <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+                  <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
                 </Link>
               </Button>
               <Button
                 asChild
                 variant="outline"
                 size="lg"
-                className="text-sm sm:text-base px-6 sm:px-8 h-12 sm:h-14 border-foreground/30 text-foreground hover:bg-foreground hover:text-white backdrop-blur-sm bg-foreground/5"
+                className="text-sm sm:text-base px-8 sm:px-10 h-14 sm:h-16 rounded-full border-2 border-foreground/30 text-foreground hover:bg-foreground hover:text-white hover:border-foreground transition-all duration-300"
+                style={{
+                  background: 'rgba(255,255,255,0.1)',
+                  backdropFilter: 'blur(8px)',
+                  WebkitBackdropFilter: 'blur(8px)',
+                }}
               >
                 <Link to="/contact">Nous contacter</Link>
               </Button>

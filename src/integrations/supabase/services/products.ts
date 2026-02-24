@@ -1,111 +1,62 @@
 import { supabaseRaw } from '../client'
+import type { Database } from '../types'
 
-// Types basés sur la structure exacte de la base de données
-export interface Product {
-  id: string
-  name: string
-  description: string
-  category: string
-  price: string
-  images: string[]
-  featured_image: string | null
-  sizes_available: string[]
-  colors: string[]
-  materials: string | null
-  inventory_count: number
-  featured: boolean
-  status: string
-  tags: string[]
-  detailed_description: string | null
-  care_instructions: string | null
-  order_index: number
-  created_at: string
-  updated_at: string
-}
+type ProductRow = Database['public']['Tables']['products']['Row']
+type ProductInsert = Database['public']['Tables']['products']['Insert']
+type ProductUpdate = Database['public']['Tables']['products']['Update']
+type ProductFeaturedSelect = { featured: boolean | null }
+type ProductCategorySelect = { category: string }
 
-export interface ProductInsert {
-  id?: string
-  name: string
-  description: string
-  category: string
-  price: string
-  images?: string[]
-  featured_image?: string | null
-  sizes_available?: string[]
-  colors?: string[]
-  materials?: string | null
-  inventory_count?: number
-  featured?: boolean
-  status?: string
-  tags?: string[]
-  detailed_description?: string | null
-  care_instructions?: string | null
-  order_index?: number
-  created_at?: string
-  updated_at?: string
-}
-
-export interface ProductUpdate {
-  id?: string
-  name?: string
-  description?: string
-  category?: string
-  price?: string
-  images?: string[]
-  featured_image?: string | null
-  sizes_available?: string[]
-  colors?: string[]
-  materials?: string | null
-  inventory_count?: number
-  featured?: boolean
-  status?: string
-  tags?: string[]
-  detailed_description?: string | null
-  care_instructions?: string | null
-  order_index?: number
-  created_at?: string
-  updated_at?: string
-}
+export type Product = ProductRow
+export type { ProductInsert, ProductUpdate }
 
 export class ProductsService {
-  // Récupérer tous les produits
   static async getAll(): Promise<Product[]> {
     const { data, error } = await supabaseRaw
       .from('products')
       .select('*')
       .order('order_index', { ascending: true })
+      .order('created_at', { ascending: false })
 
     if (error) throw error
-    return data || []
+    return (data as Product[]) || []
   }
 
-  // Récupérer les produits par catégorie
-  static async getByCategory(category: string): Promise<Product[]> {
+  static async getPublished(): Promise<Product[]> {
+    const { data, error } = await supabaseRaw
+      .from('products')
+      .select('*')
+      .eq('status', 'published')
+      .order('order_index', { ascending: true })
+
+    if (error) throw error
+    return (data as Product[]) || []
+  }
+
+  static async getByCategoryPublished(category: string): Promise<Product[]> {
     const { data, error } = await supabaseRaw
       .from('products')
       .select('*')
       .eq('category', category)
-      .eq('status', 'active')
+      .eq('status', 'published')
       .order('order_index', { ascending: true })
 
     if (error) throw error
-    return data || []
+    return (data as Product[]) || []
   }
 
-  // Récupérer les produits featured
-  static async getFeatured(): Promise<Product[]> {
+  static async getFeaturedPublished(): Promise<Product[]> {
     const { data, error } = await supabaseRaw
       .from('products')
       .select('*')
       .eq('featured', true)
-      .eq('status', 'active')
+      .eq('status', 'published')
       .order('order_index', { ascending: true })
 
     if (error) throw error
-    return data || []
+    return (data as Product[]) || []
   }
 
-  // Récupérer un produit par ID
   static async getById(id: string): Promise<Product | null> {
     const { data, error } = await supabaseRaw
       .from('products')
@@ -114,35 +65,32 @@ export class ProductsService {
       .single()
 
     if (error) throw error
-    return data
+    return (data as Product) || null
   }
 
-  // Créer un produit
   static async create(product: ProductInsert): Promise<Product> {
     const { data, error } = await (supabaseRaw
       .from('products') as any) // eslint-disable-line @typescript-eslint/no-explicit-any
       .insert(product)
-      .select()
+      .select('*')
       .single()
 
     if (error) throw error
     return data as Product
   }
 
-  // Mettre à jour un produit
-  static async update(id: string, product: ProductUpdate): Promise<Product> {
+  static async update(id: string, updates: ProductUpdate): Promise<Product> {
     const { data, error } = await (supabaseRaw
       .from('products') as any) // eslint-disable-line @typescript-eslint/no-explicit-any
-      .update(product)
+      .update(updates)
       .eq('id', id)
-      .select()
+      .select('*')
       .single()
 
     if (error) throw error
     return data as Product
   }
 
-  // Supprimer un produit
   static async delete(id: string): Promise<void> {
     const { error } = await supabaseRaw
       .from('products')
@@ -152,7 +100,6 @@ export class ProductsService {
     if (error) throw error
   }
 
-  // Toggle featured status
   static async toggleFeatured(id: string): Promise<Product> {
     const { data: product } = await supabaseRaw
       .from('products')
@@ -161,38 +108,18 @@ export class ProductsService {
       .single()
 
     if (!product) throw new Error('Product not found')
-
-    return this.update(id, { featured: !(product as any).featured }) // eslint-disable-line @typescript-eslint/no-explicit-any
+    return this.update(id, { featured: !(product as ProductFeaturedSelect).featured })
   }
 
-  // Mettre à jour l'ordre
-  static async updateOrder(id: string, orderIndex: number): Promise<Product> {
-    return this.update(id, { order_index: orderIndex })
-  }
-
-  // Rechercher des produits
-  static async searchProducts(query: string): Promise<Product[]> {
-    const { data, error } = await supabaseRaw
-      .from('products')
-      .select('*')
-      .eq('status', 'active')
-      .or(`name.ilike.%${query}%,description.ilike.%${query}%,tags.cs.{${query}}`)
-      .order('created_at', { ascending: false })
-
-    if (error) throw error
-    return data || []
-  }
-
-  // Récupérer les catégories disponibles
-  static async getCategories(): Promise<string[]> {
+  static async getCategoriesPublished(): Promise<string[]> {
     const { data, error } = await supabaseRaw
       .from('products')
       .select('category')
-      .eq('status', 'active')
+      .eq('status', 'published')
 
     if (error) throw error
-    
-    const categories = [...new Set(data?.map((p: any) => p.category) || [])] // eslint-disable-line @typescript-eslint/no-explicit-any
-    return categories
+    const categories = [...new Set((data as ProductCategorySelect[] | null)?.map((p) => p.category).filter(Boolean) || [])]
+    return categories.sort()
   }
 }
+

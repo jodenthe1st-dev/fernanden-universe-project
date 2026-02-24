@@ -37,7 +37,7 @@ const dropdownSections: DropdownSection[] = [
         title: "DENSE - Fashion",
         description: "Mode et tendances africaines",
         icon: ({ size, className }: { size?: number; className?: string }) => <ShoppingBag size={size} className={className} />,
-        href: "/blog/densen",
+        href: "/blog/dense",
       },
       {
         title: "CaFEE - Éducation",
@@ -67,7 +67,7 @@ const dropdownSections: DropdownSection[] = [
         title: "Actualités DENSE",
         description: "Collections et fashion weeks",
         icon: ({ size, className }: { size?: number; className?: string }) => <ShoppingBag size={size} className={className} />,
-        href: "/actualites/densen",
+        href: "/actualites/dense",
       },
       {
         title: "Actualités CaFEE",

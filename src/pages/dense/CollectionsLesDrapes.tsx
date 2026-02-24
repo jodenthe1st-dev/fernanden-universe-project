@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, Star, Heart, ShoppingBag, Check, Shield, Sparkles, ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import { MagneticButton } from "@/components/animations/MagneticButton";
+import { placeholderImages } from "@/components/ui/BrandedPlaceholder";
 
 // Stockage partagé du panier
 const getSharedCart = (): number[] => {
@@ -34,7 +35,7 @@ const collectionData = {
   subtitle: "Sans Couture",
   description: "L'élégance fluide, aucune limite",
   fullDescription: "Découvrez notre collection signature de drapés sans couture, où chaque pièce est une œuvre d'art fluide qui épouse votre silhouette avec une grâce naturelle. Conçus pour les femmes qui recherchent l'élégance sans effort, nos drapés sont la quintessence du luxe discret.",
-  image: "https://images.unsplash.com/photo-1558171813-4c088753af8f?q=80&w=1200&auto=format&fit=crop",
+  image: placeholderImages.collection.dense,
   price: "À partir de 89€",
   features: [
     "Sans couture visible",
@@ -47,7 +48,7 @@ const collectionData = {
       id: 1,
       name: "Drapé Soie Éternelle",
       price: "129€",
-      image: "https://images.unsplash.com/photo-1558171813-4c088753af8f?q=80&w=600&auto=format&fit=crop",
+      image: placeholderImages.product.dense,
       description: "Élégance intemporelle en soie naturelle",
       badge: "Best-seller"
     },
@@ -55,7 +56,7 @@ const collectionData = {
       id: 2,
       name: "Drapé Coton Bio",
       price: "89€",
-      image: "https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=600&auto=format&fit=crop",
+      image: placeholderImages.product.dense,
       description: "Confort et conscience écologique",
       badge: "Éco-responsable"
     },
@@ -63,7 +64,7 @@ const collectionData = {
       id: 3,
       name: "Drapé Soirée Prestige",
       price: "189€",
-      image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=600&auto=format&fit=crop",
+      image: placeholderImages.product.dense,
       description: "Luxueux et sophistiqué",
       badge: "Exclusive"
     },
@@ -71,7 +72,7 @@ const collectionData = {
       id: 4,
       name: "Drapé Quotidien Chic",
       price: "69€",
-      image: "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?q=80&w=600&auto=format&fit=crop",
+      image: placeholderImages.product.dense,
       description: "Élégance au quotidien",
       badge: "Tendance"
     }
@@ -81,13 +82,13 @@ const collectionData = {
       name: "Sophie L.",
       text: "Je n'avais jamais porté quelque chose d'aussi confortable et élégant. Mon drapé est devenu ma pièce signature !",
       rating: 5,
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=150&auto=format&fit=crop"
+      image: placeholderImages.avatar.dense
     },
     {
       name: "Marie K.",
       text: "La qualité des tissus et le sans couture... c'est absolument divin ! Je recommande vivement.",
       rating: 5,
-      image: "https://images.unsplash.com/photo-1494790108755-2616b332c1ca?q=80&w=150&auto=format&fit=crop"
+      image: placeholderImages.avatar.dense
     }
   ]
 };

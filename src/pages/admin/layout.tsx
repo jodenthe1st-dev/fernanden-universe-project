@@ -4,21 +4,7 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts/AuthContext';
-import { 
-  Menu, 
-  X, 
-  Home, 
-  Package, 
-  Mic, 
-  Briefcase, 
-  Image as ImageIcon, 
-  FileText, 
-  MessageSquare, 
-  Settings, 
-  Users,
-  LogOut,
-  BarChart3
-} from 'lucide-react';
+import { Menu, X, Package, Mic, Briefcase, Image as ImageIcon, FileText, MessageSquare, Settings, Users, LogOut, BarChart3 } from 'lucide-react';
 
 interface MenuItem {
   id: string;

@@ -12,7 +12,7 @@ const Manifeste = () => {
       <section className="py-20 relative min-h-screen">
         {/* Background decoration */}
         <div className="absolute inset-0 bg-gradient-to-br from-densen-gold/8 via-transparent to-primary/5 pointer-events-none" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,theme(colors.densen-gold/10),transparent_60%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(var(--soft-gold)/0.10),transparent_60%)]" />
         
         <div className="container-main relative">
           {/* Header */}
