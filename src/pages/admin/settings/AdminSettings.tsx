@@ -99,11 +99,6 @@ export function AdminSettings() {
     loadSettings();
   }, []);
 
-  useEffect(() => {
-    document.documentElement.style.setProperty('--primary', form.theme_primary_color);
-    document.documentElement.style.setProperty('--secondary', form.theme_secondary_color);
-  }, [form.theme_primary_color, form.theme_secondary_color]);
-
   // ─── Sauvegarde vers Supabase ─────────────────────────────────────────────
   const handleSave = async () => {
     setSaving(true);

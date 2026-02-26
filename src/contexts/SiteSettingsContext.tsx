@@ -60,7 +60,12 @@ export function SiteSettingsProvider({ children }: { children: ReactNode }) {
     const fetchSettings = async () => {
         try {
             setLoading(true);
-            const settingsMap = await SiteSettingsService.getAsObject() as SiteSettingsMap;
+            const settingsMap = await Promise.race([
+                SiteSettingsService.getAsObject() as Promise<SiteSettingsMap>,
+                new Promise<SiteSettingsMap>((resolve) =>
+                    setTimeout(() => resolve({}), 8000)
+                ),
+            ]);
 
             setSettings(prev => ({
                 ...prev,
