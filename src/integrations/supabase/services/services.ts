@@ -10,62 +10,49 @@ export type Service = ServiceRow
 export type { ServiceInsert, ServiceUpdate }
 
 export class ServicesService {
-  static async getAll(): Promise<Service[]> {
-    const { data, error } = await supabaseRaw
-      .from('services')
+  private static async selectAllBestEffort(baseQuery: ReturnType<typeof supabaseRaw.from>): Promise<Service[]> {
+    const ordered = await baseQuery
       .select('*')
       .order('order_index', { ascending: true })
       .order('created_at', { ascending: false })
+    if (!ordered.error) return (ordered.data as Service[]) || []
 
-    if (error) throw error
-    return (data as Service[]) || []
+    const createdOnly = await baseQuery
+      .select('*')
+      .order('created_at', { ascending: false })
+    if (!createdOnly.error) return (createdOnly.data as Service[]) || []
+
+    const plain = await baseQuery.select('*')
+    if (plain.error) throw ordered.error
+    return (plain.data as Service[]) || []
+  }
+
+  static async getAll(): Promise<Service[]> {
+    return this.selectAllBestEffort(supabaseRaw.from('services'))
   }
 
   static async getPublished(): Promise<Service[]> {
-    const { data, error } = await supabaseRaw
-      .from('services')
-      .select('*')
-      .eq('status', 'published')
-      .order('order_index', { ascending: true })
-
-    if (error) throw error
-    return (data as Service[]) || []
+    return this.selectAllBestEffort(
+      supabaseRaw.from('services').eq('status', 'published')
+    )
   }
 
   static async getByCategoryAll(category: string): Promise<Service[]> {
-    const { data, error } = await supabaseRaw
-      .from('services')
-      .select('*')
-      .eq('category', category)
-      .order('order_index', { ascending: true })
-      .order('created_at', { ascending: false })
-
-    if (error) throw error
-    return (data as Service[]) || []
+    return this.selectAllBestEffort(
+      supabaseRaw.from('services').eq('category', category)
+    )
   }
 
   static async getByCategoryPublished(category: string): Promise<Service[]> {
-    const { data, error } = await supabaseRaw
-      .from('services')
-      .select('*')
-      .eq('category', category)
-      .eq('status', 'published')
-      .order('order_index', { ascending: true })
-
-    if (error) throw error
-    return (data as Service[]) || []
+    return this.selectAllBestEffort(
+      supabaseRaw.from('services').eq('category', category).eq('status', 'published')
+    )
   }
 
   static async getFeaturedPublished(): Promise<Service[]> {
-    const { data, error } = await supabaseRaw
-      .from('services')
-      .select('*')
-      .eq('featured', true)
-      .eq('status', 'published')
-      .order('order_index', { ascending: true })
-
-    if (error) throw error
-    return (data as Service[]) || []
+    return this.selectAllBestEffort(
+      supabaseRaw.from('services').eq('featured', true).eq('status', 'published')
+    )
   }
 
   static async getById(id: string): Promise<Service | null> {
@@ -144,4 +131,3 @@ export class ServicesService {
     return (data as Service[]) || []
   }
 }
-

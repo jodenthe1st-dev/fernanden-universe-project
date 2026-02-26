@@ -11,52 +11,44 @@ export type Podcast = PodcastRow
 export type { PodcastInsert, PodcastUpdate }
 
 export class PodcastsService {
-  static async getAll(): Promise<Podcast[]> {
-    const { data, error } = await supabaseRaw
-      .from('podcasts')
+  private static async selectAllBestEffort(baseQuery: ReturnType<typeof supabaseRaw.from>): Promise<Podcast[]> {
+    const ordered = await baseQuery
       .select('*')
       .order('episode_number', { ascending: false })
+      .order('published_at', { ascending: false })
       .order('created_at', { ascending: false })
+    if (!ordered.error) return (ordered.data as Podcast[]) || []
 
-    if (error) throw error
-    return (data as Podcast[]) || []
+    const createdOnly = await baseQuery
+      .select('*')
+      .order('created_at', { ascending: false })
+    if (!createdOnly.error) return (createdOnly.data as Podcast[]) || []
+
+    const plain = await baseQuery.select('*')
+    if (plain.error) throw ordered.error
+    return (plain.data as Podcast[]) || []
+  }
+
+  static async getAll(): Promise<Podcast[]> {
+    return this.selectAllBestEffort(supabaseRaw.from('podcasts'))
   }
 
   static async getPublished(): Promise<Podcast[]> {
-    const { data, error } = await supabaseRaw
-      .from('podcasts')
-      .select('*')
-      .eq('status', 'published')
-      .order('episode_number', { ascending: false })
-      .order('published_at', { ascending: false })
-
-    if (error) throw error
-    return (data as Podcast[]) || []
+    return this.selectAllBestEffort(
+      supabaseRaw.from('podcasts').eq('status', 'published')
+    )
   }
 
   static async getFeatured(): Promise<Podcast[]> {
-    const { data, error } = await supabaseRaw
-      .from('podcasts')
-      .select('*')
-      .eq('featured', true)
-      .eq('status', 'published')
-      .order('episode_number', { ascending: false })
-      .order('published_at', { ascending: false })
-
-    if (error) throw error
-    return (data as Podcast[]) || []
+    return this.selectAllBestEffort(
+      supabaseRaw.from('podcasts').eq('featured', true).eq('status', 'published')
+    )
   }
 
   static async getByCategory(category: string): Promise<Podcast[]> {
-    const { data, error } = await supabaseRaw
-      .from('podcasts')
-      .select('*')
-      .eq('category', category)
-      .eq('status', 'published')
-      .order('episode_number', { ascending: false })
-
-    if (error) throw error
-    return (data as Podcast[]) || []
+    return this.selectAllBestEffort(
+      supabaseRaw.from('podcasts').eq('category', category).eq('status', 'published')
+    )
   }
 
   static async getById(id: string): Promise<Podcast | null> {
@@ -142,4 +134,3 @@ export class PodcastsService {
     return categories.sort()
   }
 }
-

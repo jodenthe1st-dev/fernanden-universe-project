@@ -136,6 +136,10 @@ export class AuthService {
 
       return this.currentUser;
     } catch (error) {
+      // Harmless race during auth/session refresh; avoid noisy logs.
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        return null;
+      }
       logger.error('Get current user error:', error);
       return null;
     }

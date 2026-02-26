@@ -7,57 +7,50 @@ type ProductUpdate = Database['public']['Tables']['products']['Update']
 type ProductFeaturedSelect = { featured: boolean | null }
 type ProductCategorySelect = { category: string }
 
-export type Product = ProductRow
-export type { ProductInsert, ProductUpdate }
+export type { ProductRow as Product, ProductInsert, ProductUpdate }
 
 export class ProductsService {
-  static async getAll(): Promise<Product[]> {
-    const { data, error } = await supabaseRaw
-      .from('products')
+  private static async selectAllBestEffort(baseQuery: ReturnType<typeof supabaseRaw.from>): Promise<ProductRow[]> {
+    const ordered = await baseQuery
       .select('*')
       .order('order_index', { ascending: true })
       .order('created_at', { ascending: false })
 
-    if (error) throw error
-    return (data as Product[]) || []
-  }
+    if (!ordered.error) return (ordered.data as ProductRow[]) || []
 
-  static async getPublished(): Promise<Product[]> {
-    const { data, error } = await supabaseRaw
-      .from('products')
+    const createdOnly = await baseQuery
       .select('*')
-      .eq('status', 'published')
-      .order('order_index', { ascending: true })
+      .order('created_at', { ascending: false })
+    if (!createdOnly.error) return (createdOnly.data as ProductRow[]) || []
 
-    if (error) throw error
-    return (data as Product[]) || []
+    const plain = await baseQuery.select('*')
+    if (plain.error) throw ordered.error
+    return (plain.data as ProductRow[]) || []
   }
 
-  static async getByCategoryPublished(category: string): Promise<Product[]> {
-    const { data, error } = await supabaseRaw
-      .from('products')
-      .select('*')
-      .eq('category', category)
-      .eq('status', 'published')
-      .order('order_index', { ascending: true })
-
-    if (error) throw error
-    return (data as Product[]) || []
+  static async getAll(): Promise<ProductRow[]> {
+    return this.selectAllBestEffort(supabaseRaw.from('products'))
   }
 
-  static async getFeaturedPublished(): Promise<Product[]> {
-    const { data, error } = await supabaseRaw
-      .from('products')
-      .select('*')
-      .eq('featured', true)
-      .eq('status', 'published')
-      .order('order_index', { ascending: true })
-
-    if (error) throw error
-    return (data as Product[]) || []
+  static async getPublished(): Promise<ProductRow[]> {
+    return this.selectAllBestEffort(
+      supabaseRaw.from('products').eq('status', 'published')
+    )
   }
 
-  static async getById(id: string): Promise<Product | null> {
+  static async getByCategoryPublished(category: string): Promise<ProductRow[]> {
+    return this.selectAllBestEffort(
+      supabaseRaw.from('products').eq('category', category).eq('status', 'published')
+    )
+  }
+
+  static async getFeaturedPublished(): Promise<ProductRow[]> {
+    return this.selectAllBestEffort(
+      supabaseRaw.from('products').eq('featured', true).eq('status', 'published')
+    )
+  }
+
+  static async getById(id: string): Promise<ProductRow | null> {
     const { data, error } = await supabaseRaw
       .from('products')
       .select('*')
@@ -65,10 +58,10 @@ export class ProductsService {
       .single()
 
     if (error) throw error
-    return (data as Product) || null
+    return (data as ProductRow) || null
   }
 
-  static async create(product: ProductInsert): Promise<Product> {
+  static async create(product: ProductInsert): Promise<ProductRow> {
     const { data, error } = await (supabaseRaw
       .from('products') as any) // eslint-disable-line @typescript-eslint/no-explicit-any
       .insert(product)
@@ -76,10 +69,10 @@ export class ProductsService {
       .single()
 
     if (error) throw error
-    return data as Product
+    return data as ProductRow
   }
 
-  static async update(id: string, updates: ProductUpdate): Promise<Product> {
+  static async update(id: string, updates: ProductUpdate): Promise<ProductRow> {
     const { data, error } = await (supabaseRaw
       .from('products') as any) // eslint-disable-line @typescript-eslint/no-explicit-any
       .update(updates)
@@ -88,7 +81,7 @@ export class ProductsService {
       .single()
 
     if (error) throw error
-    return data as Product
+    return data as ProductRow
   }
 
   static async delete(id: string): Promise<void> {
@@ -100,7 +93,7 @@ export class ProductsService {
     if (error) throw error
   }
 
-  static async toggleFeatured(id: string): Promise<Product> {
+  static async toggleFeatured(id: string): Promise<ProductRow> {
     const { data: product } = await supabaseRaw
       .from('products')
       .select('featured')
@@ -119,7 +112,6 @@ export class ProductsService {
 
     if (error) throw error
     const categories = [...new Set((data as ProductCategorySelect[] | null)?.map((p) => p.category).filter(Boolean) || [])]
-    return categories.sort()
+    return categories.sort((a, b) => a.localeCompare(b))
   }
 }
-
