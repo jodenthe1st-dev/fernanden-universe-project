@@ -40,9 +40,15 @@ export class PodcastsService {
   }
 
   static async getFeatured(): Promise<Podcast[]> {
-    return this.selectAllBestEffort(
-      supabaseRaw.from('podcasts').eq('featured', true).eq('status', 'published')
-    )
+    try {
+      return await this.selectAllBestEffort(
+        supabaseRaw.from('podcasts').eq('featured', true).eq('status', 'published')
+      )
+    } catch {
+      return this.selectAllBestEffort(
+        supabaseRaw.from('podcasts').eq('status', 'published')
+      )
+    }
   }
 
   static async getByCategory(category: string): Promise<Podcast[]> {
@@ -95,12 +101,13 @@ export class PodcastsService {
   }
 
   static async toggleFeatured(id: string): Promise<Podcast> {
-    const { data: podcast } = await supabaseRaw
+    const { data: podcast, error } = await supabaseRaw
       .from('podcasts')
       .select('featured')
       .eq('id', id)
       .single()
 
+    if (error) throw new Error('Featured flag is not available in current database schema')
     if (!podcast) throw new Error('Podcast not found')
 
     return this.update(id, { featured: !(podcast as PodcastFeaturedSelect).featured })
@@ -110,16 +117,22 @@ export class PodcastsService {
     if (!query || query.trim().length === 0) return []
 
     const cleanedQuery = query.trim().slice(0, 100)
-    const { data, error } = await supabaseRaw
+    const base = supabaseRaw
       .from('podcasts')
       .select('*')
       .eq('status', 'published')
       .or(`title.ilike.%${cleanedQuery}%,description.ilike.%${cleanedQuery}%,tags.cs.{${cleanedQuery}}`)
-      .order('episode_number', { ascending: false })
       .limit(50)
 
-    if (error) throw error
-    return (data as Podcast[]) || []
+    const ordered = await base.order('episode_number', { ascending: false })
+    if (!ordered.error) return (ordered.data as Podcast[]) || []
+
+    const fallback = await base.order('created_at', { ascending: false })
+    if (!fallback.error) return (fallback.data as Podcast[]) || []
+
+    const plain = await base
+    if (plain.error) throw ordered.error
+    return (plain.data as Podcast[]) || []
   }
 
   static async getCategories(): Promise<string[]> {

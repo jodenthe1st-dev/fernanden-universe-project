@@ -45,9 +45,16 @@ export class ProductsService {
   }
 
   static async getFeaturedPublished(): Promise<ProductRow[]> {
-    return this.selectAllBestEffort(
-      supabaseRaw.from('products').eq('featured', true).eq('status', 'published')
-    )
+    try {
+      return await this.selectAllBestEffort(
+        supabaseRaw.from('products').eq('featured', true).eq('status', 'published')
+      )
+    } catch {
+      // featured can be absent on some deployed schemas
+      return this.selectAllBestEffort(
+        supabaseRaw.from('products').eq('status', 'published')
+      )
+    }
   }
 
   static async getById(id: string): Promise<ProductRow | null> {
@@ -94,12 +101,13 @@ export class ProductsService {
   }
 
   static async toggleFeatured(id: string): Promise<ProductRow> {
-    const { data: product } = await supabaseRaw
+    const { data: product, error } = await supabaseRaw
       .from('products')
       .select('featured')
       .eq('id', id)
       .single()
 
+    if (error) throw new Error('Featured flag is not available in current database schema')
     if (!product) throw new Error('Product not found')
     return this.update(id, { featured: !(product as ProductFeaturedSelect).featured })
   }

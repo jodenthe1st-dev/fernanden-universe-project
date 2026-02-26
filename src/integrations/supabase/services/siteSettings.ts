@@ -10,6 +10,15 @@ export type SiteSetting = SiteSettingRow
 export type { SiteSettingInsert, SiteSettingUpdate }
 
 export class SiteSettingsService {
+  private static inferCategoryFromKey(key: string): string {
+    if (key.startsWith('social_')) return 'social'
+    if (key.startsWith('seo_')) return 'seo'
+    if (key.startsWith('theme_')) return 'appearance'
+    if (key.startsWith('contact_')) return 'contact'
+    if (key.includes('maintenance') || key.includes('notification') || key.includes('registration')) return 'security'
+    return 'general'
+  }
+
   static async getAll(): Promise<SiteSetting[]> {
     const { data, error } = await supabaseRaw
       .from('site_settings')
@@ -39,6 +48,7 @@ export class SiteSettingsService {
       .eq('key', key)
       .single()
 
+    if (error?.code === 'PGRST116') return null
     if (error) throw error
     return (data as SiteSetting) || null
   }
@@ -67,19 +77,37 @@ export class SiteSettingsService {
   }
 
   static async updateByKey(key: string, value: Json): Promise<SiteSetting> {
+    const now = new Date().toISOString()
+    const { data: updatedRows, error: updateError } = await (supabaseRaw
+      .from('site_settings') as any) // eslint-disable-line @typescript-eslint/no-explicit-any
+      .update({ value, updated_at: now })
+      .eq('key', key)
+      .select('*')
+
+    if (updateError) throw updateError
+    if (updatedRows && updatedRows.length > 0) {
+      return updatedRows[0] as SiteSetting
+    }
+
     const { data: setting, error } = await supabaseRaw
       .from('site_settings')
       .select('id')
       .eq('key', key)
       .single()
 
-    if (error) throw error
-    if (!setting) throw new Error('Setting not found')
+    if (!error && setting) {
+      return this.update((setting as SiteSettingIdSelect).id, {
+        value,
+        updated_at: now,
+      })
+    }
 
-    return this.update((setting as SiteSettingIdSelect).id, {
+    return this.create({
+      key,
       value,
-      updated_at: new Date().toISOString(),
-    })
+      category: this.inferCategoryFromKey(key),
+      updated_at: now,
+    } as SiteSettingInsert)
   }
 
   static async delete(id: string): Promise<void> {
@@ -112,4 +140,3 @@ export class SiteSettingsService {
     return settings
   }
 }
-

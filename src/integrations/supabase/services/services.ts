@@ -50,9 +50,15 @@ export class ServicesService {
   }
 
   static async getFeaturedPublished(): Promise<Service[]> {
-    return this.selectAllBestEffort(
-      supabaseRaw.from('services').eq('featured', true).eq('status', 'published')
-    )
+    try {
+      return await this.selectAllBestEffort(
+        supabaseRaw.from('services').eq('featured', true).eq('status', 'published')
+      )
+    } catch {
+      return this.selectAllBestEffort(
+        supabaseRaw.from('services').eq('status', 'published')
+      )
+    }
   }
 
   static async getById(id: string): Promise<Service | null> {
@@ -99,12 +105,13 @@ export class ServicesService {
   }
 
   static async toggleFeatured(id: string): Promise<Service> {
-    const { data: service } = await supabaseRaw
+    const { data: service, error } = await supabaseRaw
       .from('services')
       .select('featured')
       .eq('id', id)
       .single()
 
+    if (error) throw new Error('Featured flag is not available in current database schema')
     if (!service) throw new Error('Service not found')
     return this.update(id, { featured: !(service as ServiceFeaturedSelect).featured })
   }
@@ -118,16 +125,24 @@ export class ServicesService {
       .select('*')
       .eq('status', 'published')
       .or(`title.ilike.%${cleanedQuery}%,description.ilike.%${cleanedQuery}%,features.cs.{${cleanedQuery}}`)
-      .order('category', { ascending: true })
-      .order('order_index', { ascending: true })
       .limit(50)
 
     if (category) {
       q = q.eq('category', category)
     }
 
-    const { data, error } = await q
-    if (error) throw error
-    return (data as Service[]) || []
+    const ordered = await q
+      .order('category', { ascending: true })
+      .order('order_index', { ascending: true })
+    if (!ordered.error) return (ordered.data as Service[]) || []
+
+    const fallback = await q
+      .order('category', { ascending: true })
+      .order('created_at', { ascending: false })
+    if (!fallback.error) return (fallback.data as Service[]) || []
+
+    const plain = await q
+    if (plain.error) throw ordered.error
+    return (plain.data as Service[]) || []
   }
 }
