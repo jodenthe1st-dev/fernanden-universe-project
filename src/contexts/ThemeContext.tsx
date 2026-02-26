@@ -24,7 +24,7 @@ interface ThemeProviderProps {
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const [theme, setTheme] = useState<Theme>(() => {
-    const saved = localStorage.getItem('admin_theme');
+    const saved = localStorage.getItem('fernanden_theme');
     return (saved as Theme) || 'light'; // Default to light mode
   });
 
@@ -33,19 +33,19 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   useEffect(() => {
     const updateTheme = () => {
       let newResolvedTheme: 'light' | 'dark';
-      
+
       if (theme === 'system') {
         newResolvedTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
       } else {
         newResolvedTheme = theme;
       }
-      
+
       setResolvedTheme(newResolvedTheme);
-      
+
       // Apply theme to document
       document.documentElement.classList.remove('light', 'dark');
       document.documentElement.classList.add(newResolvedTheme);
-      
+
       // Update meta theme-color
       const metaTheme = document.querySelector('meta[name="theme-color"]');
       if (metaTheme) {
@@ -59,7 +59,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     if (theme === 'system') {
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
       mediaQuery.addEventListener('change', updateTheme);
-      
+
       return () => {
         mediaQuery.removeEventListener('change', updateTheme);
       };
@@ -68,7 +68,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 
   const handleThemeChange = (newTheme: Theme) => {
     setTheme(newTheme);
-    localStorage.setItem('admin_theme', newTheme);
+    localStorage.setItem('fernanden_theme', newTheme);
   };
 
   const value: ThemeContextType = {

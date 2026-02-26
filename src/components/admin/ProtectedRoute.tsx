@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ShieldAlert } from 'lucide-react';
 import logger from '@/lib/logger';
 
 interface ProtectedRouteProps {
@@ -25,9 +25,31 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     );
   }
 
+  // 1. Non connecté → login
   if (!isAuthenticated) {
-    // Rediriger vers login avec l'URL de destination
     return <Navigate to="/admin/login" state={{ from: location }} replace />;
+  }
+
+  // 2. Connecté mais pas admin → accès refusé
+  if (user?.role !== 'admin') {
+    logger.warn('ProtectedRoute - Access denied: user is not admin', { role: user?.role, email: user?.email });
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <div className="text-center max-w-md mx-auto px-6">
+          <ShieldAlert className="h-16 w-16 text-red-500 mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Accès refusé</h1>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
+            Vous n'avez pas les droits administrateur pour accéder à cette page.
+          </p>
+          <a
+            href="/"
+            className="inline-block px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+          >
+            Retour au site
+          </a>
+        </div>
+      </div>
+    );
   }
 
   return <>{children}</>;

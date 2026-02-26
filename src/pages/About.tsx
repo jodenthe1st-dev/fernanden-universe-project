@@ -1,4 +1,5 @@
 import { Layout } from "@/components/layout/Layout";
+import { PageMeta } from "@/components/layout/PageMeta";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Award, Users, Target, Sparkles, ArrowRight, Globe, Heart, Eye, Lightbulb, HandHeart, Quote, Star, ChevronRight } from "lucide-react";
 import { useRef } from "react";
@@ -82,6 +83,10 @@ const About = () => {
 
   return (
     <Layout>
+      <PageMeta
+        title="À Propos"
+        description="Découvrez la ligne éditoriale et la vision de Fernanden : héritage africain, design pluriel, inspiration et éthique au cœur de chaque création."
+      />
       {/* Hero Section - Ultra Premium */}
       <section className="relative pt-32 pb-24 overflow-hidden">
         {/* Animated background elements */}
@@ -90,20 +95,20 @@ const About = () => {
           <div className="absolute bottom-0 right-0 w-96 h-96 bg-secondary/5 rounded-full blur-3xl animate-pulse delay-1000" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-densen-gold/5 rounded-full blur-3xl animate-pulse delay-500" />
         </div>
-        
-        <GradientBlob 
-          className="-top-40 left-1/4" 
+
+        <GradientBlob
+          className="-top-40 left-1/4"
           color1="hsl(var(--primary) / 0.15)"
           size="600px"
           animate={true}
         />
-        <GradientBlob 
-          className="top-20 right-1/4" 
+        <GradientBlob
+          className="top-20 right-1/4"
           color1="hsl(var(--secondary) / 0.1)"
           size="400px"
           animate={true}
         />
-        
+
         <div className="container-main relative z-10">
           <motion.div
             initial={{ opacity: 0 }}
@@ -122,7 +127,7 @@ const About = () => {
               </span>
               <div className="w-2 h-2 bg-secondary rounded-full animate-pulse delay-300" />
             </motion.div>
-            
+
             <h1 className="heading-hero text-foreground mb-8">
               <span className="block mb-2">
                 <AnimatedLetters text="L'art de" type="wave" />
@@ -131,7 +136,7 @@ const About = () => {
                 <AnimatedLetters text="réinventer le design" type="wave" delay={0.5} />
               </span>
             </h1>
-            
+
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -167,7 +172,7 @@ const About = () => {
         <div className="absolute inset-0 opacity-5">
           <div className="absolute inset-0 bg-gradient-to-br from-primary via-transparent to-secondary" />
         </div>
-        
+
         <div className="container-main relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -180,13 +185,13 @@ const About = () => {
               <span className="text-xs font-heading uppercase tracking-wider text-primary">Notre Mission</span>
               <div className="w-1 h-1 bg-primary rounded-full" />
             </div>
-            
+
             <h2 className="heading-section text-foreground mb-8">
               Une <span className="text-primary">vision</span> transformatrice
             </h2>
             <p className="body-large text-muted-foreground max-w-4xl mx-auto leading-relaxed">
-              Une présence sur les réseaux sociaux unifiée et reconnaissable, 
-              construisant une communauté engagée autour d'un univers de marque fort 
+              Une présence sur les réseaux sociaux unifiée et reconnaissable,
+              construisant une communauté engagée autour d'un univers de marque fort
               et d'une ligne éditoriale qui inspire et élève.
             </p>
           </motion.div>
@@ -261,10 +266,10 @@ const About = () => {
                   alt="Design studio"
                   className="rounded-3xl shadow-2xl w-full object-cover aspect-square group-hover:scale-105 transition-transform duration-700"
                 />
-                
+
                 {/* Premium overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-deep-black/70 via-deep-black/20 to-transparent rounded-3xl" />
-                
+
                 {/* Floating quote card */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -297,13 +302,13 @@ const About = () => {
       {/* Piliers Éditoriaux - Ultra Premium */}
       <section className="py-24 relative">
         {/* Sophisticated background */}
-          <div className="absolute inset-0">
+        <div className="absolute inset-0">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/3 via-transparent to-secondary/3" />
           {/* Tailwind: use CSS var colors with explicit alpha (theme(colors.primary/5) is invalid). */}
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,hsl(var(--primary)/0.05),transparent_50%)]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,hsl(var(--secondary)/0.05),transparent_50%)]" />
         </div>
-        
+
         <div className="container-main relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -318,13 +323,13 @@ const About = () => {
               </span>
               <div className="w-2 h-2 bg-secondary rounded-full animate-pulse delay-300" />
             </div>
-            
+
             <h2 className="heading-section text-foreground mb-8">
               Les <span className="text-primary">4 piliers</span> fondamentaux
             </h2>
             <p className="body-large text-muted-foreground max-w-4xl mx-auto leading-relaxed">
-              Ces quatre piliers structurent l'ensemble de notre communication 
-              et transparaissent dans chaque publication, créant une cohérence 
+              Ces quatre piliers structurent l'ensemble de notre communication
+              et transparaissent dans chaque publication, créant une cohérence
               qui renforce notre univers de marque.
             </p>
           </motion.div>
@@ -344,12 +349,12 @@ const About = () => {
                 <div className="relative h-full">
                   {/* Glow effect on hover */}
                   <div className={`absolute inset-0 bg-gradient-to-br ${pillar.color} rounded-3xl blur-xl opacity-0 group-hover:opacity-70 transition-all duration-700 scale-105`} />
-                  
+
                   {/* Main card */}
                   <div className="relative bg-card/80 backdrop-blur-xl rounded-3xl p-10 border border-border/30 shadow-xl group-hover:shadow-2xl transition-all duration-500 h-full flex flex-col">
                     {/* Icon with premium styling */}
                     <div className="flex items-start gap-8 mb-6">
-                      <motion.div 
+                      <motion.div
                         className="w-20 h-20 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-2xl flex items-center justify-center shadow-lg flex-shrink-0"
                         whileHover={{ rotate: 15, scale: 1.1 }}
                         transition={{ duration: 0.3 }}
@@ -363,11 +368,11 @@ const About = () => {
                         <div className="w-16 h-0.5 bg-gradient-to-r from-primary to-secondary mb-4" />
                       </div>
                     </div>
-                    
+
                     <p className="body-regular text-muted-foreground leading-relaxed text-lg flex-grow">
                       {pillar.description}
                     </p>
-                    
+
                     {/* Subtle decorative element */}
                     <div className="absolute top-6 right-6 w-8 h-8 border-2 border-primary/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </div>
@@ -399,7 +404,7 @@ const About = () => {
       <section className="py-24 relative">
         {/* Elegant background */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-muted/20 to-transparent" />
-        
+
         <div className="container-main relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -414,13 +419,13 @@ const About = () => {
               </span>
               <div className="w-2 h-2 bg-primary rounded-full animate-pulse delay-300" />
             </div>
-            
+
             <h2 className="heading-section text-foreground mb-8">
               Notre <span className="text-densen-gold">alchimie</span> subtile
             </h2>
             <p className="body-large text-muted-foreground max-w-4xl mx-auto leading-relaxed">
-              Une alchimie unique qui se reflète dans chaque légende, 
-              chaque message et chaque interaction, créant une signature 
+              Une alchimie unique qui se reflète dans chaque légende,
+              chaque message et chaque interaction, créant une signature
               reconnaissable et mémorable.
             </p>
           </motion.div>
@@ -443,8 +448,8 @@ const About = () => {
                     initial={{ scale: 0, rotate: -180 }}
                     whileInView={{ scale: 1, rotate: 0 }}
                     viewport={{ once: true }}
-                    transition={{ 
-                      type: "spring", 
+                    transition={{
+                      type: "spring",
                       delay: 0.3 + index * 0.1,
                       stiffness: 100,
                       damping: 20
@@ -454,17 +459,17 @@ const About = () => {
                     <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-full animate-pulse opacity-50" />
                     <voice.icon className={`w-12 h-12 ${voice.color} relative z-10`} />
                   </motion.div>
-                  
+
                   <h3 className="font-heading font-bold text-2xl text-foreground mb-6">
                     {voice.title}
                   </h3>
-                  
+
                   <div className="w-16 h-0.5 bg-gradient-to-r from-primary to-secondary mx-auto mb-6" />
-                  
+
                   <p className="body-regular text-muted-foreground leading-relaxed text-lg">
                     {voice.description}
                   </p>
-                  
+
                   {/* Decorative elements */}
                   <div className="absolute top-4 right-4 w-6 h-6 border-2 border-primary/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   <div className="absolute bottom-4 left-4 w-4 h-4 border-2 border-secondary/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100" />
@@ -499,7 +504,7 @@ const About = () => {
           <div className="absolute inset-0 bg-gradient-to-br from-primary/3 via-transparent to-secondary/3" />
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(var(--soft-gold)/0.05),transparent_70%)]" />
         </div>
-        
+
         <div className="container-main relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -512,7 +517,7 @@ const About = () => {
             <div className="relative group">
               {/* Glow effect */}
               <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-densen-gold/20 to-secondary/20 rounded-3xl blur-2xl opacity-60 group-hover:opacity-80 transition-opacity duration-700" />
-              
+
               {/* Main CTA container */}
               <div className="relative bg-gradient-to-br from-card/90 via-card/80 to-card/90 backdrop-blur-xl rounded-3xl p-16 md:p-20 text-center border border-border/20 shadow-2xl overflow-hidden">
                 {/* Animated background elements */}
@@ -528,15 +533,15 @@ const About = () => {
                     className="absolute -bottom-20 -left-20 w-32 h-32 border-2 border-secondary rounded-full"
                   />
                 </div>
-                
-                <GradientBlob 
-                  className="top-0 left-0" 
+
+                <GradientBlob
+                  className="top-0 left-0"
                   color1="hsl(var(--primary) / 0.15)"
                   size="400px"
                   animate={true}
                 />
-                <GradientBlob 
-                  className="bottom-0 right-0" 
+                <GradientBlob
+                  className="bottom-0 right-0"
                   color1="hsl(var(--secondary) / 0.12)"
                   size="350px"
                   animate={true}
@@ -558,7 +563,7 @@ const About = () => {
                     <div className="w-2 h-2 bg-secondary rounded-full animate-pulse delay-300" />
                   </motion.div>
 
-                  <motion.h2 
+                  <motion.h2
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
@@ -567,19 +572,19 @@ const About = () => {
                   >
                     Prêt à <span className="text-primary">collaborer</span> ?
                   </motion.h2>
-                  
-                  <motion.p 
+
+                  <motion.p
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.4 }}
                     className="body-large text-muted-foreground max-w-3xl mx-auto mb-12 leading-relaxed"
                   >
-                    Découvrez comment notre ligne éditoriale guide chaque création 
-                    et façonne une expérience unique qui vous ressemble. 
+                    Découvrez comment notre ligne éditoriale guide chaque création
+                    et façonne une expérience unique qui vous ressemble.
                     Transformons ensemble vos idées en réalités exceptionnelles.
                   </motion.p>
-                  
+
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -595,7 +600,7 @@ const About = () => {
                         </Link>
                       </Button>
                     </MagneticButton>
-                    
+
                     <MagneticButton>
                       <Button asChild variant="outline" size="lg" className="rounded-xl border-2 border-primary/50 text-primary hover:bg-primary hover:text-foreground backdrop-blur-sm px-8 py-4 text-lg transition-all duration-300">
                         <Link to="/contact" className="flex items-center gap-3">

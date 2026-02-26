@@ -40,7 +40,7 @@ const universes = [
 ];
 
 // 3D Card Component
-function Universe3DCard({ universe, index }: { universe: typeof universes[0]; index: number }) {
+function Universe3DCard({ universe, index }: Readonly<{ universe: typeof universes[0]; index: number }>) {
   const ref = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);

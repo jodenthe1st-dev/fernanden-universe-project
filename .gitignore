@@ -34,3 +34,9 @@ supabase/config.toml
 # Database files
 *.sql
 database-schema.sql
+
+# Vite timestamp cache files
+vite.config.ts.timestamp-*
+
+# OS junk
+Thumbs.db

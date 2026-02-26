@@ -103,7 +103,7 @@ const CafEE = () => {
   useEffect(() => {
     const loadServices = async () => {
       try {
-        const data = await DatabaseService.getServices('CafEE');
+        const data = await DatabaseService.getServices({ category: 'cafee' });
         setServices(data);
       } catch (error) {
         logger.error('Error loading CafEE services:', error);
@@ -127,6 +127,59 @@ const CafEE = () => {
       case 'award': return Award;
       default: return BookOpen;
     }
+  };
+
+  const renderEducationServices = () => {
+    if (loading) {
+      return (
+        <div className="col-span-full text-center py-12">
+          <div className="text-muted-foreground">Chargement des services éducatifs...</div>
+        </div>
+      );
+    }
+    
+    if (services.length === 0) {
+      return (
+        <div className="col-span-full text-center py-12">
+          <div className="text-muted-foreground">Aucun service disponible pour le moment</div>
+        </div>
+      );
+    }
+    
+    return services.map((service, index) => {
+      const IconComponent = getIconForService(service.icon_name || 'brain');
+      return (
+        <motion.div
+          key={service.title}
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: index * 0.1 }}
+          className="group bg-card rounded-2xl p-6 border border-border hover:border-cafee-mint/50 hover:shadow-lg transition-all duration-300"
+        >
+          <div className="flex items-start gap-4">
+            <div className="w-14 h-14 bg-cafee-mint/10 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-cafee-mint/20 transition-colors">
+              <IconComponent className="w-7 h-7 text-cafee-mint" />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-heading font-semibold text-lg text-foreground mb-2">{service.title}</h3>
+              <p className="body-small text-muted-foreground mb-4">{service.description}</p>
+              <div className="flex flex-wrap gap-2">
+                {(service.features || []).map((feature) => (
+                  <span 
+                    key={feature}
+                    className="inline-flex items-center gap-1 text-xs bg-cafee-mint/10 text-cafee-mint px-3 py-1 rounded-full"
+                  >
+                    <CheckCircle2 size={12} />
+                    {feature}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      );
+    });
   };
 
   return (
@@ -242,50 +295,7 @@ const CafEE = () => {
           </motion.div>
 
           <div className="grid md:grid-cols-2 gap-6">
-            {loading ? (
-              <div className="col-span-full text-center py-12">
-                <div className="text-muted-foreground">Chargement des services éducatifs...</div>
-              </div>
-            ) : services.length === 0 ? (
-              <div className="col-span-full text-center py-12">
-                <div className="text-muted-foreground">Aucun service disponible pour le moment</div>
-              </div>
-            ) : (
-              services.map((service, index) => {
-                const IconComponent = getIconForService(service.icon_name || 'brain');
-                return (
-              <motion.div
-                key={service.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="group bg-card rounded-2xl p-6 border border-border hover:border-cafee-mint/50 hover:shadow-lg transition-all duration-300"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="w-14 h-14 bg-cafee-mint/10 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-cafee-mint/20 transition-colors">
-                    <IconComponent className="w-7 h-7 text-cafee-mint" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-heading font-semibold text-lg text-foreground mb-2">{service.title}</h3>
-                    <p className="body-small text-muted-foreground mb-4">{service.description}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {(service.features || []).map((feature) => (
-                        <span 
-                          key={feature}
-                          className="inline-flex items-center gap-1 text-xs bg-cafee-mint/10 text-cafee-mint px-3 py-1 rounded-full"
-                        >
-                          <CheckCircle2 size={12} />
-                          {feature}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-                );
-              })
-            )}
+            {renderEducationServices()}
           </div>
 
           <motion.div

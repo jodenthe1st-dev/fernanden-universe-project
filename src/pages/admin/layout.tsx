@@ -14,15 +14,18 @@ interface MenuItem {
   badge?: number;
 }
 
-export default function AdminLayout() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+export function AdminLayout() {
+  const [sidebarOpen, setSidebarOpen] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.innerWidth >= 1024;
+  });
   const { user, logout, isLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
     if (!isLoading) {
-      if (!user || user.role !== 'admin') {
+      if (user?.role !== 'admin') {
         navigate('/admin/login');
       }
     }
@@ -124,7 +127,7 @@ export default function AdminLayout() {
                   {sidebarOpen && (
                     <>
                       <span className="ml-3">{item.label}</span>
-                      {item.badge && item.badge > 0 && (
+                      {Boolean(item.badge && item.badge > 0) && (
                         <Badge variant="secondary" className="ml-auto">
                           {item.badge}
                         </Badge>
@@ -188,13 +191,20 @@ export default function AdminLayout() {
 
       {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
-        <div 
+        <button
+          type="button"
           className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
+          aria-label="Fermer le menu"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              setSidebarOpen(false);
+            }
+          }}
         />
       )}
     </div>
   );
 }
 
-export { AdminLayout };

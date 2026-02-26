@@ -1,4 +1,5 @@
 import { Layout } from "@/components/layout/Layout";
+import { PageMeta } from "@/components/layout/PageMeta";
 import { motion } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -36,7 +37,11 @@ const Blog = () => {
 
   // Determine current category from URL
   const categoryPath = location.pathname.split("/")[2];
-  const currentCategory = categoryPath ? (categoryPath === "dense" ? "DENSE" : categoryPath.toUpperCase()) : "Tous";
+  const currentCategory = (() => {
+    if (!categoryPath) return "Tous";
+    if (categoryPath === "dense") return "DENSE";
+    return categoryPath.toUpperCase();
+  })();
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -49,7 +54,7 @@ const Blog = () => {
           data = await BlogPostsService.getByCategory(currentCategory.toLowerCase());
         }
         setPosts(data);
-      } catch (error) {
+      } catch (error: unknown) {
         logger.error('Error fetching blog posts:', error);
         toast.error("Erreur lors du chargement des articles. Veuillez réessayer plus tard.");
       } finally {
@@ -61,7 +66,7 @@ const Blog = () => {
   }, [currentCategory]);
 
   const handleSubscribe = async () => {
-    if (!email || !email.includes('@')) {
+    if (!email?.includes('@')) {
       toast.error("Veuillez entrer une adresse email valide");
       return;
     }
@@ -91,6 +96,10 @@ const Blog = () => {
 
   return (
     <Layout>
+      <PageMeta
+        title={currentCategory === 'Tous' ? 'Blog' : `Blog ${currentCategory}`}
+        description="Découvrez les articles, tutoriels et inspirations de Fernanden à travers nos trois univers créatifs : SHE, DENSE et CaFEE."
+      />
       {/* Hero Section */}
       <section className="py-16 bg-gradient-to-br from-primary/5 to-secondary/5">
         <div className="container-main">
@@ -195,7 +204,7 @@ const Blog = () => {
                               <Calendar size={14} />
                               <span>{post.published_at ? new Date(post.published_at).toLocaleDateString('fr-FR') : 'Date inconnue'}</span>
                             </div>
-                            {post.reading_time && (
+                            {!!post.reading_time && (
                               <div className="flex items-center gap-1">
                                 <Clock size={14} />
                                 <span>{post.reading_time} min</span>
@@ -276,7 +285,7 @@ const Blog = () => {
                               <Calendar size={14} />
                               <span>{post.published_at ? new Date(post.published_at).toLocaleDateString('fr-FR') : 'Date inconnue'}</span>
                             </div>
-                            {post.reading_time && (
+                            {!!post.reading_time && (
                               <div className="flex items-center gap-1">
                                 <Clock size={14} />
                                 <span>{post.reading_time} min</span>

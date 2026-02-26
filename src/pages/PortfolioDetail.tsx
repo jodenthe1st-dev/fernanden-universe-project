@@ -1,10 +1,9 @@
 import { Layout } from "@/components/layout/Layout";
 import { motion } from "framer-motion";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Calendar, MapPin, ExternalLink, User, Tag } from "lucide-react";
+import { ArrowLeft, Calendar, MapPin, ExternalLink, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
 
 // Portfolio data (same as in Portfolio.tsx)
 const portfolioItems = [
@@ -178,7 +177,7 @@ const categoryColors = {
 
 const PortfolioDetail = () => {
   const { id } = useParams();
-  const project = portfolioItems.find(item => item.id === parseInt(id || "1"));
+  const project = portfolioItems.find(item => item.id === Number.parseInt(id || "1"));
 
   if (!project) {
     return (
@@ -273,8 +272,8 @@ const PortfolioDetail = () => {
                   </div>
                   
                   <div className="flex flex-wrap gap-2 mb-6">
-                    {project.tags.map((tag, index) => (
-                      <Badge key={index} variant="secondary" className="text-xs">
+                    {project.tags.map((tag) => (
+                      <Badge key={tag} variant="secondary" className="text-xs">
                         #{tag}
                       </Badge>
                     ))}
@@ -316,8 +315,8 @@ const PortfolioDetail = () => {
                   Services réalisés
                 </h3>
                 <div className="grid md:grid-cols-2 gap-4">
-                  {project.services.map((service, index) => (
-                    <div key={index} className="flex items-center gap-3">
+                  {project.services.map((service) => (
+                    <div key={service} className="flex items-center gap-3">
                       <div className="w-2 h-2 bg-primary rounded-full" />
                       <span className="text-muted-foreground">{service}</span>
                     </div>
@@ -384,7 +383,7 @@ const PortfolioDetail = () => {
           <div className="grid md:grid-cols-3 gap-6">
             {project.gallery.map((image, index) => (
               <motion.div
-                key={index}
+                key={image}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -393,7 +392,7 @@ const PortfolioDetail = () => {
               >
                 <img
                   src={image}
-                  alt={`${project.title} - Image ${index + 1}`}
+                  alt={`${project.title} ${index + 1}`}
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
                 />
               </motion.div>

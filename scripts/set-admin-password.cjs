@@ -1,3 +1,4 @@
+
 // scripts/set-admin-password.cjs
 // Usage: node scripts/set-admin-password.cjs admin@domain.com newPassword
 const fs = require('fs');

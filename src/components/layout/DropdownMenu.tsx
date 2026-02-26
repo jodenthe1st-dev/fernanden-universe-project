@@ -121,6 +121,8 @@ export const BlogDropdown = () => {
             ? "text-primary"
             : "text-foreground hover:text-primary"
         )}
+        aria-haspopup="true"
+        aria-expanded={isOpen}
       >
         <span>Blog & Actualités</span>
         <motion.div

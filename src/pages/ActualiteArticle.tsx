@@ -1,7 +1,7 @@
 import { Layout } from "@/components/layout/Layout";
 import { motion } from "framer-motion";
-import { Link, useParams, useNavigate } from "react-router-dom";
-import { Calendar, Clock, User, ArrowLeft, ArrowRight, Share2, Bell, ExternalLink } from "lucide-react";
+import { useParams, useNavigate } from "react-router-dom";
+import { Calendar, Clock, User, ArrowLeft, Share2, Bell, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";

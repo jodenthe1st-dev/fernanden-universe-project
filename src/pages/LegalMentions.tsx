@@ -1,7 +1,7 @@
 import { Layout } from "@/components/layout/Layout";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { FileText, Building, Calendar, MapPin, Mail, Phone, Shield, Scale, Gavel, ChevronRight } from "lucide-react";
+import { FileText, Building, Shield, Scale, Gavel, ChevronRight } from "lucide-react";
 
 const LegalMentions = () => {
   return (

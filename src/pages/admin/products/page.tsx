@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { DatabaseService, Product } from '@/services/DatabaseService';
 import { 
@@ -12,8 +12,7 @@ import {
   Edit, 
   Trash2, 
   Eye,
-  Package,
-  Filter
+  Package
 } from 'lucide-react';
 import logger from '@/lib/logger';
 

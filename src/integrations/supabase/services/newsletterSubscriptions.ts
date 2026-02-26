@@ -1,7 +1,7 @@
 import { supabaseRaw } from '../client'
 
 // Types basés sur la structure exacte de la base de données
-export interface NewsletterSubscription {
+type NewsletterSubscription = {
   id: string
   email: string
   name: string | null
@@ -16,7 +16,7 @@ export interface NewsletterSubscription {
   updated_at: string
 }
 
-export interface NewsletterSubscriptionInsert {
+type NewsletterSubscriptionInsert = {
   id?: string
   email: string
   name?: string | null
@@ -31,7 +31,7 @@ export interface NewsletterSubscriptionInsert {
   updated_at?: string
 }
 
-export interface NewsletterSubscriptionUpdate {
+type NewsletterSubscriptionUpdate = {
   id?: string
   email?: string
   name?: string | null
@@ -45,6 +45,8 @@ export interface NewsletterSubscriptionUpdate {
   created_at?: string
   updated_at?: string
 }
+
+export type { NewsletterSubscription, NewsletterSubscriptionInsert, NewsletterSubscriptionUpdate }
 
 export class NewsletterSubscriptionsService {
   // Récupérer tous les abonnés
@@ -303,7 +305,7 @@ export class NewsletterSubscriptionsService {
     
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const sources = [...new Set(data?.map((s: any) => s.source).filter(Boolean) || [])] as string[]
-    return sources.sort()
+    return sources.sort((a, b) => a.localeCompare(b))
   }
 
   // Récupérer les préférences disponibles
@@ -318,7 +320,7 @@ export class NewsletterSubscriptionsService {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const allPreferences = data?.flatMap((s: any) => s.preferences) || []
     const uniquePreferences = [...new Set(allPreferences)]
-    return uniquePreferences.sort()
+    return uniquePreferences.sort((a, b) => a.localeCompare(b))
   }
 
   // Générer un token de désabonnement

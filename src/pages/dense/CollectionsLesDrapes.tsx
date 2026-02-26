@@ -2,9 +2,8 @@ import { Layout } from "@/components/layout/Layout";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight, Star, Heart, ShoppingBag, Check, Shield, Sparkles, ChevronRight } from "lucide-react";
+import { ArrowRight, Star, Heart, ShoppingBag, Check, ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
-import { MagneticButton } from "@/components/animations/MagneticButton";
 import { placeholderImages } from "@/components/ui/BrandedPlaceholder";
 
 // Stockage partagé du panier
@@ -26,8 +25,6 @@ const getSharedFavorites = (): number[] => {
 const setSharedFavorites = (items: number[]) => {
   localStorage.setItem('dense-favorites', JSON.stringify(items));
 };
-
-import logoDensen from "@/assets/logo-densen.png";
 
 // Données provisoires pour la collection Les Drapés
 const collectionData = {
@@ -152,7 +149,11 @@ const DenseCollectionLesDrapes = () => {
             )}
           </div>
           <span className="font-heading font-semibold">
-            {cartItems.length > 0 ? `${cartItems.length} article${cartItems.length > 1 ? 's' : ''}` : 'Panier'}
+            {(() => {
+              if (cartItems.length === 0) return 'Panier';
+              const plural = cartItems.length > 1 ? 's' : '';
+              return `${cartItems.length} article${plural}`;
+            })()}
           </span>
         </Link>
       </motion.div>
@@ -281,7 +282,7 @@ const DenseCollectionLesDrapes = () => {
                 <div className="space-y-4">
                   {collectionData.features.map((feature, index) => (
                     <motion.div
-                      key={index}
+                      key={`feature-${feature}`}
                       initial={{ opacity: 0, x: -20 }}
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
@@ -480,7 +481,7 @@ const DenseCollectionLesDrapes = () => {
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {collectionData.testimonials.map((testimonial, index) => (
               <motion.div
-                key={index}
+                key={`testimonial-${testimonial.name}`}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -488,8 +489,8 @@ const DenseCollectionLesDrapes = () => {
                 className="bg-card rounded-2xl p-6 border border-border/30"
               >
                 <div className="flex items-center gap-1 mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} size={16} className="fill-densen-gold text-densen-gold" />
+                  {Array.from({ length: testimonial.rating }).map((_, i) => (
+                    <Star key={`star-${testimonial.name}-${i}`} size={16} className="fill-densen-gold text-densen-gold" />
                   ))}
                 </div>
                 

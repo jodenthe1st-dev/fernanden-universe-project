@@ -1,4 +1,5 @@
 import { Layout } from "@/components/layout/Layout";
+import { PageMeta } from "@/components/layout/PageMeta";
 import { motion } from "framer-motion";
 import { MapPin, Phone, Mail, Clock, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -99,6 +100,10 @@ const Contact = () => {
 
   return (
     <Layout>
+      <PageMeta
+        title="Contact"
+        description="Contactez Fernanden à Cotonou, Bénin. Remplissez notre formulaire ou appelez-nous au +229 01 97 51 26 36. Nous répondons sous 24h."
+      />
       {/* Hero Section - Professional Design */}
       <section className="relative pt-32 pb-16 bg-gradient-to-b from-muted/50 to-background">
         <div className="container-main">
@@ -111,7 +116,7 @@ const Contact = () => {
             <h1 className="heading-hero text-foreground mb-6">
               Contact
             </h1>
-            <motion.p 
+            <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
@@ -135,7 +140,7 @@ const Contact = () => {
               className="space-y-6"
             >
               <h3 className="heading-subsection text-foreground mb-8">Informations</h3>
-              
+
               {contactInfo.map((info, index) => (
                 <motion.div
                   key={info.title}
@@ -152,7 +157,7 @@ const Contact = () => {
                     <div className="flex-1">
                       <h4 className="font-heading font-semibold text-foreground mb-2">{info.title}</h4>
                       {info.href ? (
-                        <a 
+                        <a
                           href={info.href}
                           className="text-muted-foreground hover:text-primary transition-colors"
                         >
@@ -181,20 +186,20 @@ const Contact = () => {
                 <p className="body-small text-muted-foreground mb-8">
                   Décrivez votre projet et nous vous recontacterons rapidement
                 </p>
-                
+
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid md:grid-cols-2 gap-6">
-                    <GlowingInput 
-                      label="Nom complet" 
-                      required 
+                    <GlowingInput
+                      label="Nom complet"
+                      required
                       value={formData.name}
                       onChange={(e) => handleInputChange('name', e.target.value)}
                       placeholder="John Doe"
                     />
-                    <GlowingInput 
-                      label="Email professionnel" 
-                      type="email" 
-                      required 
+                    <GlowingInput
+                      label="Email professionnel"
+                      type="email"
+                      required
                       value={formData.email}
                       onChange={(e) => handleInputChange('email', e.target.value)}
                       placeholder="john@entreprise.com"
@@ -202,25 +207,25 @@ const Contact = () => {
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-6">
-                    <GlowingInput 
-                      label="Téléphone" 
+                    <GlowingInput
+                      label="Téléphone"
                       value={formData.phone}
                       onChange={(e) => handleInputChange('phone', e.target.value)}
                       placeholder="+229 XX XX XX XX"
                     />
-                    <GlowingInput 
-                      label="Sujet du message" 
-                      required 
+                    <GlowingInput
+                      label="Sujet du message"
+                      required
                       value={formData.subject}
                       onChange={(e) => handleInputChange('subject', e.target.value)}
                       placeholder="Projet de design"
                     />
                   </div>
 
-                  <GlowingTextarea 
-                    label="Décrivez votre projet" 
-                    rows={6} 
-                    required 
+                  <GlowingTextarea
+                    label="Décrivez votre projet"
+                    rows={6}
+                    required
                     value={formData.message}
                     onChange={(e) => handleInputChange('message', e.target.value)}
                     placeholder="Parlez-nous de votre vision, de vos objectifs, et de ce que vous aimeriez accomplir ensemble..."
@@ -230,10 +235,10 @@ const Contact = () => {
                     <p className="text-sm text-muted-foreground">
                       <span className="text-primary font-medium">*</span> Champs obligatoires
                     </p>
-                    
-                    <Button 
-                      type="submit" 
-                      size="lg" 
+
+                    <Button
+                      type="submit"
+                      size="lg"
                       className="px-8 py-3 rounded-lg bg-primary hover:bg-primary/90 text-white font-medium shadow-md hover:shadow-lg transition-all duration-300"
                       disabled={isSubmitting}
                     >
@@ -266,7 +271,7 @@ const Contact = () => {
       {/* Interactive Map - Real Location */}
       <section className="relative h-96 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-background/0 to-background/20 z-10 pointer-events-none" />
-        
+
         {/* Embedded Google Map with real coordinates */}
         <iframe
           src={`https://maps.google.com/maps?q=${mapCoordinates.lat},${mapCoordinates.lng}&z=15&output=embed`}
@@ -276,7 +281,7 @@ const Contact = () => {
           referrerPolicy="no-referrer-when-downgrade"
           title="FERNANDEN Location - Cotonou, Bénin"
         />
-        
+
         {/* Location Badge */}
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
