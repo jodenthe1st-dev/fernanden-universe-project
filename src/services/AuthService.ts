@@ -22,10 +22,16 @@ export class AuthService {
   // Connexion via Supabase Auth
   static async login(credentials: LoginCredentials): Promise<AuthUser> {
     try {
+      const email = credentials.email.trim().toLowerCase();
+      const password = credentials.password;
+      if (!email || !password) {
+        throw new Error('Email et mot de passe requis');
+      }
+
       // 1. Authentification Supabase
       const { data, error } = await supabase.auth.signInWithPassword({
-        email: credentials.email,
-        password: credentials.password,
+        email,
+        password,
       });
 
       if (error) throw error;
@@ -36,18 +42,24 @@ export class AuthService {
         .from('profiles')
         .select('*')
         .eq('id', data.user.id)
-        .single();
+        .maybeSingle();
 
-      if (profileError && profileError.code !== 'PGRST116') {
+      if (profileError) {
         logger.error('Error fetching profile:', profileError);
-        // Fallback: si pas de profil, on assume 'user' basic
+        throw new Error('Impossible de vérifier le profil utilisateur');
       }
 
-      // 3. Construire l'objet utilisateur unifié
+      // 3. Contrôle strict admin pour éviter toute ambiguïté de session
+      if (profile?.role !== 'admin') {
+        await supabase.auth.signOut();
+        throw new Error('Accès administrateur requis');
+      }
+
+      // 4. Construire l'objet utilisateur unifié
       this.currentUser = {
         id: data.user.id,
         email: data.user.email!,
-        role: profile?.role || 'user',
+        role: profile.role,
         name: profile?.full_name || data.user.user_metadata?.full_name,
         avatar_url: profile?.avatar_url || data.user.user_metadata?.avatar_url,
         full_name: profile?.full_name
@@ -122,13 +134,19 @@ export class AuthService {
         .from('profiles')
         .select('*')
         .eq('id', session.user.id)
-        .single();
+        .maybeSingle();
+
+      // Session active mais profil non-admin: on force la déconnexion de l'espace admin.
+      if (!profile || profile.role !== 'admin') {
+        this.currentUser = null;
+        return null;
+      }
 
       // 3. Mettre à jour l'état local
       this.currentUser = {
         id: session.user.id,
         email: session.user.email!,
-        role: profile?.role || 'user',
+        role: profile.role,
         name: profile?.full_name || session.user.user_metadata?.full_name,
         avatar_url: profile?.avatar_url || session.user.user_metadata?.avatar_url,
         full_name: profile?.full_name
