@@ -91,7 +91,7 @@ L'administration est divisée en plusieurs sections :
 \`\`\`typescript
 POST /api/auth/login
 {
-  "email": "admin@example.com",
+  "email": "fernandenentreprises@gmail.com",
   "password": "password"
 }
 \`\`\`

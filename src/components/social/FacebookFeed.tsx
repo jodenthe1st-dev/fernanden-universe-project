@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FacebookPageInfo, FacebookPost } from "./FacebookTypes";
-import { mockFacebookPageInfo, mockFacebookPosts } from "./FacebookMockData";
+import { facebookPageInfo, facebookPosts } from "./FacebookStaticData";
 import { FacebookPostCard } from "./FacebookPostCard";
 import { Users, Facebook, TrendingUp, Heart, MessageCircle, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -100,8 +100,8 @@ const FacebookFeed = () => {
 
   // Simulated data - replace with actual Facebook Graph API calls
   useEffect(() => {
-    setPageInfo(mockFacebookPageInfo);
-    setPosts(mockFacebookPosts);
+    setPageInfo(facebookPageInfo);
+    setPosts(facebookPosts);
     setLoading(false);
   }, []);
 

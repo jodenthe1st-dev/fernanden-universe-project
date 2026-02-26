@@ -1,6 +1,7 @@
 ﻿// src/pages/admin/contacts/AdminContactsList.tsx
 import React, { useState, useEffect } from 'react';
 import logger from '@/lib/logger';
+import { ContactSubscriptionsService } from '@/integrations/supabase/services/contactSubscriptions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -20,7 +21,7 @@ interface Contact {
   name: string;
   email: string;
   phone?: string;
-  subject: string;
+  subject?: string;
   message: string;
   status: 'new' | 'read' | 'replied';
   created_at: string;
@@ -39,9 +40,18 @@ export default function AdminContactsList() {
 
   const loadContacts = async () => {
     try {
-      // Simulation - Remplacer par appel API réel
-      const mockContacts: Contact[] = [];
-      setContacts(mockContacts);
+      const rows = await ContactSubscriptionsService.getAll();
+      const normalized: Contact[] = rows.map((row) => ({
+        id: row.id,
+        name: row.name || 'Sans nom',
+        email: row.email || 'email-inconnu@local',
+        phone: row.phone || undefined,
+        subject: row.subject || undefined,
+        message: row.message || '',
+        status: ((row.status || 'new') as Contact['status']),
+        created_at: row.created_at || new Date().toISOString(),
+      }));
+      setContacts(normalized);
     } catch (error) {
       logger.error('Error loading contacts:', error);
     } finally {
@@ -51,7 +61,7 @@ export default function AdminContactsList() {
 
   const handleStatusChange = async (id: string, status: Contact['status']) => {
     try {
-      // Simulation - Remplacer par appel API réel
+      await ContactSubscriptionsService.updateStatus(id, status);
       setContacts(contacts.map(contact => 
         contact.id === id ? { ...contact, status } : contact
       ));
@@ -67,7 +77,7 @@ export default function AdminContactsList() {
     }
 
     try {
-      // Simulation - Remplacer par appel API réel
+      await ContactSubscriptionsService.delete(id);
       setContacts(contacts.filter(contact => contact.id !== id));
     } catch (error) {
       logger.error('Error deleting contact:', error);
