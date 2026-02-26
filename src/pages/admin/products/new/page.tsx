@@ -8,7 +8,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DatabaseService, Product } from '@/services/DatabaseService';
-import { CloudinaryService } from '@/services/CloudinaryService';
+import { UploadService } from '@/integrations/supabase/services/upload';
+import { showErrorToast, showSuccessToast } from '@/lib/toast';
 import { 
   ArrowLeft, 
   Save, 
@@ -48,8 +49,8 @@ export default function AdminProductForm() {
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         if (file.type.startsWith('image/')) {
-          const result = await CloudinaryService.uploadImage(file, 'products');
-          newImages.push(result.url);
+          const url = await UploadService.uploadImage(file, 'products');
+          newImages.push(url);
         }
       }
 
@@ -60,7 +61,7 @@ export default function AdminProductForm() {
       }));
     } catch (error) {
       logger.error('Error uploading images:', error);
-      alert('Erreur lors de l\'upload des images');
+      showErrorToast("Erreur lors de l'upload des images");
     } finally {
       setUploading(false);
     }
@@ -86,15 +87,16 @@ export default function AdminProductForm() {
 
     try {
       if (!product.name || !product.description) {
-        alert('Le nom et la description sont obligatoires');
+        showErrorToast('Le nom et la description sont obligatoires');
         return;
       }
 
       await DatabaseService.createProduct(product as Omit<Product, 'id' | 'created_at'>);
+      showSuccessToast('Produit créé avec succès');
       navigate('/admin/products');
     } catch (error) {
       logger.error('Error creating product:', error);
-      alert('Erreur lors de la création du produit');
+      showErrorToast('Erreur lors de la création du produit');
     } finally {
       setLoading(false);
     }
@@ -174,12 +176,13 @@ export default function AdminProductForm() {
                   <Label htmlFor="status">Statut</Label>
                   <select
                     id="status"
-                    value={product.status || 'active'}
+                    value={product.status || 'published'}
                     onChange={(e) => setProduct(prev => ({ ...prev, status: e.target.value }))}
                     className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-terracotta focus:border-transparent"
                   >
-                    <option value="active">Actif</option>
-                    <option value="inactive">Inactif</option>
+                    <option value="published">Publié</option>
+                    <option value="draft">Brouillon</option>
+                    <option value="archived">Archivé</option>
                   </select>
                 </div>
 
@@ -252,6 +255,7 @@ export default function AdminProductForm() {
                         <Button
                           variant="destructive"
                           size="sm"
+                          type="button"
                           className="absolute top-1 right-1 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
                           onClick={() => handleRemoveImage(index)}
                         >
@@ -263,6 +267,7 @@ export default function AdminProductForm() {
                           <Button
                             variant="secondary"
                             size="sm"
+                            type="button"
                             className="absolute bottom-1 left-1 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
                             onClick={() => handleSetFeatured(image)}
                           >

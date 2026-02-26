@@ -35,9 +35,8 @@ export default function AdminDashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    logger.debug('AdminDashboard - User:', user);
     loadStats();
-  }, [user, navigate]);
+  }, []);
 
   const loadStats = async () => {
     try {
@@ -108,31 +107,6 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
-      <div className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-4">
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Tableau de Bord
-              </h1>
-              <Badge variant="secondary">
-                {user?.name || 'Admin'}
-              </Badge>
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              <Button variant="outline" size="sm">
-                <Settings className="h-4 w-4 mr-2" />
-                Paramètres
-              </Button>
-              <Button variant="outline" size="sm" onClick={handleLogout}>
-                Déconnexion
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -148,10 +122,10 @@ export default function AdminDashboard() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {menuItems.map((item, index) => {
+          {menuItems.map((item) => {
             const Icon = item.icon;
             return (
-              <Card key={index} className="hover:shadow-lg transition-shadow cursor-pointer">
+              <Card key={item.title} className="hover:shadow-lg transition-shadow cursor-pointer">
                 <CardContent className="p-6">
                   <div className="flex items-center">
                     <div className={`p-3 rounded-full ${item.color}`}>
@@ -182,29 +156,29 @@ export default function AdminDashboard() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Button 
-                className="w-full justify-start" 
+              <Button
+                className="w-full justify-start"
                 variant="outline"
-                onClick={() => navigate('/admin/products?action=new')}
+                onClick={() => navigate('/admin/products/new')}
               >
                 <Package className="h-4 w-4 mr-2" />
                 Ajouter un Produit
               </Button>
-              <Button 
-                className="w-full justify-start" 
+              <Button
+                className="w-full justify-start"
                 variant="outline"
-                onClick={() => navigate('/admin/podcasts?action=new')}
+                onClick={() => navigate('/admin/podcasts/new')}
               >
                 <Mic className="h-4 w-4 mr-2" />
                 Ajouter un Podcast
               </Button>
-              <Button 
-                className="w-full justify-start" 
+              <Button
+                className="w-full justify-start"
                 variant="outline"
-                onClick={() => navigate('/admin/services?action=new')}
+                onClick={() => navigate('/admin/blog/new')}
               >
                 <Briefcase className="h-4 w-4 mr-2" />
-                Ajouter un Service
+                Ajouter un Article Blog
               </Button>
             </CardContent>
           </Card>
@@ -251,5 +225,3 @@ export default function AdminDashboard() {
     </div>
   );
 }
-
-export { AdminDashboard };

@@ -1,14 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Facebook, Instagram, Linkedin, MapPin, Phone, Mail, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
-import { useState } from "react";
 import logoMain from "@/assets/logo-fernanden-main.png";
-import { supabase } from "@/integrations/supabase/client";
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
 import { useSiteSettings } from "@/contexts/SiteSettingsContext";
+import logger from "@/lib/logger";
 
 // TikTok icon component
 const TikTokIcon = ({ size = 20 }: { size?: number }) => (
@@ -26,8 +25,13 @@ const universeLinks = [
 const resourceLinks = [
   { href: "/portfolio", label: "Portfolio" },
   { href: "/podcasts", label: "Podcasts" },
+  { href: "/social", label: "Réseaux sociaux" },
   { href: "/about", label: "À propos" },
 ];
+
+const getErrorMessage = (error: unknown): string => {
+  return error instanceof Error ? error.message : "Une erreur est survenue lors de l'inscription.";
+};
 
 export function Footer() {
   const { settings } = useSiteSettings();
@@ -52,7 +56,7 @@ export function Footer() {
       showSuccessToast("Inscription réussie ! Merci de votre intérêt.");
       setNewsletterEmail('');
     } catch (error: unknown) {
-      console.error('Newsletter subscription error:', error);
+      logger.error('Newsletter subscription error:', error);
       showErrorToast(getErrorMessage(error));
     } finally {
       setIsSubscribing(false);
@@ -65,7 +69,7 @@ export function Footer() {
       <div className="absolute inset-0 bg-gradient-to-br from-secondary/10 via-transparent to-primary/10" />
 
       <div className="container-main py-20 lg:py-24 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-12 gap-10 lg:gap-12">
 
           {/* Brand Column - Enhanced */}
           <motion.div
@@ -203,7 +207,7 @@ export function Footer() {
                       <h5 className="font-heading font-medium text-white mb-2">Notre Siège</h5>
                       <p className="text-soft-gray body-regular leading-relaxed">
                         {(settings.contact_address || '').split('\n').map((line, i) => (
-                          <React.Fragment key={i}>
+                          <React.Fragment key={`address-line-${line}-${i}`}>
                             {line}<br />
                           </React.Fragment>
                         ))}
@@ -331,6 +335,3 @@ export function Footer() {
     </footer>
   );
 }
-  const getErrorMessage = (error: unknown): string => {
-    return error instanceof Error ? error.message : "Une erreur est survenue lors de l'inscription.";
-  };

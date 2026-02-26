@@ -4,9 +4,12 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
+import { SiteSettingsProvider } from "./contexts/SiteSettingsContext";
 import { ProtectedRoute } from "./components/admin/ProtectedRoute";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { useEffect } from "react";
+import type { ReactNode } from "react";
+import { Button } from "./components/ui/button";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
@@ -15,7 +18,7 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import SHE from "./pages/SHE";
 import DENSE from "./pages/DENSE";
-import CaFEE from "./pages/CafEE";
+import CaFEE from "./pages/CaFEE";
 import Portfolio from "./pages/Portfolio";
 import PortfolioDetail from "./pages/PortfolioDetail";
 import Podcasts from "./pages/Podcasts";
@@ -60,8 +63,8 @@ import Social from "./pages/Social";
 
 // Admin pages - NEW STRUCTURE
 import { AdminLayout } from "./pages/admin/layout";
-import AdminLogin from "./pages/admin/login/page";
-import { AdminDashboard } from "./pages/admin/dashboard/page";
+import { AdminLogin } from "./pages/admin/login/page";
+import AdminDashboard from "./pages/admin/dashboard/page";
 import { AdminProductsList } from "./pages/admin/products/page";
 import { AdminProductForm } from "./pages/admin/products/new/page";
 import { AdminProductView } from "./pages/admin/products/[id]/page";
@@ -94,6 +97,7 @@ import { AdminSettings } from "./pages/admin/settings/AdminSettings";
 // Admin pages - Documentation
 import { SiteDocumentation } from "./pages/admin/documentation/SiteDocumentation";
 import { AdminGuide } from "./pages/admin/documentation/AdminGuide";
+import { useSiteSettings } from "./contexts/SiteSettingsContext";
 
 const queryClient = new QueryClient();
 
@@ -108,17 +112,45 @@ const ScrollToTop = () => {
   return null;
 };
 
+const MaintenanceGate = ({ children }: { children: ReactNode }) => {
+  const { settings, loading } = useSiteSettings();
+  const location = useLocation();
+
+  if (loading) return <>{children}</>;
+
+  const isAdminRoute = location.pathname.startsWith("/admin");
+  if (!settings.maintenance_mode || isAdminRoute) {
+    return <>{children}</>;
+  }
+
+  return (
+    <main className="min-h-screen flex items-center justify-center px-6 bg-muted/20">
+      <div className="max-w-xl text-center space-y-4">
+        <h1 className="text-3xl font-bold">Site en maintenance</h1>
+        <p className="text-muted-foreground">
+          Nous effectuons actuellement des mises a jour. Merci de revenir dans quelques instants.
+        </p>
+        <Button asChild>
+          <a href="mailto:fernandenentreprises@gmail.com">Nous contacter</a>
+        </Button>
+      </div>
+    </main>
+  );
+};
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <AuthProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner position="top-right" richColors />
-            <BrowserRouter>
-              <ScrollToTop />
-              <Routes>
+          <SiteSettingsProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner position="top-right" richColors />
+              <BrowserRouter>
+                <ScrollToTop />
+                <MaintenanceGate>
+                  <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
@@ -126,7 +158,6 @@ function App() {
                 <Route path="/she/services/interior-design" element={<SHEServiceInteriorDesign />} />
                 <Route path="/she/services/events" element={<SHEServiceEvents />} />
                 <Route path="/she/services/decoration" element={<SHEServiceDecoration />} />
-                <Route path="/she" element={<SHE />} />
                 <Route path="/she/realizations/:id" element={<SHERealizationDetail />} />
                 <Route path="/dense" element={<DENSE />} />
                 <Route path="/dense/contact" element={<DenseContact />} />
@@ -153,7 +184,7 @@ function App() {
                 {/* Blog Routes */}
                 <Route path="/blog" element={<Blog />} />
                 <Route path="/blog/she" element={<BlogSHE />} />
-                <Route path="/blog/densen" element={<BlogDENSE />} />
+                <Route path="/blog/dense" element={<BlogDENSE />} />
                 <Route path="/blog/cafee" element={<BlogCaFEE />} />
                 <Route path="/blog/:id" element={<BlogArticle />} />
                 
@@ -198,9 +229,11 @@ function App() {
                 
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
-          </TooltipProvider>
+                  </Routes>
+                </MaintenanceGate>
+              </BrowserRouter>
+            </TooltipProvider>
+          </SiteSettingsProvider>
         </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>

@@ -1,5 +1,4 @@
 ﻿// src/services/AuthService.ts
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { supabase } from '@/integrations/supabase/client';
 import logger from '@/lib/logger';
 

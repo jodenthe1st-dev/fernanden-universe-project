@@ -2,27 +2,38 @@ import { Layout } from "@/components/layout/Layout";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ShoppingBag, Plus, Minus, Trash2, Heart, Star, Shield, Clock } from "lucide-react";
+import { ArrowLeft, ShoppingBag, Plus, Minus, Trash2, Heart, Shield, Clock } from "lucide-react";
 import { useState, useEffect } from "react";
 import { MagneticButton } from "@/components/animations/MagneticButton";
-import logoDensen from "@/assets/logo-densen.png";
 import { placeholderImages } from "@/components/ui/BrandedPlaceholder";
+import { DatabaseService } from "@/services/DatabaseService";
+import logger from "@/lib/logger";
 
 // Stockage partagé du panier (compatible avec les autres pages)
 const getSharedCart = (): { collectionId: number; quantity: number }[] => {
-  const stored = localStorage.getItem('dense-cart-items');
-  const items = stored ? JSON.parse(stored) : [];
-  
-  // Convertir les IDs simples en objets avec quantité
-  const cartMap: { [key: number]: number } = {};
-  items.forEach((id: number) => {
-    cartMap[id] = (cartMap[id] || 0) + 1;
-  });
-  
-  return Object.entries(cartMap).map(([collectionId, quantity]) => ({
-    collectionId: parseInt(collectionId),
-    quantity
-  }));
+  try {
+    const stored = localStorage.getItem('dense-cart-items');
+    const items = stored ? JSON.parse(stored) : [];
+
+    if (!Array.isArray(items)) return [];
+
+    // Convertir les IDs simples en objets avec quantité
+    const cartMap: { [key: number]: number } = {};
+    items.forEach((id: number) => {
+      if (typeof id === 'number') {
+        cartMap[id] = (cartMap[id] || 0) + 1;
+      }
+    });
+
+    return Object.entries(cartMap).map(([collectionId, quantity]) => ({
+      collectionId: Number.parseInt(collectionId),
+      quantity
+    }));
+  } catch {
+    // Données corrompues — on vide le panier proprement
+    localStorage.removeItem('dense-cart-items');
+    return [];
+  }
 };
 
 const setSharedCart = (items: { collectionId: number; quantity: number }[]) => {
@@ -37,7 +48,16 @@ const setSharedCart = (items: { collectionId: number; quantity: number }[]) => {
 };
 
 // Données des collections pour le panier
-const collections = [
+interface CollectionItem {
+  id: number;
+  name: string;
+  subtitle: string;
+  price: number;
+  image: string;
+  icon: string;
+}
+
+const fallbackCollections: CollectionItem[] = [
   {
     id: 1,
     name: "Les Drapés",
@@ -96,13 +116,45 @@ const collections = [
   }
 ];
 
+const parseProductPrice = (price: string | null | undefined): number => {
+  if (!price) return 0;
+  const normalized = price.replace(",", ".").replace(/[^\d.]/g, "");
+  const parsed = Number.parseFloat(normalized);
+  return Number.isFinite(parsed) ? parsed : 0;
+};
+
 const Cart = () => {
   // Panier avec stockage partagé
   const [cartItems, setCartItems] = useState<{ collectionId: number; quantity: number }[]>([]);
+  const [collections, setCollections] = useState<CollectionItem[]>(fallbackCollections);
 
   // Charger le panier depuis localStorage au montage
   useEffect(() => {
     setCartItems(getSharedCart());
+  }, []);
+
+  useEffect(() => {
+    const loadDenseProducts = async () => {
+      try {
+        const products = await DatabaseService.getProducts({ category: "dense", status: "published" });
+        if (!products.length) return;
+
+        const mappedCollections: CollectionItem[] = products.map((product, index) => ({
+          id: index + 1,
+          name: product.name || `Produit DENSE ${index + 1}`,
+          subtitle: product.category ? `Categorie: ${product.category}` : "Produit DENSE",
+          price: parseProductPrice(product.price),
+          image: product.featured_image || product.images?.[0] || placeholderImages.product.dense,
+          icon: "DENSE",
+        }));
+
+        setCollections(mappedCollections);
+      } catch (error) {
+        logger.warn("Cart: unable to load DENSE products from Supabase, using fallback", error);
+      }
+    };
+
+    void loadDenseProducts();
   }, []);
 
   // Écouter les changements de panier (pour la synchronisation entre pages)
@@ -111,8 +163,8 @@ const Cart = () => {
       setCartItems(getSharedCart());
     };
 
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
+    globalThis.addEventListener('storage', handleStorageChange);
+    return () => globalThis.removeEventListener('storage', handleStorageChange);
   }, []);
 
   const updateQuantity = (collectionId: number, newQuantity: number) => {
@@ -120,8 +172,8 @@ const Cart = () => {
     if (newQuantity === 0) {
       newCart = cartItems.filter(item => item.collectionId !== collectionId);
     } else {
-      newCart = cartItems.map(item => 
-        item.collectionId === collectionId 
+      newCart = cartItems.map(item =>
+        item.collectionId === collectionId
           ? { ...item, quantity: newQuantity }
           : item
       );
@@ -160,15 +212,15 @@ const Cart = () => {
               <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 bg-densen-gold/20 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 md:mb-8">
                 <ShoppingBag size={28} className="text-densen-gold w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9" />
               </div>
-              
+
               <h1 className="heading-section mb-4 sm:mb-6">
                 Votre <span className="text-densen-gold">Panier</span> est vide
               </h1>
-              
+
               <p className="body-large text-muted-foreground mb-6 sm:mb-8">
                 Découvrez nos collections uniques et trouvez la pièce qui vous ressemble
               </p>
-              
+
               <MagneticButton>
                 <Button size="lg" className="rounded-xl bg-gradient-to-r from-densen-gold to-primary hover:from-densen-gold/90 hover:to-primary/90 text-black shadow-xl transition-all duration-300 px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base md:px-8 md:py-4 md:text-lg">
                   <Link to="/dense#collections" className="flex items-center gap-3">
@@ -203,7 +255,7 @@ const Cart = () => {
                   {getTotalItems()} article{getTotalItems() > 1 ? 's' : ''}
                 </p>
               </div>
-              
+
               <MagneticButton>
                 <Button variant="outline" size="lg" className="rounded-xl border-densen-gold text-densen-gold hover:bg-densen-gold hover:text-black transition-all duration-300">
                   <Link to="/dense" className="flex items-center gap-2">
@@ -239,7 +291,7 @@ const Cart = () => {
                           className="w-full h-full object-cover"
                         />
                       </div>
-                      
+
                       {/* Details */}
                       <div className="flex-1">
                         <div className="flex justify-between items-start mb-4">
@@ -251,7 +303,7 @@ const Cart = () => {
                               {collection.subtitle}
                             </p>
                           </div>
-                          
+
                           <button
                             onClick={() => removeFromCart(item.collectionId)}
                             className="text-red-500 hover:text-red-600 transition-colors"
@@ -259,7 +311,7 @@ const Cart = () => {
                             <Trash2 size={20} />
                           </button>
                         </div>
-                        
+
                         {/* Quantity */}
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
@@ -269,11 +321,11 @@ const Cart = () => {
                             >
                               <Minus size={16} className="text-densen-gold" />
                             </button>
-                            
+
                             <span className="font-heading font-semibold text-lg w-8 text-center">
                               {item.quantity}
                             </span>
-                            
+
                             <button
                               onClick={() => updateQuantity(item.collectionId, item.quantity + 1)}
                               className="w-8 h-8 rounded-full border border-densen-gold/30 flex items-center justify-center hover:bg-densen-gold/10 transition-colors"
@@ -281,7 +333,7 @@ const Cart = () => {
                               <Plus size={16} className="text-densen-gold" />
                             </button>
                           </div>
-                          
+
                           <div className="text-right">
                             <p className="font-heading font-bold text-xl text-densen-gold">
                               {collection.price * item.quantity}€
@@ -309,20 +361,20 @@ const Cart = () => {
                 <h3 className="font-heading font-bold text-2xl text-foreground mb-6">
                   Résumé de la commande
                 </h3>
-                
+
                 <div className="space-y-4 mb-6">
                   <div className="flex justify-between text-muted-foreground">
                     <span>Sous-total</span>
                     <span>{getTotalPrice()}€</span>
                   </div>
-                  
+
                   <div className="flex justify-between text-muted-foreground">
                     <span>Livraison</span>
                     <span className="text-densen-gold font-medium">Gratuite</span>
                   </div>
-                  
+
                   <div className="h-px bg-border/30" />
-                  
+
                   <div className="flex justify-between">
                     <span className="font-heading font-bold text-xl">Total</span>
                     <span className="font-heading font-bold text-2xl text-densen-gold">
@@ -330,7 +382,7 @@ const Cart = () => {
                     </span>
                   </div>
                 </div>
-                
+
                 {/* Trust elements */}
                 <div className="space-y-3 mb-8">
                   <div className="flex items-center gap-3 text-sm text-muted-foreground">
@@ -346,10 +398,10 @@ const Cart = () => {
                     <span>Satisfaction garantie</span>
                   </div>
                 </div>
-                
+
                 <MagneticButton>
-                  <Button 
-                    size="lg" 
+                  <Button
+                    size="lg"
                     className="w-full rounded-xl bg-gradient-to-r from-densen-gold to-primary hover:from-densen-gold/90 hover:to-primary/90 text-black shadow-xl transition-all duration-300 px-6 py-4 text-lg"
                     onClick={() => {
                       const articles = cartItems.map(item => {
@@ -363,14 +415,14 @@ const Cart = () => {
                     Valider la commande
                   </Button>
                 </MagneticButton>
-                
+
                 <div className="mt-4 space-y-2">
                   <p className="text-xs text-muted-foreground text-center">
                     Ou contactez-nous par email :
                   </p>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
+                  <Button
+                    variant="outline"
+                    size="sm"
                     className="w-full rounded-xl border-densen-gold text-densen-gold hover:bg-densen-gold hover:text-black"
                     onClick={() => {
                       const articles = cartItems.map(item => {
@@ -379,13 +431,13 @@ const Cart = () => {
                       }).filter(Boolean).join('\n');
                       const subject = encodeURIComponent(`Commande DENSE - Total: ${getTotalPrice()}€`);
                       const body = encodeURIComponent(`Bonjour!\n\nJe souhaite valider ma commande.\n\nTotal: ${getTotalPrice()}€\n\nArticles:\n${articles}\n\nPouvez-vous m'indiquer la procédure pour finaliser ma commande?\n\nMerci!`);
-                      window.location.href = `mailto:fernandenentreprises@gmail.com?subject=${subject}&body=${body}`;
+                      globalThis.location.href = `mailto:fernandenentreprises@gmail.com?subject=${subject}&body=${body}`;
                     }}
                   >
                     Envoyer par email
                   </Button>
                 </div>
-                
+
                 <p className="text-xs text-muted-foreground text-center mt-4">
                   En finalisant, vous acceptez nos conditions générales de vente
                 </p>

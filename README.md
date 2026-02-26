@@ -36,6 +36,16 @@ npm i
 npm run dev
 ```
 
+## Dev scripts used in this repo
+
+- `npm run dev`: Frontend Vite only.
+- `npm run dev:all`: Frontend + API server together.
+- `npm run build`: Production build.
+- `npm run lint`: ESLint checks.
+
+Default Vite port is `5173` (configured in `vite.config.ts`).
+If a port is already used, stop the conflicting process first.
+
 **Edit a file directly in GitHub**
 
 - Navigate to the desired file(s).

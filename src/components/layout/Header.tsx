@@ -166,7 +166,7 @@ export function Header() {
                         🏠 Blog SHE
                       </Link>
                       <Link
-                        to="/blog/densen"
+                        to="/blog/dense"
                         className="block py-2 text-sm text-muted-foreground hover:text-primary transition-colors"
                       >
                         🛍️ Blog DENSE
