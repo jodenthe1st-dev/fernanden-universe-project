@@ -119,7 +119,8 @@ const MaintenanceGate = ({ children }: { children: ReactNode }) => {
   if (loading) return <>{children}</>;
 
   const isAdminRoute = location.pathname.startsWith("/admin");
-  if (!settings.maintenance_mode || isAdminRoute) {
+  const isMaintenanceEnabled = settings.maintenance_mode === true;
+  if (!isMaintenanceEnabled || isAdminRoute) {
     return <>{children}</>;
   }
 

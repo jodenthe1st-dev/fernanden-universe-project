@@ -39,7 +39,6 @@ import type {
   NewsletterSubscriberInsert,
   ServiceUpdate,
 } from '@/integrations/supabase/services';
-import logger from '@/lib/logger';
 
 // Types pour les filtres
 export interface ServiceFilters {
